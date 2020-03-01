@@ -1,0 +1,27 @@
+{
+
+    "manifest_version": 2,
+    "name": "4chan Mass Quote",
+    "version": "1.0",
+  
+    "description": "Sneed",
+
+    "homepage_url":"https://github.com/mdn/webextensions-examples/tree/master/beastify",
+  
+    "icons": {
+      "48": "icons/janny-48.png",
+      "96": "icons/janny-96.png"
+    },
+
+    "permissions": [
+        "activeTab", "clipboardWrite"
+      ],
+      
+
+    "browser_action": {
+        "default_icon": "icons/janny-32.png",
+        "default_title": "massQuote",
+        "default_popup": "popup/chooseMode.html"
+    }
+
+  }
