@@ -22,6 +22,12 @@
         "default_icon": "icons/janny-32.png",
         "default_title": "massQuote",
         "default_popup": "popup/chooseMode.html"
+    },
+
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "f.lb@gmx.com"
+      }
     }
 
   }

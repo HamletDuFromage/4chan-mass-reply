@@ -1,12 +1,12 @@
+// fill the <p> with the quotes
 function fillField(textData){
+    // The innerHTML is only done on the popup, not on actual webpages
     document.getElementById("textField").innerHTML = textData;
 }
 
 function listenForClicks() {
     document.addEventListener("click", (e) => {
 
-        //function
-        
         function updateClipboard() {
             var newClip = document.getElementById("textField").innerText;
 
@@ -34,7 +34,7 @@ function listenForClicks() {
             browser.tabs.insertCSS({code: hidePage});
         }
         function massQuote(tabs) {
-            
+            // send a message with the kind of quote that must be performed
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
                 action: e.target.textContent
@@ -45,6 +45,7 @@ function listenForClicks() {
             console.error(`Could not mass quote: ${error}`);
         }
 
+        // Check if buttons are clicked
         if (e.target.classList.contains("action")) {
             
             browser.tabs.query({active: true, currentWindow: true})
@@ -75,4 +76,5 @@ function handleMessage(message, sender, sendResponse){
     fillField(message); 
   }
 
+// get the message from contents
 browser.runtime.onMessage.addListener(handleMessage)

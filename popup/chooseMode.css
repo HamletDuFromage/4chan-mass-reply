@@ -47,6 +47,10 @@ img{
 #sneed{
   color: #d00;
 }
+
+#textField{
+	font-size: 0.73em;
+}
 .action:hover {
 	background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
 	background-color:#e9e9e9;

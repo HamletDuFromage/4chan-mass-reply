@@ -16,7 +16,6 @@
             str+= "sneed";
         }
         browser.runtime.sendMessage(str);  
-        //str = "";
       });
 
 })();
