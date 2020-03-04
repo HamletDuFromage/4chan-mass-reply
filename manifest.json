@@ -17,10 +17,16 @@
         "activeTab", "clipboardWrite"
       ],
       
+    "content_scripts": [
+      {
+        "matches": ["*://*.4channel.org/*"],
+        "js": ["popup/choseMode.js"]
+      }
+    ],
 
     "browser_action": {
         "default_icon": "icons/janny-32.png",
-        "default_title": "massQuote",
+        "default_title": "4chan Mass Quote",
         "default_popup": "popup/chooseMode.html"
     },
 

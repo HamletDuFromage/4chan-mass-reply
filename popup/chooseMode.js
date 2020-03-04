@@ -4,13 +4,15 @@ function fillField(textData){
     document.getElementById("textField").innerHTML = textData;
 }
 
+
+
 function listenForClicks() {
     document.addEventListener("click", (e) => {
 
         function updateClipboard() {
             var newClip = document.getElementById("textField").innerText;
 
-            if (newClip !== "" && newClip !== "sneed"){
+            if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread"){
                 navigator.clipboard.writeText(newClip);
             }
             /*
@@ -39,7 +41,6 @@ function listenForClicks() {
                 command: "massQuote",
                 action: e.target.textContent
             });
-
         }
         function reportError(error) {
             console.error(`Could not mass quote: ${error}`);
@@ -64,7 +65,7 @@ function listenForClicks() {
 function reportExecuteScriptError(error) {
     document.querySelector("#popup-content").classList.add("hidden");
     document.querySelector("#error-content").classList.remove("hidden");
-    console.error(`Failed to execute bmassQuote content script: ${error.message}`);
+    console.error(`Failed to execute massQuote content script: ${error.message}`);
 }
 
 
