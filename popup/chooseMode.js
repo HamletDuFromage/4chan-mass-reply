@@ -15,17 +15,6 @@ function listenForClicks() {
             if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread"){
                 navigator.clipboard.writeText(newClip);
             }
-            /*
-            //navigator.permissions.query({name: "clipboard-write"}).then(result => {
-                //if (result.state == "granted" || result.state == "prompt") {
-                    navigator.clipboard.writeText(newClip).then(function() {
-                        
-                    }, function() {
-                        
-                    });
-                //}
-            //});
-            */
         }
         
         function copyQuote() {
@@ -39,7 +28,8 @@ function listenForClicks() {
             // send a message with the kind of quote that must be performed
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
-                action: e.target.textContent
+                action: e.target.textContent,
+                bttm : document.getElementById("bttm").checked
             });
         }
         function reportError(error) {
