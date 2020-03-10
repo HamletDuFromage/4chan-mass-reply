@@ -45,10 +45,8 @@ img{
   text-shadow:0px 1px 0px #ffffff;
 }
 
-.ch
-
 #sneed{
-  color: #d00;
+  color: #d00 !important;
 }
 
 #textField{
