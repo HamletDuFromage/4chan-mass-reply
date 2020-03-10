@@ -23,7 +23,7 @@
                     for (var i = 0; i < maxLines - r; i++) {
                         str += ">>" + posts[i].id.substring(2) + "<br>";
                     }
-                    for (var i = 0; i < quotesNumber - maxLines - r; i++){
+                    for (var i = maxLines - r; i < quotesNumber; i++){
                         str += ">>" + posts[i].id.substring(2);
                         if (i%(cols+1) === 0 || i === quotesNumber - maxLines - r - 1) {str += "<br>";}
                         else{str += " ";}
