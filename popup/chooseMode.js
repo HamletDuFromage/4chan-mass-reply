@@ -25,6 +25,7 @@ function listenForClicks() {
             browser.tabs.insertCSS({code: hidePage});
         }
         function massQuote(tabs) {
+            
             // send a message with the kind of quote that must be performed
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
@@ -57,6 +58,27 @@ function reportExecuteScriptError(error) {
     document.querySelector("#error-content").classList.remove("hidden");
     console.error(`Failed to execute massQuote content script: ${error.message}`);
 }
+
+function setItem() {
+    console.log("storage updated");
+}
+
+function onGot(item) {
+    document.getElementById("bttm").checked = item.checkBoxState.value;
+}
+  
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
+
+document.getElementById("bttm").onclick = function() {
+    browser.storage.local.set({
+        checkBoxState : {value:this.checked}
+    }).then(setItem, onError);
+};
+
+let gettingState = browser.storage.local.get("checkBoxState");
+gettingState.then(onGot, onError);
 
 
 browser.tabs.executeScript({file: "/content_scripts/massQuote.js"})

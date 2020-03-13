@@ -14,7 +14,7 @@
     },
 
     "permissions": [
-        "activeTab", "clipboardWrite"
+        "activeTab", "clipboardWrite", "storage"
       ], 
 
     "browser_action": {
