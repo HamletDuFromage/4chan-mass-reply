@@ -25,16 +25,16 @@
 
                 if (cols < 1){
                     for (var i = 0; i < quotesNumber; i++) {
-                        str += ">>" + posts[i].id.substring(2) + "<br>";
+                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                     }
                 }
                 else{
                     var r = Math.floor((quotesNumber - maxLines)/cols) + 1;
                     for (var i = 0 + offset; i < maxLines - r + offset; i++) {
-                        str += ">>" + posts[i].id.substring(2) + "<br>";
+                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                     }
                     for (var i = maxLines - r + offset; i < quotesNumber + offset; i++){
-                        str += ">>" + posts[i].id.substring(2);
+                        str += ">>" + posts[i].id.substring(2, postLength);
                         if ((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) {str += "<br>";}
                         else{str += " ";}
                     }
@@ -47,7 +47,7 @@
             else{
                 for (var i = 0; i < maxLines; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
-                        str += ">>" + posts[i].id.substring(2) + "<br>";
+                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                     }
                 }
             }
