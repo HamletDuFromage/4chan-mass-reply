@@ -9,9 +9,11 @@ Click on the toolbar icon when in a thread, and select one of two options. "Quot
 Tested on Firefox 73 for GNU/Arch Loonix, Microsoft Winblows 10 and Android 9
 
 ## Install
-https://addons.mozilla.org/en-US/firefox/addon/4chan-mass-quote/
+https://hamletdufromage.github.io/mass-reply/mass-reply.html
 
-Or get it in the releases section
+<del>https://addons.mozilla.org/en-US/firefox/addon/4chan-mass-quote/</del>
+
+Was removed from the AMO for "spamming", eventho
 
 ### Buy me a coffee?
 
