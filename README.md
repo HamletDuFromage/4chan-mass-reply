@@ -13,7 +13,7 @@ https://hamletdufromage.github.io/mass-reply/mass-reply.html
 
 <del>https://addons.mozilla.org/en-US/firefox/addon/4chan-mass-quote/</del>
 
-Was removed from the AMO for "spamming", eventho
+Was removed from the AMO for "spamming", eventhough that's not in the rules
 
 ### Buy me a coffee?
 
