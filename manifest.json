@@ -2,7 +2,7 @@
 
     "manifest_version": 2,
     "name": "4chan Mass Reply",
-    "version": "1.3.3",
+    "version": "1.3.4",
   
     "description": "Sneed",
 
@@ -26,7 +26,7 @@
     "browser_specific_settings": {
       "gecko": {
         "id": "id@id.com",
-        "update_url": "https://hamletdufromage.github.io/mass-reply/updates.json"
+        "update_url": "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-quote/master/updates.json"
       }
     }
 
