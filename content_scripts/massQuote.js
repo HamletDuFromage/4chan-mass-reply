@@ -14,12 +14,12 @@
         var quotesNumber = 166;
         if(url.match(/\/jp/)){quotesNumber = 416;}
         if(url.match(/\/lit/)){quotesNumber = 250;}
+        quotesNumber = Math.min(posts.length, quotesNumber);
 
         if(url.match(/boards.4chann?e?l?.org\/[a-z]+\/thread/))
         {
             if(message.action != "Check 'em")
             {
-                quotesNumber = Math.min(posts.length, quotesNumber);
                 var cols = Math.floor(quotesNumber/maxLines);
                 var offset = message.bttm * (posts.length - quotesNumber);
 
@@ -45,7 +45,7 @@
                 }
             }
             else{
-                for (var i = 0; i < maxLines; i++) {
+                for (var i = 0; i < quotesNumber; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
                         str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                     }
