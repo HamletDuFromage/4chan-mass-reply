@@ -30,6 +30,7 @@ function listenForClicks() {
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
                 action: e.target.textContent,
+                selected: document.getElementById("shitpost").value,
                 bttm : document.getElementById("bttm").checked
             });
         }

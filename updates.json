@@ -6,7 +6,7 @@
           "version": "1.3.1",
           "update_link": "https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.1-an+fx.xpi",
           "update_hash": "sha256:2cc62be6b79de937099202810c6974f191ad59c6e42a99d380e6ac1cb6ceba99"
-      },
+        },
         {
           "version": "1.3.2",
           "update_link": "https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.2-an+fx.xpi",
@@ -26,6 +26,11 @@
           "version": "1.3.5",
           "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.5/4chan_mass_reply-1.3.5-an+fx.xpi",
           "update_hash": "sha256:d35578fcf269f9b6cf6b88ef43e5679fd5dc64395347ca423b2acd782c5f1740"
+        },
+        {
+          "version": "1.4.0",
+          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.0/4chan_mass_reply.xpi",
+          "update_hash": "sha256:05f1631444732260b34d11445905b1ff96632cf0047f85fd4b2c888a852b783c"
         }
       ]
     }
