@@ -47,10 +47,25 @@ function loadShitposts(){
         {
             "name" : "11-Top 10",
             "content" : "1. Пиcьмa мёpтвoгo чeлoвeкa (1986, Lopushansky)<br>2. Le Fils du Masque (2005, Guterman)<br>3. Guns of The Trees (1961, Mekas)<br>4. L\'ascension du chevalier noir (2012, Nolan)<br>5. 牯嶺街少年殺人事件 (1991, Yang)<br>6. Duelle (1976, Rivette)<br>7. Pauvre Pierrot (1892, Reynaud)<br>8. Batman v Superman: Dawn of Justice (2016, Snyder)<br>9. Սայաթ-Նովա (1968, Parajanov)<br>10. Mauvais Sang (1986, Carax)"
+        },
+        {
+            "name" : "12-Quite pungent",
+            "content" : "BBBBBBBBBRRRRRRRRRRRAAAAAAAAAAAPPPPPPPPPPPPPPPPPsnnnnniiiiiiffffffffffff...oh yes my dear....sssnnnnnnnnnnnniiiiiiiiffffffff....quite pungent indeed...is that....dare I say....sssssssnniff...eggs I smell?......sniff sniff....hmmm...yes...quite so my darling....sniff....quite pungent eggs yes very much so .....ssssssssssssssnnnnnnnnnnnnnnniiiiiiiffffff....ah yes...and also....a hint of....sniff....cheese.....quite wet my dear....sniff...but of yes...this will do nicely....sniff.....please my dear....another if you please....nice a big now....BBBBBBRRRRRRRAAAAAAAPPPPPPPFFFFFFFFLLLLLLLLLPPPPPPPPPFFFFFF Oh yes...very good!....very sloppy and wet my dear....hmmmmm...is that a drop of nugget I see on the rim?...hmmmm.....let me.....let me just have a little taste before the sniff my darling.......hmmmmm....hmm..yes....that is a delicate bit of chocolate my dear....ah yes....let me guess...curry for dinner?....oh quite right I am....aren\'t I?....ok....time for sniff.....sssssnnnnnnniiiiiiiiffffffff.....hmmm...hhhmmmmm I see...yes....yes indeed as well curry......hmmm....that fragrance is quite noticeable....yes.....onion and garlic chutney I take it my dear?.....hmmmmm....yes quite.....BBBBBBRRRRRRRRPPPPPPFFFFFFFFFFFFFFFFFFFFFTTTTTTTTTTT Oh I was not expecting that…that little gust my dear….you caught me off guard…yes…so gentle it was though…hmmmm…let me taste this little one…just one small sniff…..sniff…ah….ssssssnnnnnniiiiiffffffffffff…and yet…so strong…yes…the odor….sniff sniff…hmmm….is that….sniff….hmmm….I can almost taste it my dear…..yes….just…sniff….a little whiff more if you please…..ssssssnnnnnniiiiiffffffffff…ah yes I have it now….yes quite….hhhhmmmm…delectable my dear…..quite exquisite yes…..I dare say…sniff….the most pungent one yet my dear….ssssnnnnniiiifffffffffffffffffffffff….yes…."
+        },
+        {
+            "name" : "13->mfw thinking of you hurting",
+            "content" : "Listen here little baby. You\'re gonna get a lot of hurtful and degrading comments, but that ain\'t what I\'m about. Let me just say, you are perfect the way you are. You hear me sugar? PERFECT. Don\'t ever change. You deserve anything and everything you want. Stay safe for me, baby girl. <br>>mfw thinking of you hurting"
+        },
+        {
+            "name" : "14-AWOOOGA",
+            "content" : "Hummina hummina hummina bazooooooooing! *eyes pop out* AROOOOOOOOGA! *jaw drops tongue rolls out* WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF WOOF *tongue bursts out of the outh uncontrollably leaking face and everything in reach* WURBLWUBRLBWURblrwurblwurlbrwubrlwburlwbruwrlblwublr *tiny cupid shoots an arrow through heart* Ahhhhhhhhhhh me lady... *heart in the shape of a heart starts beating so hard you can see it through shirt* ba-bum ba-bum ba-bum ba-bum ba-bum *milk truck crashes into a bakery store in the background spiling white liquid and dough on the streets* BABY WANTS TO FUCK *inhales from the gas tank* honka honka honka honka *masturabtes furiously* ohhhh my gooooodd~"
+        },
+        {
+            "name" : "15-For free",
+            "content" : ">he\'s a janitor<br>>on the internet<br>>on an anime imageboard<br>>he does it for free<br>>he takes his \"job\" very seriously<br>>he does it because it is the only amount of power & control he will ever have in his pathetic life<br>>he deletes threads he doesn\'t like because whenever he gets upset he has an asthma attack<br>>he deletes threads he doesn\'t like because they interfere with the large backlog of little girl chinese cartoons he still has to watch<br>>he will never have a real job<br>>he will never move out of his parent\'s house<br>>he will never be at a healthy weight<br>>he will never know how to cook anything besides a hot pocket<br>>he will never have a girlfriend<br>>he will never have any friends"
         }
     ];
 }
-
 
 (function() {
 
@@ -69,6 +84,11 @@ function loadShitposts(){
 
         if(message.action === "Select"){
             str+=loadShitposts()[message.selected].content;
+        }
+
+        else if(document.title.search(/\/fr\//i) != -1)
+        {
+            str += "prends tes médocs";
         }
 
         else if(url.match(/boards.4chann?e?l?.org\/[a-z]+\/thread/))

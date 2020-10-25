@@ -1,10 +1,23 @@
+function onCreated(tab) {
+    console.log("tg");
+}  
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
 // fill the <p> with the quotes
 function fillField(textData){
     // The innerHTML is only done on the popup, not on actual webpages
-    document.getElementById("textField").innerHTML = textData;
+    if(textData === "prends tes médocs"){
+        var updating = browser.tabs.update({
+            url:"https://www.reddit.com/r/france/",
+            pinned:true
+            });
+        updating.then(onCreated, onError);
+    }
+    else{
+        document.getElementById("textField").innerHTML = textData;
+    }
 }
-
-
 
 function listenForClicks() {
     document.addEventListener("click", (e) => {
@@ -80,7 +93,6 @@ document.getElementById("bttm").onclick = function() {
 
 let gettingState = browser.storage.local.get("checkBoxState");
 gettingState.then(onGot, onError);
-
 
 browser.tabs.executeScript({file: "/content_scripts/massQuote.js"})
 .then(listenForClicks)
