@@ -1,4 +1,4 @@
-# 4chan Mass Quotes browser extension
+# [4chan Mass Quotes browser extension](https://git.io/mass_reply)
 <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/HamletDuFromage/4chan-mass-quote/total">
 
 This browser extension aims to facilitate the creation of mass replies on 4chan.org and 4channel.org, and also reply to dubs. It may or may not work on other imageboards.
