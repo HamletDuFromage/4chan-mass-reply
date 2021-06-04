@@ -101,7 +101,9 @@ function loadShitposts(){
 
         else if(url.match(/boards.4chann?e?l?.org\/[a-z]+\/thread/))
         {
-            var maxLines = 100;
+            var maxLines;
+            if(url.match(/\/pol/)){maxLines = 70;}
+            else{maxLines = 100;}
             var posts = document.getElementsByClassName("postContainer");
             var postLength = posts[0].id.length;
             var quotesNumber = 166;
