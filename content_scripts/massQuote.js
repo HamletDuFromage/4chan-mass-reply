@@ -138,7 +138,7 @@ function loadShitposts(){
                 }
             }
             else{
-                for (var i = 0; i < quotesNumber; i++) {
+                for (var i = 0; i < posts.length; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
                         str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                     }
