@@ -87,7 +87,7 @@ function loadShitposts(){
             str += "prends tes médocs";
         }
 
-        else if(url.match(/boards.4chann?e?l?.org\/[a-z]+\/thread/))
+        else if(url.match(/boards.4chan(nel)?.org\/[a-z]+\/.*thread.*/))
         {
             var maxLines;
             if(url.match(/\/pol/)){maxLines = 70;}
@@ -101,34 +101,43 @@ function loadShitposts(){
             
             if(message.action != "Check 'em")
             {
-                var cols = Math.floor(quotesNumber/maxLines);
-                var offset = message.bttm * (posts.length - quotesNumber);
+                if(message.format){
+                    var cols = Math.floor(quotesNumber/maxLines);
+                    var offset = message.bttm * (posts.length - quotesNumber);
 
-                if (cols < 1){
-                    for (var i = 0; i < quotesNumber; i++) {
-                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+                    if (cols < 1){
+                        for (var i = 0; i < quotesNumber; i++) {
+                            str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+                        }
+                    }
+                    else{
+                        var r = Math.floor((quotesNumber - maxLines)/cols) + 1;
+                        for (var i = 0 + offset; i < maxLines - r + offset; i++) {
+                            str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+                        }
+                        for (var i = maxLines - r + offset; i < quotesNumber + offset; i++){
+                            str += ">>" + posts[i].id.substring(2, postLength);
+                            if ((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) {str += "<br>";}
+                            else{str += " ";}
+                        }
                     }
                 }
                 else{
-                    var r = Math.floor((quotesNumber - maxLines)/cols) + 1;
-                    for (var i = 0 + offset; i < maxLines - r + offset; i++) {
-                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+                    for (var i = 0; i < posts.length; i++) {
+                        str += ">>" + posts[i].id.substring(2, postLength) + " ";
                     }
-                    for (var i = maxLines - r + offset; i < quotesNumber + offset; i++){
-                        str += ">>" + posts[i].id.substring(2, postLength);
-                        if ((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) {str += "<br>";}
-                        else{str += " ";}
-                    }
+                    str += "<br>"
                 }
-                
+
                 if(message.action === "Sneed"){
                     str+= "sneed";
                 }
             }
-            else{
+            else
+            {
                 for (var i = 0; i < posts.length; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
-                        str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+                        str += ">>" + posts[i].id.substring(2, postLength) + ((message.format) ? "<br>" : " ");
                     }
                 }
             } 

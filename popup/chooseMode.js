@@ -44,7 +44,8 @@ function listenForClicks() {
                 command: "massQuote",
                 action: e.target.textContent,
                 selected: document.getElementById("shitpost").value,
-                bttm : document.getElementById("bttm").checked
+                bttm : document.getElementById("bttm").checked,
+                format : document.getElementById("format").checked
             });
         }
         function reportError(error) {
@@ -77,22 +78,35 @@ function setItem() {
     console.log("storage updated");
 }
 
-function onGot(item) {
-    document.getElementById("bttm").checked = item.checkBoxState.value;
+function bttmOnGot(item) {
+    document.getElementById("bttm").checked = item.bttmCheckBoxState.value;
 }
-  
+
+function formatOnGot(item) {
+    document.getElementById("format").checked = item.formatCheckBoxState.value;
+}
+
 function onError(error) {
     console.log(`Error: ${error}`);
 }
 
 document.getElementById("bttm").onclick = function() {
     browser.storage.local.set({
-        checkBoxState : {value:this.checked}
+        bttmCheckBoxState : {value:this.checked}
     }).then(setItem, onError);
 };
 
-let gettingState = browser.storage.local.get("checkBoxState");
-gettingState.then(onGot, onError);
+document.getElementById("format").onclick = function() {
+    browser.storage.local.set({
+        formatCheckBoxState : {value:this.checked}
+    }).then(setItem, onError);
+};
+
+let bttmGettingState = browser.storage.local.get("bttmCheckBoxState");
+bttmGettingState.then(bttmOnGot, onError);
+
+let formatGettingState = browser.storage.local.get("formatCheckBoxState");
+formatGettingState.then(formatOnGot, onError);
 
 browser.tabs.executeScript({file: "/content_scripts/massQuote.js"})
 .then(listenForClicks)
