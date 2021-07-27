@@ -1,25 +1,25 @@
-html, body{
+html, body {
   width: 310px;
-	font-family: Sans-Serif;
-	font-size: 0.8em;
-  }
-  
-body{
+  font-family: Sans-Serif;
+  font-size: 0.8em;
+}
+
+body {
   padding-top: 5px;
-  }
+}
 
 .hidden {
-    display: none;
-	}
-	
-img{
-	position: relative;
-	left: 35px;
-	float: left;
+  display: none;
 }
-  
+
+img {
+  position: relative;
+  left: 35px;
+  float: left;
+}
+
 .header {
-  color:#789922;
+  color: #789922;
   font-weight: bold;
   text-align: center;
 }
@@ -29,55 +29,57 @@ img{
 }
 
 .button {
-	box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
-	background-color:#f9f9f9;
-	border-radius:6px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:11px;
-	font-weight:bold;
-	padding:6px 15px;
-	text-decoration:none;
-  text-shadow:0px 1px 0px #ffffff;
+  box-shadow: inset 0px 1px 0px 0px #ffffff;
+  background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+  display: inline-block;
+  cursor: pointer;
+  color: #666666;
+  font-family: Arial;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px 15px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #ffffff;
 }
 
-#shitpost{
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:11px;
-	font-weight:bold;
-	text-decoration:none;
-  text-shadow:0px 1px 0px #ffffff;
+#shitpost {
+  display: inline-block;
+  cursor: pointer;
+  color: #666666;
+  font-family: Arial;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #ffffff;
 }
 
-#sneed{
+#sneed {
   color: #d00 !important;
 }
 
-#textField{
-	font-size: 1.05em;
+#textField {
+  font-size: 1.05em;
 }
+
 .action:hover {
-	background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-	background-color:#e9e9e9;
+  background: linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
+  background-color: #e9e9e9;
 }
+
 .action:active {
-	position:relative;
-	top:1px;
+  position: relative;
+  top: 1px;
 }
 
 .copy:hover {
-	background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-	background-color:#e9e9e9;
-}
-.copy:active {
-	position:relative;
-	top:1px;
+  background: linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
+  background-color: #e9e9e9;
 }
 
+.copy:active {
+  position: relative;
+  top: 1px;
+}
