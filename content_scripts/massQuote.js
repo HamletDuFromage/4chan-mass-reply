@@ -70,8 +70,8 @@ function loadShitposts(){
             return;
         }
 
-        var str = "";
-        var url = window.location.href;
+        let str = "";
+        let board = window.location.href.match(/boards.4chan(nel)?.org\/([a-z]+)\/.*thread.*/)
 
         function reportExecuteScriptError(error) {
             console.error(`Failed to execute massQuote content script: ${error.message}`);
@@ -82,48 +82,57 @@ function loadShitposts(){
             str+=loadShitposts()[message.selected].content;
         }
 
-        else if(document.title.search(/\/fr\//i) != -1)
+        /* else if(document.title.search(/\/fr\//i) != -1)
         {
             str += "prends tes médocs";
-        }
+        } */
 
-        else if(url.match(/boards.4chan(nel)?.org\/[a-z]+\/.*thread.*/))
+        else if(board)
         {
-            var maxLines;
-            if(url.match(/\/pol/)){maxLines = 70;}
-            else{maxLines = 100;}
-            var posts = document.getElementsByClassName("postContainer");
-            var postLength = posts[0].id.length;
-            var quotesNumber = 166;
-            if(url.match(/\/jp/)){quotesNumber = 416;}
-            if(url.match(/\/lit/)){quotesNumber = 250;}
-            quotesNumber = Math.min(posts.length, quotesNumber);
-            
+            let maxLines = 100;
+            let characterLimit = 2000;
+            switch(board[2]) {
+                case "pol":
+                    maxLines = 70;
+                    break;
+                case "v":
+                    maxLines = 25;
+                    break;
+                case "jp":
+                    characterLimit = 5000;
+                    break;
+                case "lit":
+                    characterLimit = 3000;
+                    break;
+            }
+
+            let posts = document.getElementsByClassName("postContainer");
+            let postLength = posts[0].id.length;
+            quotesNumber = Math.min(posts.length, Math.floor(characterLimit / (postLength + 1))); // +1 to account for spaces and linebreaks
+
             if(message.action != "Check 'em")
             {
                 if(message.format){
-                    var cols = Math.floor(quotesNumber/maxLines);
-                    var offset = message.bttm * (posts.length - quotesNumber);
+                    let cols = Math.floor(quotesNumber/maxLines);
+                    let offset = message.bttm * (posts.length - quotesNumber);
 
                     if (cols < 1){
-                        for (var i = 0; i < quotesNumber; i++) {
+                        for (let i = 0; i < quotesNumber; i++) {
                             str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                         }
                     }
                     else{
-                        var r = Math.floor((quotesNumber - maxLines)/cols) + 1;
-                        for (var i = 0 + offset; i < maxLines - r + offset; i++) {
+                        let r = Math.floor((quotesNumber - maxLines)/cols) + 1;
+                        for (let i = 0 + offset; i < maxLines - r + offset; i++) {
                             str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                         }
-                        for (var i = maxLines - r + offset; i < quotesNumber + offset; i++){
-                            str += ">>" + posts[i].id.substring(2, postLength);
-                            if ((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) {str += "<br>";}
-                            else{str += " ";}
+                        for (let i = maxLines - r + offset; i < quotesNumber + offset; i++){
+                            str += ">>" + posts[i].id.substring(2, postLength) + (((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
                         }
                     }
                 }
                 else{
-                    for (var i = 0; i < posts.length; i++) {
+                    for (let i = 0; i < quotesNumber; i++) {
                         str += ">>" + posts[i].id.substring(2, postLength) + " ";
                     }
                     str += "<br>"
@@ -135,7 +144,7 @@ function loadShitposts(){
             }
             else
             {
-                for (var i = 0; i < posts.length; i++) {
+                for (let i = 0; i < quotesNumber; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
                         str += ">>" + posts[i].id.substring(2, postLength) + ((message.format) ? "<br>" : " ");
                     }
