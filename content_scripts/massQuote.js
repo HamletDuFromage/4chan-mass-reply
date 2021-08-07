@@ -106,15 +106,15 @@ function loadShitposts(){
                     break;
             }
 
-            let posts = document.getElementsByClassName("postContainer");
-            let postLength = posts[0].id.length;
+            const posts = document.getElementsByClassName("postContainer");
+            const postLength = posts[0].id.length;
             quotesNumber = Math.min(posts.length, Math.floor(characterLimit / (postLength + 1))); // +1 to account for spaces and linebreaks
 
             if(message.action != "Check 'em")
             {
+                const offset = message.bttm * (posts.length - quotesNumber);
                 if(message.format){
-                    let cols = Math.floor(quotesNumber/maxLines);
-                    let offset = message.bttm * (posts.length - quotesNumber);
+                    const cols = Math.floor(quotesNumber/maxLines);
 
                     if (cols < 1){
                         for (let i = 0; i < quotesNumber; i++) {
@@ -127,12 +127,12 @@ function loadShitposts(){
                             str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
                         }
                         for (let i = maxLines - r + offset; i < quotesNumber + offset; i++){
-                            str += ">>" + posts[i].id.substring(2, postLength) + (((i - maxLines - r + offset)%(cols+1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
+                            str += ">>" + posts[i].id.substring(2, postLength) + (((i - maxLines - r + offset)%(cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
                         }
                     }
                 }
                 else{
-                    for (let i = 0; i < quotesNumber; i++) {
+                    for (let i = 0 + offset; i < quotesNumber + offset; i++) {
                         str += ">>" + posts[i].id.substring(2, postLength) + " ";
                     }
                     str += "<br>"
@@ -144,10 +144,15 @@ function loadShitposts(){
             }
             else
             {
-                for (let i = 0; i < quotesNumber; i++) {
+                const dubs = [];
+                for (let i = 0; i < posts.length; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
-                        str += ">>" + posts[i].id.substring(2, postLength) + ((message.format) ? "<br>" : " ");
+                        dubs.push(posts[i].id);
                     }
+                }
+                const offset = message.bttm * (Math.max(dubs.length - quotesNumber, 0));
+                for (let i = 0 + offset; i < Math.min(dubs.length, quotesNumber) + offset; i++) {
+                    str += ">>" + dubs[i].substring(2, postLength) + ((message.format) ? "<br>" : " ");
                 }
             } 
         }
