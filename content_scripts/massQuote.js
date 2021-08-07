@@ -63,6 +63,37 @@ function loadShitposts(){
     ];
 }
 
+function createQuotesString(posts, format, bottom, characterLimit, maxLines, postLength) {
+    let res = "";
+    let quotesNumber = Math.min(posts.length, Math.floor(characterLimit / (postLength + 1))); // +1 to account for spaces and linebreaks
+    const offset = bottom * (posts.length - quotesNumber);
+    if(format){
+        const cols = Math.floor(quotesNumber/maxLines);
+
+        if (cols < 1){
+            for (let i = 0; i < quotesNumber; i++) {
+                res += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+            }
+        }
+        else{
+            let r = Math.floor((quotesNumber - maxLines)/cols) + 1;
+            for (let i = 0 + offset; i < maxLines - r + offset; i++) {
+                res += ">>" + posts[i].id.substring(2, postLength) + "<br>";
+            }
+            for (let i = maxLines - r + offset; i < quotesNumber + offset; i++){
+                res += ">>" + posts[i].id.substring(2, postLength) + (((i - maxLines - r + offset)%(cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
+            }
+        }
+    }
+    else{
+        for (let i = 0 + offset; i < quotesNumber + offset; i++) {
+            res += ">>" + posts[i].id.substring(2, postLength) + " ";
+        }
+        res += "<br>";
+    }
+    return res;
+}
+
 (function() {
 
     browser.runtime.onMessage.addListener((message) => {
@@ -79,7 +110,7 @@ function loadShitposts(){
 
 
         if(message.action === "Select"){
-            str+=loadShitposts()[message.selected].content;
+            str += loadShitposts()[message.selected].content;
         }
 
         /* else if(document.title.search(/\/fr\//i) != -1)
@@ -108,35 +139,10 @@ function loadShitposts(){
 
             const posts = document.getElementsByClassName("postContainer");
             const postLength = posts[0].id.length;
-            quotesNumber = Math.min(posts.length, Math.floor(characterLimit / (postLength + 1))); // +1 to account for spaces and linebreaks
 
             if(message.action != "Check 'em")
             {
-                const offset = message.bttm * (posts.length - quotesNumber);
-                if(message.format){
-                    const cols = Math.floor(quotesNumber/maxLines);
-
-                    if (cols < 1){
-                        for (let i = 0; i < quotesNumber; i++) {
-                            str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
-                        }
-                    }
-                    else{
-                        let r = Math.floor((quotesNumber - maxLines)/cols) + 1;
-                        for (let i = 0 + offset; i < maxLines - r + offset; i++) {
-                            str += ">>" + posts[i].id.substring(2, postLength) + "<br>";
-                        }
-                        for (let i = maxLines - r + offset; i < quotesNumber + offset; i++){
-                            str += ">>" + posts[i].id.substring(2, postLength) + (((i - maxLines - r + offset)%(cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
-                        }
-                    }
-                }
-                else{
-                    for (let i = 0 + offset; i < quotesNumber + offset; i++) {
-                        str += ">>" + posts[i].id.substring(2, postLength) + " ";
-                    }
-                    str += "<br>"
-                }
+                str += createQuotesString(posts, message.format, message.bttm, characterLimit, maxLines, postLength);
 
                 if(message.action === "Sneed"){
                     str+= "sneed";
@@ -147,13 +153,10 @@ function loadShitposts(){
                 const dubs = [];
                 for (let i = 0; i < posts.length; i++) {
                     if(posts[i].id.charAt(postLength - 1) === posts[i].id.charAt(postLength - 2)){
-                        dubs.push(posts[i].id);
+                        dubs.push(posts[i]);
                     }
                 }
-                const offset = message.bttm * (Math.max(dubs.length - quotesNumber, 0));
-                for (let i = 0 + offset; i < Math.min(dubs.length, quotesNumber) + offset; i++) {
-                    str += ">>" + dubs[i].substring(2, postLength) + ((message.format) ? "<br>" : " ");
-                }
+                str += createQuotesString(dubs, message.format, message.bttm, characterLimit, maxLines, postLength);
             } 
         }
         else{str += "This is not a recongized 4chan thread";}

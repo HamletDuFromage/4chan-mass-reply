@@ -1,4 +1,3 @@
 #!/bin/bash
-rm *.xpi
-zip -r temp.zip popup/ icons/ content_scripts/ manifest.json
-mv temp.zip 4chan_Mass_Reply.xpi
+rm *.xpi *.zip
+zip -r extension.zip popup/ icons/ content_scripts/ manifest.json
