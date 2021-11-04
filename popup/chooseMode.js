@@ -1,51 +1,49 @@
 function onCreated(tab) {
     console.log("tg");
-}  
+}
 function onError(error) {
     console.log(`Error: ${error}`);
 }
 // fill the <p> with the quotes
-function fillField(textData){
+function fillField(textData) {
     // The innerHTML is only done on the popup, not on actual webpages
-    if(textData === "prends tes médocs"){
+    if (textData === "prends tes médocs") {
         var updating = browser.tabs.update({
-            url:"https://www.reddit.com/r/france/",
-            pinned:true
-            });
+            url: "https://www.reddit.com/r/france/",
+            pinned: true
+        });
         updating.then(onCreated, onError);
     }
-    else{
+    else {
         document.getElementById("textField").innerHTML = textData;
     }
 }
 
 function listenForClicks() {
     document.addEventListener("click", (e) => {
-
         function updateClipboard() {
             var newClip = document.getElementById("textField").innerText;
 
-            if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread"){
+            if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
                 navigator.clipboard.writeText(newClip);
             }
         }
-        
+
         function copyQuote() {
             copyToClipBoard("lol");
         }
 
         function hide(tabs) {
-            browser.tabs.insertCSS({code: hidePage});
+            browser.tabs.insertCSS({ code: hidePage });
         }
         function massQuote(tabs) {
-            
             // send a message with the kind of quote that must be performed
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
-                action: e.target.textContent,
+                action: e.target.id,
                 selected: document.getElementById("shitpost").value,
-                bttm : document.getElementById("bttm").checked,
-                format : document.getElementById("format").checked
+                bttm: document.getElementById("bttm").checked,
+                format: document.getElementById("format").checked
             });
         }
         function reportError(error) {
@@ -54,16 +52,16 @@ function listenForClicks() {
 
         // Check if buttons are clicked
         if (e.target.classList.contains("action")) {
-            
-            browser.tabs.query({active: true, currentWindow: true})
-              .then(massQuote)
-              .catch(reportError);
+            browser.tabs.query({ active: true, currentWindow: true })
+                .then(massQuote)
+                .catch(reportError);
         }
 
-        else if (e.target.classList.contains("copy")) {
-            browser.tabs.query({active: true, currentWindow: true})
-              .then(updateClipboard)
-              .catch(reportError);
+        else if (e.target.id === "copy") {
+            console.log("Copying to clipboard");
+            browser.tabs.query({ active: true, currentWindow: true })
+                .then(updateClipboard)
+                .catch(reportError);
         }
     });
 }
@@ -74,47 +72,32 @@ function reportExecuteScriptError(error) {
     console.error(`Failed to execute massQuote content script: ${error.message}`);
 }
 
-function setItem() {
-    console.log("storage updated");
-}
-
-function bttmOnGot(item) {
-    document.getElementById("bttm").checked = item.bttmCheckBoxState.value;
-}
-
-function formatOnGot(item) {
-    document.getElementById("format").checked = item.formatCheckBoxState.value;
-}
-
 function onError(error) {
     console.log(`Error: ${error}`);
 }
 
-document.getElementById("bttm").onclick = function() {
-    browser.storage.local.set({
-        bttmCheckBoxState : {value:this.checked}
-    }).then(setItem, onError);
-};
+function onGot(name, item) {
+    document.getElementById(name).checked = item[name];
+}
 
-document.getElementById("format").onclick = function() {
-    browser.storage.local.set({
-        formatCheckBoxState : {value:this.checked}
-    }).then(setItem, onError);
-};
+for (const button of ["format", "bttm"]) {
+    document.getElementById(button).onclick = function () {
+        browser.storage.local.set({
+            [this.name]: this.checked
+        }).then(console.log(`storage updated`), onError);
+    };
 
-let bttmGettingState = browser.storage.local.get("bttmCheckBoxState");
-bttmGettingState.then(bttmOnGot, onError);
+    let buttonGettingState = browser.storage.local.get(button);
+    buttonGettingState.then(onGot.bind(null, button), onError);
+}
 
-let formatGettingState = browser.storage.local.get("formatCheckBoxState");
-formatGettingState.then(formatOnGot, onError);
+browser.tabs.executeScript({ file: "/content_scripts/massQuote.js" })
+    .then(listenForClicks)
+    .catch(reportExecuteScriptError);
 
-browser.tabs.executeScript({file: "/content_scripts/massQuote.js"})
-.then(listenForClicks)
-.catch(reportExecuteScriptError);
-
-function handleMessage(message, sender, sendResponse){
-    fillField(message); 
-  }
+function handleMessage(message, sender, sendResponse) {
+    fillField(message);
+}
 
 // get the message from contents
 browser.runtime.onMessage.addListener(handleMessage)

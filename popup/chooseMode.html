@@ -1,61 +1,66 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="chooseMode.css"/>
-    </head>
 
-    <body>
-        <div id="popup-content">
-            <div class= header>
-            <img src= "/icons/4chan.png">
-            4chan Mass Reply - Shitposting suite</div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="chooseMode.css" />
+</head>
+
+<body>
+    <div id="popup-content">
+        <div class=header>
+            <img src="/icons/4chan.png">
+            4chan Mass Reply - Shitposting suite
+        </div>
+        <br>
+        <div class="container">
+            <form>
+                <select id="shitpost">
+                    <option value="1">Interjection</option>
+                    <option value="2">No Richard</option>
+                    <option value="3">No one:</option>
+
+                    <option value="4">Indian Intellectuals</option>
+                    <option value="5">Navy Seals</option>
+
+                    <option value="6">Rick & Morty</option>
+                    <option value="7">Cinema genres</option>
+                    <option value="8">Genres shitpost</option>
+                    <option value="9">Top 10 Kino</option>
+
+                    <option value="10">>mfw you hurting</option>
+                    <option value="11">AWOOOOGA</option>
+                    <option value="12">Does it for free</option>
+                    <option value="13">MacToddlers BTFO</option>
+                    <option value="14">Soy tropes</option>
+                    <option value="0">>Contribute</option>
+                </select>
+                <div class="button action" id="shitpost">Select</div>
+            </form>
+            <div class="button action" id="regular">Quote all</div>
+            <div class="button action" id="sneed">Sneed</div>
+            <div class="button action" id="dubs">Check 'em</div>
+            <div class="button action" id="kym">kym</div>
+            <div class="button" id="copy">Copy to Clipboard</div>
+        </div>
+        <div>
+            <label><input type="checkbox" id="bttm" name="bttm" />Quote the bottom posts if too many quotes to
+                fit</label>
             <br>
-            <div class="container">
-                <form>
-                    <select id="shitpost">
-                        <option value="1">Interjection</option>
-                        <option value="2">No Richard</option>
-                        <option value="3">No one:</option>
-
-                        <option value="4">Indian Intellectuals</option>
-                        <option value="5">Navy Seals</option>
-
-                        <option value="6">Rick & Morty</option>
-                        <option value="7">Cinema genres</option>
-                        <option value="8">Genres shitpost</option>
-                        <option value="9">Top 10 Kino</option>
-
-                        <option value="10">>mfw you hurting</option>
-                        <option value="11">AWOOOOGA</option>
-                        <option value="12">Does it for free</option>
-                        <option value="13">MacToddlers BTFO</option>
-                        <option value="14">Soy tropes</option>
-                        <option value="0">>Contribute</option>
-                    </select>
-                    <div class="button action" id="shitpost">Select</div>
-                </form>
-                <div class="button action">Quote all</div>
-                <div class="button action" id="sneed">Sneed</div>
-                <div class="button action" id="dubs">Check 'em</div>
-                <div class="button copy">Copy to Clipboard</div>
-            </div>
-            <div>
-                <label><input type="checkbox" id="bttm" name="bttm"/>Quote the bottom posts if too many quotes to fit</label>
-                <br>
-                <label><input type="checkbox" id="format" name="format" checked="checked"/>Format the post to maximize the number of lines</label>
-            </div>
-
-            <p id="textField"> </p>
-
-        </div>
-        <div id="error-content" class="hidden">
-            <p>Can't massQuote this web page.</p>
+            <label><input type="checkbox" id="format" name="format" checked="checked" />Format the post to maximize the
+                number of lines</label>
         </div>
 
-        <script src="chooseMode.js"></script>
-      </body>
-      
+        <p id="textField"> </p>
+
+    </div>
+    <div id="error-content" class="hidden">
+        <p>Can't massQuote this web page.</p>
+    </div>
+
+    <script src="chooseMode.js"></script>
+</body>
+
 </html>
