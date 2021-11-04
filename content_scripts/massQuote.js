@@ -87,7 +87,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
     }
     else {
         for (let i = 0 + offset; i < quotesNumber + offset; i++) {
-            res += ">>" + posts[i].id.substring(2, postLength) + " ";
+            res += strArray[i] + " ";
         }
         res += "<br>";
     }
@@ -134,7 +134,6 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
 
             if (message.action === "regular" || message.action === "sneed") {
                 const ids = Array.from(posts).map(e => {
-                    //console.log(e.id);
                     return ">>" + e.id.slice(2);
                 });
                 str += createQuotesString(ids, message.format, message.bttm, characterLimit, maxLines);
