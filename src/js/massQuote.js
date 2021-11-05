@@ -95,7 +95,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
 }
 
 (function () {
-    browser.runtime.onMessage.addListener((message) => {
+    chrome.runtime.onMessage.addListener((message) => {
         if (message.command != "massQuote") {
             return;
         }
@@ -174,7 +174,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
             }
         }
         else { str += "This is not a recongized 4chan thread"; }
-        if (str != "") { browser.runtime.sendMessage(str); }
+        if (str != "") { chrome.runtime.sendMessage(str); }
     });
 
 })();

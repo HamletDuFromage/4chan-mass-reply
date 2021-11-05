@@ -19,7 +19,8 @@
   ],
   "background": {
     "scripts": [
-      "background/background.js"
+      "js/browser-polyfill.min.js",
+      "js/background.js"
     ]
   },
   "content_scripts": [
@@ -28,14 +29,16 @@
         "*://*.4chan.org/*", "*://*.4channel.org/*"
       ],
       "js": [
-        "content_scripts/kymSpotter.js"
+        "js/browser-polyfill.min.js",
+        "js/content.js"
       ]
     }
   ],
   "browser_action": {
+    "browser_style": true,
     "default_icon": "icons/janny-32.png",
     "default_title": "4chan Mass Quote",
-    "default_popup": "popup/chooseMode.html"
+    "default_popup": "html/popup.html"
   },
   "browser_specific_settings": {
     "gecko": {

@@ -13,6 +13,7 @@ function onError(error) {
 }
 
 browser.contextMenus.onClicked.addListener(function (info) {
+    console.log("4chan-mass-reply context menu");
     if (info.menuItemId == "rm-cookies") {
         for (const url of ["https://4channel.org", "https://4chan.org"])
             browser.cookies.getAll({ url: url })

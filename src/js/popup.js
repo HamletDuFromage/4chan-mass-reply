@@ -23,20 +23,12 @@ function listenForClicks() {
     document.addEventListener("click", (e) => {
         function updateClipboard() {
             var newClip = document.getElementById("textField").innerText;
-
             if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
                 navigator.clipboard.writeText(newClip);
             }
         }
 
-        function copyQuote() {
-            copyToClipBoard("lol");
-        }
-
-        function hide(tabs) {
-            browser.tabs.insertCSS({ code: hidePage });
-        }
-        function massQuote(tabs) {
+        function sendQuoteInstruction(tabs) {
             // send a message with the kind of quote that must be performed
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
@@ -53,7 +45,7 @@ function listenForClicks() {
         // Check if buttons are clicked
         if (e.target.classList.contains("action")) {
             browser.tabs.query({ active: true, currentWindow: true })
-                .then(massQuote)
+                .then(sendQuoteInstruction)
                 .catch(reportError);
         }
 
@@ -72,10 +64,6 @@ function reportExecuteScriptError(error) {
     console.error(`Failed to execute massQuote content script: ${error.message}`);
 }
 
-function onError(error) {
-    console.log(`Error: ${error}`);
-}
-
 function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
@@ -91,7 +79,7 @@ for (const button of ["format", "bttm"]) {
     buttonGettingState.then(onGot.bind(null, button), onError);
 }
 
-browser.tabs.executeScript({ file: "/content_scripts/massQuote.js" })
+browser.tabs.executeScript({ file: "/js/massQuote.js" })
     .then(listenForClicks)
     .catch(reportExecuteScriptError);
 

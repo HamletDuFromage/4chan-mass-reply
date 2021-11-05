@@ -1,21 +1,17 @@
 html, body {
-  width: 310px;
+  overflow-x: hidden;
+  padding: 0.3em;
   font-family: Sans-Serif;
   font-size: 0.8em;
-}
-
-body {
-  padding-top: 5px;
 }
 
 .hidden {
   display: none;
 }
 
-img {
-  position: relative;
-  left: 35px;
-  float: left;
+form {
+  text-align: center;
+  display: inline-block;
 }
 
 .header {
@@ -25,22 +21,56 @@ img {
 }
 
 .container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.3em;
+}
+
+#form {
   text-align: center;
+  grid-column: 1/3;
+  grid-row: 1;
+}
+
+#regular {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#sneed {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+#dubs {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+#kym {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+#copy {
+  grid-column: 1/3;
+  grid-row: 4;
 }
 
 .button {
+  text-align: center;
   box-shadow: inset 0px 1px 0px 0px #ffffff;
   background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
   background-color: #f9f9f9;
-  border-radius: 6px;
+  border-radius: 0.5em;
   border: 1px solid #dcdcdc;
   display: inline-block;
   cursor: pointer;
   color: #666666;
   font-family: Arial;
-  font-size: 11px;
+  font-size: 1em;
   font-weight: bold;
-  padding: 6px 15px;
+  padding: 0.5em 1.5em;
   text-decoration: none;
   text-shadow: 0px 1px 0px #ffffff;
 }
@@ -55,26 +85,11 @@ img {
   top: 1px;
 }
 
-#shitpost {
-  display: inline-block;
-  cursor: pointer;
-  color: #666666;
-  font-family: Arial;
-  font-size: 11px;
-  font-weight: bold;
-  text-decoration: none;
-  text-shadow: 0px 1px 0px #ffffff;
-}
-
 #sneed {
   color: #d00 !important;
 }
 
 #textField {
+  width: 25em;
   font-size: 1.05em;
-}
-
-.copy:hover {
-  background: linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-  background-color: #e9e9e9;
 }
