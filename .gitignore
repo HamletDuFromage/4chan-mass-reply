@@ -1,5 +1,7 @@
 node_modules/
 dist/
+*.png
+*.xcf
 *.xpi
 *.zip
 *.tar.gz
