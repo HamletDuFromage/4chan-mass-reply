@@ -101,7 +101,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
         }
 
         let str = "";
-        let board = window.location.href.match(/boards.4chan(nel)?.org\/([a-z]+)\/.*thread.*/);
+        let board = window.location.href.match(/boards.4chan(?:nel)?.org\/([a-z]+)\/.*thread.*/);
         let fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
 
         function reportExecuteScriptError(error) {
@@ -115,17 +115,33 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
         else if (board) {
             let maxLines = 100;
             let characterLimit = 2000;
-            switch (board[2]) {
+            switch (board[1]) {
                 case "pol":
                     maxLines = 70;
                     break;
                 case "v":
                     maxLines = 25;
                     break;
+                case "bant":
+                    maxLines = 49;
+                    break;
+
                 case "jp":
                     characterLimit = 5000;
                     break;
                 case "lit":
+                    characterLimit = 3000;
+                    break;
+                case "vt":
+                    characterLimit = 5000;
+                    break;
+                case "qst":
+                    characterLimit = 3000;
+                    break;
+                case "vt":
+                    characterLimit = 5000;
+                    break;
+                case "mlp":
                     characterLimit = 3000;
                     break;
             }

@@ -4,12 +4,12 @@
 Inspired by /tv/'s posting culture, this browser extension aims to facilitate the creation of mass replies on 4chan.org and 4channel.org, and also reply to dubs.
 
 ## Usage
-Click on the toolbar icon when in a thread, and select one of three options.
+Click on the toolbar icon when in a thread, and select one of four options.
 
 - "Quote" quotes all the replies in the thread.
 - "Sneed" adds "sneed" at the end.
 - "Check 'em" only quotes post with repeating digits.
-- "KnowYourMeme" quotes knowyourmeme.com filenames
+- "KnowYourMeme" quotes knowyourmeme.com filenames.
 - "Copy To Clipboard" is self explanatory.
 
 In addition, the extension highlights knowyourmeme filenames and can delete 4chan(nel) cookies by right clicking and selecting "Delete cookies" on a 4chan(nel) page.
