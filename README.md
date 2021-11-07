@@ -15,7 +15,7 @@ Click on the toolbar icon when in a thread, and select one of four options.
 In addition, the extension highlights knowyourmeme filenames and can delete 4chan(nel) cookies by right clicking and selecting "Delete cookies" on a 4chan(nel) page.
 
 ## Screenshots
-![screenshot](https://user-images.githubusercontent.com/61667930/140608121-3eba87a2-aa6d-4571-acb6-61b410626558.png)
+![screenshot](https://user-images.githubusercontent.com/61667930/140646993-7c5c77e3-d8f4-4427-9450-8684fb62d80b.png)
 
 ## Permissions:
 - Clipboard to the quotes to the clipboard 

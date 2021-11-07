@@ -35,7 +35,7 @@ function listenForClicks() {
             browser.tabs.sendMessage(tabs[0].id, {
                 command: "massQuote",
                 action: e.target.id,
-                selected: document.getElementById("shitpost").value,
+                selected: document.getElementById("shitpost-entry").value,
                 bttm: document.getElementById("bttm").checked,
                 format: document.getElementById("format").checked
             });
