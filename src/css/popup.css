@@ -93,3 +93,29 @@ form {
   width: 25em;
   font-size: 1.05em;
 }
+
+hr.solid {
+  border: 1px solid rgb(221, 221, 221);
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 12em;
+  background-color: rgb(241, 241, 241);
+  text-align: center;
+  border-radius: 0.3em;
+  padding: 0.6em 0;
+  position: absolute;
+  right: 105%; 
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

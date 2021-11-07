@@ -15,10 +15,15 @@
             4chan Mass Reply - Shitposting suite
         </div>
         <br>
+        <label><input type="checkbox" id="anonymize" name="anonymize" />Anonymize image uploads</label>
+        <div class="tooltip">&#128712
+            <span class="tooltiptext">You WILL NOT use this with 4chanx's quick reply</span>
+        </div>
+        <hr class="solid">
         <div class="container">
             <div id="form">
                 <form>
-                    <select id="shitpost">
+                    <select>
                         <option value="1">Interjection</option>
                         <option value="2">No Richard</option>
                         <option value="3">No one:</option>
@@ -45,8 +50,8 @@
             <div class="button" id="copy">&#x1f4cb Copy to Clipboard</div>
         </div>
         <div>
-            <label><input type="checkbox" id="bttm" name="bttm" />Quote the bottom posts if too many quotes to
-                fit</label>
+            <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
+                posts</label>
             <br>
             <label><input type="checkbox" id="format" name="format" checked="checked" />Format the post to maximize the
                 number of lines</label>

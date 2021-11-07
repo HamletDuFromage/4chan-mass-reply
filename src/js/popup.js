@@ -1,9 +1,11 @@
 function onCreated(tab) {
     console.log("tg");
 }
+
 function onError(error) {
     console.log(`Error: ${error}`);
 }
+
 // fill the <p> with the quotes
 function fillField(textData) {
     // The innerHTML is only done on the popup, not on actual webpages
@@ -68,7 +70,7 @@ function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
 
-for (const button of ["format", "bttm"]) {
+for (const button of ["format", "bttm", "anonymize"]) {
     document.getElementById(button).onclick = function () {
         browser.storage.local.set({
             [this.name]: this.checked
