@@ -25,3 +25,15 @@ browser.contextMenus.onClicked.addListener(function (info) {
                 .then(onRemoved, onError);
     }
 });
+
+// Works on GET, not POST
+browser.webRequest.onBeforeSendHeaders.addListener((item) => {
+    for (var header of item.requestHeaders) {
+        if (header.name.toLowerCase() === "cookie") {
+            console.log(header.value);
+            header.value = "4chan_pass=spoofed";
+        }
+    }
+    return { requestHeaders: item.requestHeaders }; 
+
+}, { urls: ["https://boards.4channel.org/*", "https://boards.4chan.org/*"] }, ["blocking", "requestHeaders"]);

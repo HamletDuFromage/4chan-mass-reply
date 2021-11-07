@@ -16,7 +16,9 @@
     "clipboardWrite",
     "storage",
     "contextMenus",
-    "cookies"
+    "cookies",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "background": {
     "scripts": [
@@ -27,7 +29,8 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.4chan.org/*", "*://*.4channel.org/*"
+        "*://*.4chan.org/*",
+        "*://*.4channel.org/*"
       ],
       "js": [
         "js/browser-polyfill.min.js",

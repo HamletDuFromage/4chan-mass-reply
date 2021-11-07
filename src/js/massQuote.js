@@ -146,7 +146,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
                     break;
             }
 
-            const posts = document.querySelectorAll('div[class~="postContainer"]:not([data-clone])')
+            const posts = document.querySelectorAll('div[class~="postContainer"]:not([data-clone])');
 
             if (message.action === "regular" || message.action === "sneed") {
                 const ids = Array.from(posts).map(e => {

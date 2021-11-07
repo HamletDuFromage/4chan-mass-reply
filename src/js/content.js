@@ -40,6 +40,7 @@ function getFilename() {
 
 function fileNameChange() {
     var element = this;
+    if (element.files.length === 0) { return; }
     var mimetype = element.files[0].type;
     var filename = getFilename() + '.' + element.files[0].name.split('.')[1];
     //change name and write element first immediately because fast responding sites
@@ -81,21 +82,22 @@ function addNameChangeEvent(element, anonymize) {
 }
 
 function mutationChange(mutations, fourchanx, anonymize) {
-    console.log(anonymize);
     mutations.forEach((mutation) => {
         var nodes = mutation.addedNodes;
         for (var n = 0; n < nodes.length && anonymize; n++) {
-            spotKym(nodes[n], fourchanx);
-            if (isFileInput(nodes[n])) {
-                //if element itself is input=file
-                addNameChangeEvent(nodes[n], anonymize);
-            }
-            else {
-                //search child nodes for input=file
-                var nodesl = nodes[n].getElementsByTagName("input");
-                for (var i = 0; i < nodesl.length && anonymize; i++) {
-                    if (isFileInput(nodesl[i])) {
-                        addNameChangeEvent(nodesl[i], anonymize);
+            if (nodes[n].nodeType === 1) {
+                spotKym(nodes[n], fourchanx);
+                if (isFileInput(nodes[n])) {
+                    //if element itself is input=file
+                    addNameChangeEvent(nodes[n], anonymize);
+                }
+                else {
+                    //search child nodes for input=file
+                    var nodesl = nodes[n].getElementsByTagName("input");
+                    for (var i = 0; i < nodesl.length && anonymize; i++) {
+                        if (isFileInput(nodesl[i])) {
+                            addNameChangeEvent(nodesl[i], anonymize);
+                        }
                     }
                 }
             }
@@ -117,8 +119,9 @@ function mutationChange(mutations, fourchanx, anonymize) {
             }
         }
     });
+
     browser.storage.local.get("anonymize").then((item) => {
-        anonymize = item.anonymize;
+        anonymize = item.hasOwnProperty("anonymize") ? item.anonymize : anonymize;
         spotKym(document, fourchanx);
         let inputs = document.getElementsByTagName('input');
         for (var i = 0; i < inputs.length && anonymize; i++) {
