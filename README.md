@@ -30,7 +30,10 @@ Click on the toolbar icon when in a thread, and select one of four options.
 ### Firefox
 - https://github.com/HamletDuFromage/4chan-mass-reply/releases/download/latest/4chan_mass_reply.xpi
 
-### Chrome/Chromium/MS Edge/Brave
+### MS Edge
+- https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
+
+### Chrome/Chromium/Brave
 The extension has been ported to Chromium based browser. Download the zip file in the release and sideload it. 
 
 ## How to build
