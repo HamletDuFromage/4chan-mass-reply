@@ -70,7 +70,7 @@ function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
 
-for (const button of ["format", "bttm", "anonymize"]) {
+for (const button of ["format", "bttm", "anonymize", "nocookie"]) {
     document.getElementById(button).onclick = function () {
         browser.storage.local.set({
             [this.name]: this.checked
