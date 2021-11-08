@@ -12,10 +12,14 @@ Click on the toolbar icon when in a thread, and select one of four options.
 - "KnowYourMeme" quotes knowyourmeme.com filenames.
 - "Copy To Clipboard" is self explanatory.
 
-In addition, the extension highlights knowyourmeme filenames and can delete 4chan(nel) cookies by right clicking and selecting "Delete cookies" on a 4chan(nel) page.
+## Additional features
+- Anonymize image uploads by changing hash and randomizing filename (toggleable).
+- Strip cookies from post uploads (toggleable).
+- Delete cookies through a context menu item.
+- Highlights knowyourmeme filenames.
 
 ## Screenshots
-![screenshot](https://user-images.githubusercontent.com/61667930/140646993-7c5c77e3-d8f4-4427-9450-8684fb62d80b.png)
+![screenshot](https://user-images.githubusercontent.com/61667930/140670643-ab781714-92ed-4840-8256-c0fe3bd9de3c.png)
 
 ## Permissions:
 - Clipboard to the quotes to the clipboard 
