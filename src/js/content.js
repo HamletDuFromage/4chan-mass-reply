@@ -1,6 +1,7 @@
 (function () {
     const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
     let anonymize = false;
+    let bypassfilter = false;
 
     function spotKym(element) {
         let filenameDOMs = null;
@@ -26,11 +27,23 @@
     function isFileInput(e) {
         const result = (typeof e.type !== 'undefined'
             && e.nodeType === 1
-            && e.tagName.toLowerCase() === 'input'
+            && e.tagName === 'INPUT'
             && /file(?:s)?/i.test(e.type)
         );
         if (result) {
           console.log('Found file input field', e);
+        }
+        return result;
+    }
+
+    function isCommentArea(e) {
+        const result = (typeof e.type !== 'undefined'
+            && e.nodeType === 1
+            && e.tagName === 'TEXTAREA'
+            && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
+        );
+        if (result) {
+          console.log('Found comment textarea', e);
         }
         return result;
     }
@@ -92,35 +105,40 @@
         }
     }
 
-    function checkNodesAndChildNodes(nodes, check) {
-        for (let n = 0; n < nodes.length; n++) {
-            const node = nodes[n];
-            if (check(node)) {
-                return node;
-            }
-            const childNodes = node.childNodes;
-            const findChild = checkNodesAndChildNodes(childNodes, check);
-            if (findChild) {
-                return findChild;
-            }
+    function commentChanged() {
+        const element = this;
+        if (bypassfilter) {
+            let comment = element.value.replaceAll('soy', 'ꜱoy');
+            comment = comment.replaceAll('SOY', 'SÖY');
+            element.value = comment;
         }
-        return null;
     }
 
     function mutationChange(mutations) {
         mutations.forEach((mutation) => {
             const nodes = mutation.addedNodes;
             for (let n = 0; n < nodes.length; n++) {
-                if (isFileInput(nodes[n])) {
+                const node = nodes[n];
+                if (isFileInput(node)) {
                     //if element itself is input=file
-                    nodes[n].addEventListener('change', anonymizeFile);
+                    node.addEventListener('change', anonymizeFile);
                 }
-                else if (nodes[n].nodeType === 1) {
-                    //search child nodes for input=file
-                    const nodesl = nodes[n].getElementsByTagName("input");
+                else if (isCommentArea(node)) {
+                    //if element itself is comment textarea
+                    nodes.addEventListener('change', commentChanged);
+                }
+                else if (node.nodeType === 1) {
+                    //search child nodes for input=file and comment texarea
+                    let nodesl = node.getElementsByTagName("input");
                     for (let i = 0; i < nodesl.length; i++) {
                         if (isFileInput(nodesl[i])) {
                             nodesl[i].addEventListener('change', anonymizeFile);
+                        }
+                    }
+                    nodesl = node.getElementsByTagName("textarea");
+                    for (let i = 0; i < nodesl.length; i++) {
+                        if (isCommentArea(nodesl[i])) {
+                            nodesl[i].addEventListener('change', commentChanged);
                         }
                     }
                 }
@@ -132,17 +150,29 @@
         if (changes.hasOwnProperty("anonymize")) {
             anonymize = changes["anonymize"].newValue;
         }
+        if (changes.hasOwnProperty("bypassfilter")) {
+            bypassfilter = changes["bypassfilter"].newValue;
+        }
     });
 
-    browser.storage.local.get("anonymize").then((item) => {
+    browser.storage.local.get(["anonymize", "bypassfilter"]).then((item) => {
         anonymize = item.hasOwnProperty("anonymize") ? item.anonymize : anonymize;
+        bypassfilter = item.hasOwnProperty("bypassfilter") ? item.bypassfilter : bypassfilter;
         spotKym(document);
-        const inputs = document.getElementsByTagName('input');
+
+        let inputs = document.getElementsByTagName('input');
         for (let i = 0; i < inputs.length; i++) {
             if (isFileInput(inputs[i])) {
                 inputs[i].addEventListener('change', anonymizeFile);
             }
         }
+        inputs = document.getElementsByTagName('textarea');
+        for (let i = 0; i < inputs.length; i++) {
+            if (isCommentArea(inputs[i])) {
+                inputs[i].addEventListener('change', commentChanged);
+            }
+        }
+
         let observer = new MutationObserver((mutations) => { mutationChange(mutations); });
         observer.observe(document, { childList: true, subtree: true });
     }, (error) => { console.log(`Error: ${error}`); });
