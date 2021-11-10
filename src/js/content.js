@@ -1,135 +1,144 @@
-/* Anonymization code by https://github.com/pixelplanetdev, public domain */
+(function () {
+    const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
+    let anonymize = false;
 
-function spotKym(element, fourchanx) {
-    let filenameDOMs = null;
-    if (fourchanx) {
-        filenameDOMs = element.querySelectorAll('div[class~="fileText"] > span[class~="file-info"] > a[target]');
-    }
-    else {
-        filenameDOMs = element.querySelectorAll('div[class~="fileText"] > a[target]');
-    }
-    for (const filenameDOM of filenameDOMs) {
-        if (/^\b\w{3}\./.test(filenameDOM.textContent)) {
-            filenameDOM.style.backgroundColor = "#FDFF47";
+    function spotKym(element) {
+        let filenameDOMs = null;
+        if (fourchanx) {
+            filenameDOMs = element.querySelectorAll('div[class~="fileText"] > span[class~="file-info"] > a[target]');
+        }
+        else {
+            filenameDOMs = element.querySelectorAll('div[class~="fileText"] > a[target]');
+        }
+        for (const filenameDOM of filenameDOMs) {
+            if (/^\b\w{3}\./.test(filenameDOM.textContent)) {
+                filenameDOM.style.backgroundColor = "#FDFF47";
+            }
         }
     }
-}
 
-function hideQr(element, fourchanx) {
-    if (fourchanx) {
-        element.querySelector('body[id="qr"]').style.visibility = "hidden";
+    function hideQr(element) {
+        if (fourchanx) {
+            element.querySelector('body[id="qr"]').style.visibility = "hidden";
+        }
     }
-}
 
-function isFileInput(e) {
-    return (typeof e.type !== 'undefined' && /file(?:s)?/i.test(e.type));
-}
+    function isFileInput(e) {
+        const result = (typeof e.type !== 'undefined'
+            && e.nodeType === 1
+            && e.tagName.toLowerCase() === 'input'
+            && /file(?:s)?/i.test(e.type)
+        );
+        if (result) {
+          console.log('Found file input field', e);
+        }
+        return result;
+    }
 
-function createFileList(a) {
-    a = [].slice.call(Array.isArray(a) ? a : arguments)
-    for (var c, b = c = a.length, d = !0; b-- && d;) d = a[b] instanceof File
-    if (!d) throw new TypeError('expected argument to FileList is File or array of File objects')
-    for (b = (new ClipboardEvent('')).clipboardData || new DataTransfer; c--;) b.items.add(a[c])
-    return b.files
-}
+    function createFileList(a) {
+        a = [].slice.call(Array.isArray(a) ? a : arguments)
+        let b = a.length;
+        let c = b;
+        let d = true;
+        while (b-- && d) d = a[b] instanceof File
+        if (!d) throw new TypeError('expected argument to FileList is File or array of File objects')
+        for (b = (new ClipboardEvent('')).clipboardData || new DataTransfer; c--;) b.items.add(a[c])
+        return b.files
+    }
 
-function getFilename() {
-    var curtime = new Date().getTime();
-    return curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
-}
+    function getFilename() {
+        const curtime = new Date().getTime();
+        return curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
+    }
 
-function fileNameChange() {
-    var element = this;
-    if (element.files.length === 0) { return; }
-    var mimetype = element.files[0].type;
-    var filename = getFilename() + '.' + element.files[0].name.split('.')[1];
-    //change name and write element first immediately because fast responding sites
-    //would not catch after hash change
-    var file = new File([element.files[0]], filename, { type: mimetype });
-    element.files = createFileList(file);
-    console.log("Change filename to " + filename);
-    if (mimetype == 'image/png' || mimetype == 'image/jpeg' || mimetype == 'image/webp') {
-        var reader = new FileReader();
-        reader.addEventListener("load", function () {
-            var imgs = new Image();
-            imgs.src = reader.result;
-            imgs.onload = function () {
-                var cvs = document.createElement('canvas');
-                cvs.width = imgs.naturalWidth;
-                cvs.height = imgs.naturalHeight;
-                var canvas = cvs.getContext("2d");
-                console.log("Change Imagehash");
-                canvas.drawImage(imgs, 0, 0);
-                canvas.fillStyle = "rgba(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ",255)";
-                canvas.fillRect(Math.floor(Math.random() * cvs.width), Math.floor(Math.random() * cvs.height), 1, 1);
-                var newImageData = cvs.toBlob(function (blob) {
-                    file = new File([blob], filename, { type: mimetype });
-                    element.files = createFileList(file);
-                }, 'image/jpeg', 0.9);
+    function anonymizeFile() {
+        const element = this;
+        if (!anonymize || element.files.length === 0) {
+            return;
+        }
+        let mimetype = element.files[0].type;
+        const filename = getFilename() + '.' + element.files[0].name.split('.')[1];
+        //change name and write element first immediately because fast responding sites
+        //would not catch after hash change
+        let file = new File([element.files[0]], filename, { type: mimetype });
+        element.files = createFileList(file);
+        console.log("Change filename to " + filename);
+        if (mimetype == 'image/png' || mimetype == 'image/jpeg' || mimetype == 'image/webp') {
+            const reader = new FileReader();
+            reader.addEventListener("load", function () {
+                const imgs = new Image();
+                imgs.src = reader.result;
+                imgs.onload = function () {
+                    const cvs = document.createElement('canvas');
+                    cvs.width = imgs.naturalWidth;
+                    cvs.height = imgs.naturalHeight;
+                    const canvas = cvs.getContext("2d");
+                    console.log("Change Imagehash");
+                    canvas.drawImage(imgs, 0, 0);
+                    canvas.fillStyle = "rgba(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ",255)";
+                    canvas.fillRect(Math.floor(Math.random() * cvs.width), Math.floor(Math.random() * cvs.height), 1, 1);
+                    const newImageData = cvs.toBlob(function (blob) {
+                        file = new File([blob], filename, { type: mimetype });
+                        element.files = createFileList(file);
+                    }, 'image/jpeg', 0.9);
+                }
+            }, false)
+            reader.readAsDataURL(element.files[0]);
+        }
+    }
+
+    function checkNodesAndChildNodes(nodes, check) {
+        for (let n = 0; n < nodes.length; n++) {
+            const node = nodes[n];
+            if (check(node)) {
+                return node;
             }
-        }, false)
-        reader.readAsDataURL(element.files[0]);
+            const childNodes = node.childNodes;
+            const findChild = checkNodesAndChildNodes(childNodes, check);
+            if (findChild) {
+                return findChild;
+            }
+        }
+        return null;
     }
-}
 
-function addNameChangeEvent(element, anonymize) {
-    if (anonymize) {
-        element.addEventListener('change', fileNameChange);
-    }
-    else {
-        element.removeEventListener('change', fileNameChange);
-    }
-}
-
-function mutationChange(mutations, fourchanx, anonymize) {
-    mutations.forEach((mutation) => {
-        var nodes = mutation.addedNodes;
-        for (var n = 0; n < nodes.length && anonymize; n++) {
-            if (nodes[n].nodeType === 1) {
-                spotKym(nodes[n], fourchanx);
+    function mutationChange(mutations) {
+        mutations.forEach((mutation) => {
+            const nodes = mutation.addedNodes;
+            for (let n = 0; n < nodes.length; n++) {
                 if (isFileInput(nodes[n])) {
                     //if element itself is input=file
-                    addNameChangeEvent(nodes[n], anonymize);
+                    nodes[n].addEventListener('change', anonymizeFile);
                 }
-                else {
+                else if (nodes[n].nodeType === 1) {
                     //search child nodes for input=file
-                    var nodesl = nodes[n].getElementsByTagName("input");
-                    for (var i = 0; i < nodesl.length && anonymize; i++) {
+                    const nodesl = nodes[n].getElementsByTagName("input");
+                    for (let i = 0; i < nodesl.length; i++) {
                         if (isFileInput(nodesl[i])) {
-                            addNameChangeEvent(nodesl[i], anonymize);
+                            nodesl[i].addEventListener('change', anonymizeFile);
                         }
                     }
                 }
             }
-        }
-    });
-};
+        });
+    };
 
-(function () {
-    const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
-    var anonymize = false;
     browser.storage.onChanged.addListener((changes, area) => {
         if (changes.hasOwnProperty("anonymize")) {
             anonymize = changes["anonymize"].newValue;
-            let inputs = document.getElementsByTagName('input');
-            for (var i = 0; i < inputs.length; i++) {
-                if (isFileInput(inputs[i])) {
-                    addNameChangeEvent(inputs[i], anonymize);
-                }
-            }
         }
     });
 
     browser.storage.local.get("anonymize").then((item) => {
         anonymize = item.hasOwnProperty("anonymize") ? item.anonymize : anonymize;
-        spotKym(document, fourchanx);
-        let inputs = document.getElementsByTagName('input');
-        for (var i = 0; i < inputs.length && anonymize; i++) {
+        spotKym(document);
+        const inputs = document.getElementsByTagName('input');
+        for (let i = 0; i < inputs.length; i++) {
             if (isFileInput(inputs[i])) {
-                addNameChangeEvent(inputs[i], anonymize);
+                inputs[i].addEventListener('change', anonymizeFile);
             }
         }
-        let observer = new MutationObserver((mutations) => { mutationChange(mutations, fourchanx, anonymize); });
+        let observer = new MutationObserver((mutations) => { mutationChange(mutations); });
         observer.observe(document, { childList: true, subtree: true });
     }, (error) => { console.log(`Error: ${error}`); });
 })();
