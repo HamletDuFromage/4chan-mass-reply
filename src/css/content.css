@@ -1,0 +1,8 @@
+.mrBtn {
+  font-size: 18px;
+}
+
+.mrBtn:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
