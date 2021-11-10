@@ -57,13 +57,18 @@
             return;
         }
         let mimetype = element.files[0].type;
-        const filename = getFilename() + '.' + element.files[0].name.split('.')[1];
+        let filename = getFilename() + '.' + element.files[0].name.split('.')[1];
         //change name and write element first immediately because fast responding sites
         //would not catch after hash change
         let file = new File([element.files[0]], filename, { type: mimetype });
         element.files = createFileList(file);
         console.log("Change filename to " + filename);
+        //change hash of images
         if (mimetype == 'image/png' || mimetype == 'image/jpeg' || mimetype == 'image/webp') {
+            if (mimetype === 'image/webp') mimetype = 'image/jpeg';
+            const ext = (mimetype === 'image/png') ? 'png' : 'jpg';
+            filename = filename.split('.')[0] + '.' + ext;
+
             const reader = new FileReader();
             reader.addEventListener("load", function () {
                 const imgs = new Image();
@@ -80,7 +85,7 @@
                     const newImageData = cvs.toBlob(function (blob) {
                         file = new File([blob], filename, { type: mimetype });
                         element.files = createFileList(file);
-                    }, 'image/jpeg', 0.9);
+                    }, mimetype, 0.9);
                 }
             }, false)
             reader.readAsDataURL(element.files[0]);
