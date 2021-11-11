@@ -23,54 +23,25 @@ function fillField(textData) {
     }
 }
 
-function listenForClicks() {
-    document.addEventListener("click", (e) => {
-        function updateClipboard() {
-            var newClip = document.getElementById("textField").value;
-            if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
-                navigator.clipboard.writeText(newClip);
-            }
+// listn to copy button
+document.getElementById('copy').addEventListener("click", (e) => {
+    function updateClipboard() {
+        var newClip = document.getElementById("textField").value;
+        if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
+            navigator.clipboard.writeText(newClip);
         }
+    }
 
-        function sendQuoteInstruction(tabs) {
-            // send a message with the kind of quote that must be performed
-            browser.tabs.sendMessage(tabs[0].id, {
-                command: "massQuote",
-                action: e.target.id,
-                bttm: document.getElementById("bttm").checked,
-                format: document.getElementById("format").value,
-            });
-        }
-        function reportError(error) {
-            console.error(`Could not mass quote: ${error}`);
-        }
+    console.log("Copying to clipboard");
+    browser.tabs.query({ active: true, currentWindow: true })
+        .then(updateClipboard)
+        .catch(reportError);
+});
 
-        // Check if buttons are clicked
-        if (e.target.classList.contains("action")) {
-            browser.tabs.query({ active: true, currentWindow: true })
-                .then(sendQuoteInstruction)
-                .catch(reportError);
-        }
-
-        else if (e.target.id === "copy") {
-            console.log("Copying to clipboard");
-            browser.tabs.query({ active: true, currentWindow: true })
-                .then(updateClipboard)
-                .catch(reportError);
-        }
-    });
-}
-
-function reportExecuteScriptError(error) {
-    document.querySelector("#popup-content").classList.add("hidden");
-    document.querySelector("#error-content").classList.remove("hidden");
-    console.error(`Failed to execute massQuote content script: ${error.message}`);
-}
-
+// listen to checkbox events
 function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
-// listen to checkbox events
 for (const button of ["bttm", "anonymize", "bypassfilter", "nocookie"]) {
     document.getElementById(button).onclick = function () {
         browser.storage.local.set({
@@ -125,14 +96,3 @@ browser.storage.local.get(['shitposts', 'selectedsp']).then((item) => {
         }
     }
 }, (error) => { console.log(`Error: ${error}`); });
-
-browser.tabs.executeScript({ file: "/js/massQuote.js" })
-    .then(listenForClicks)
-    .catch(reportExecuteScriptError);
-
-function handleMessage(message, sender, sendResponse) {
-    fillField(message);
-}
-
-// get the message from contents
-browser.runtime.onMessage.addListener(handleMessage)

@@ -20,43 +20,6 @@ form {
   text-align: center;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.3em;
-}
-
-#form {
-  text-align: center;
-  grid-column: 1/3;
-  grid-row: 1;
-}
-
-#regular {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-#sneed {
-  grid-column: 1;
-  grid-row: 3;
-}
-
-#dubs {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-#kym {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-#copy {
-  grid-column: 1/3;
-  grid-row: 4;
-}
-
 .button {
   text-align: center;
   box-shadow: inset 0px 1px 0px 0px #ffffff;
@@ -83,6 +46,10 @@ form {
 .button:active {
   position: relative;
   top: 1px;
+}
+
+#formsp {
+  display: flex;
 }
 
 #sneed {

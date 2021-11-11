@@ -94,59 +94,59 @@ export function getBoardLimits(board) {
 }
 
 export default function createQuotes(action, format, bttm) {
-    let str = "";
     let board = window.location.href.match(/boards.4chan(?:nel)?.org\/([a-z]+)\/.*thread.*/);
+    if (!board) return 'This is not a recongized 4chan thread';
+
+    let str = "";
     let fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
+    const limits = getBoardLimits(board[1]);
+    const maxLines = limits.maxLines;
+    const characterLimit = limits.characterLimit;
 
-    if (board) {
-        const limits = getBoardLimits(board[1]);
-        const maxLines = limits.maxLines;
-        const characterLimit = limits.characterLimit;
+    const posts = document.querySelectorAll('div[class~="postContainer"]:not([data-clone])');
 
-        const posts = document.querySelectorAll('div[class~="postContainer"]:not([data-clone])');
+    if (action === "regular" || action === "sneed") {
+        const ids = Array.from(posts).map(e => {
+            return ">>" + e.id.slice(2);
+        });
+        str += createQuotesString(ids, format, bttm, characterLimit, maxLines);
 
-        if (action === "regular" || action === "sneed") {
-            const ids = Array.from(posts).map(e => {
-                return ">>" + e.id.slice(2);
-            });
-            str += createQuotesString(ids, format, bttm, characterLimit, maxLines);
-
-            if (action === "sneed") {
-                str += "sneed";
-            }
-        }
-        else if (action === "dubs") {
-            let dubs = [];
-            for (let i = 0; i < posts.length; i++) {
-                if (/(\d)\1\b/.test(posts[i].id)) {
-                    dubs.push(">>" + posts[i].id.slice(2));
-                }
-            }
-            str += createQuotesString(dubs, format, bttm, characterLimit, maxLines);
-        }
-        else if (action === "kym") {
-            let kym = [];
-            let filename = null;
-            let filenameDOM = null;
-            for (let i = 0; i < posts.length; i++) {
-                if (fourchanx) {
-                    filenameDOM = posts[i].querySelector('div[class~="fileText"] > span[class~="file-info"] > a[target]');
-                }
-                else {
-                    filenameDOM = posts[i].querySelector('[class~="fileText"] > a');
-                }
-                if (filenameDOM !== null) {
-                    filename = filenameDOM.textContent
-                    if (/^\b\w{3}\./.test(filename)) {
-                        kym.push(">" + filename);
-                    }
-                }
-
-            }
-            str += createQuotesString(kym, format, bttm, characterLimit, maxLines);
+        if (action === "sneed") {
+            str += "sneed";
         }
     }
-    else { str += "This is not a recongized 4chan thread"; }
+    else if (action === "dubs") {
+        let dubs = [];
+        for (let i = 0; i < posts.length; i++) {
+            if (/(\d)\1\b/.test(posts[i].id)) {
+                dubs.push(">>" + posts[i].id.slice(2));
+            }
+        }
+        if (!dubs.length) return 'No posts with digits found';
+        str += createQuotesString(dubs, format, bttm, characterLimit, maxLines);
+    }
+    else if (action === "kym") {
+        let kym = [];
+        let filename = null;
+        let filenameDOM = null;
+        for (let i = 0; i < posts.length; i++) {
+            if (fourchanx) {
+                filenameDOM = posts[i].querySelector('div[class~="fileText"] > span[class~="file-info"] > a[target]');
+            }
+            else {
+                filenameDOM = posts[i].querySelector('[class~="fileText"] > a');
+            }
+            if (filenameDOM !== null) {
+                filename = filenameDOM.textContent
+                if (/^\b\w{3}\./.test(filename)) {
+                    kym.push(">" + filename);
+                }
+            }
+
+        }
+        if (!kym.length) return 'No kym filenames found';
+        str += createQuotesString(kym, format, bttm, characterLimit, maxLines);
+    }
 
     return str;
 };

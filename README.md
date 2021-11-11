@@ -22,7 +22,7 @@ Click on the toolbar icon when in a thread, and select one of four options.
 ![screenshot](https://user-images.githubusercontent.com/61667930/140670643-ab781714-92ed-4840-8256-c0fe3bd9de3c.png)
 
 ## Permissions:
-- Clipboard to the quotes to the clipboard 
+- Clipboard to copy copypastas into the clipboard and for the button to paste the clipboard into the comment
 - Storage to save the parameter between each use 
 - Access to 4chan and 4channel to be able to delete cookies
 

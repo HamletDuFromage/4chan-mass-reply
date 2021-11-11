@@ -8,6 +8,11 @@
   font-weight: bold;
 }
 
+.comtxt {
+  height: 10em;
+  width: 55em;
+}
+
 #sneed-btn {
   color: red;
 }

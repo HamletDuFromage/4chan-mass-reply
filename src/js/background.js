@@ -1,7 +1,7 @@
 'use strict';
 
 // url of JSON with copypastas
-const url = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+const url = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/cleanup/copypastas.json';
 
 browser.contextMenus.create({
     id: "rm-cookies",

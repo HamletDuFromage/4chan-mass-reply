@@ -146,7 +146,18 @@ function gotTextArea(e) {
     const ui = document.createElement('span');
     const br = document.createElement('br');
     ui.appendChild(br);
-    createButton(ui, '🗑', 'Clear Text', () => e.value = '');
+    createButton(ui, '🗑', 'Clear Text', () => {
+        e.value = ''
+        e.focus();
+    });
+    createButton(ui, '📋', 'Paste from Clipboard', () => {
+        navigator.clipboard.readText().then((txt) => {
+            if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+            e.value += txt;
+            e.scrollTop = e.scrollHeight;
+            e.focus();
+        });
+    });
     createButton(ui, '⚔','Mass Reply', () => {
         addQuotesText(e, 'regular');
     });
@@ -166,6 +177,7 @@ function gotTextArea(e) {
 }
 
 function mutationChange(mutations) {
+    spotKym(document);
     mutations.forEach((mutation) => {
         const nodes = mutation.addedNodes;
         for (let n = 0; n < nodes.length; n++) {
