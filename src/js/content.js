@@ -186,6 +186,17 @@ function gotTextArea(e) {
     createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
     });
+    createButton(ui, '😮', 'Soyquote', () => {
+        e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+            let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
+            str += '>' + document.getElementById('m' + repl).innerText
+                .replaceAll('\n', '\n>');
+            if (offset + match.length + 1 < value.length) str += '\n';
+            return str;
+        });
+        e.scrollTop = e.scrollHeight;
+        e.focus();
+    });
     e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
 }
 
