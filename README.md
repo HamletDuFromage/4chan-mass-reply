@@ -15,6 +15,7 @@ Use the buttons in the reply box for (left to right):
 - Quote posts with repeating digits.
 - Quote posts with memeflags (on /pol/)
 - Quote posts from 1-post-by-this-ID users (all boards with IDs)
+- Print rank of users by post amount (all boars with IDs)
 - Quote knowyourmeme.com filenames.
 
 Click on the toolbar icon to change settings or to copy a copypasta into the clipboard.
