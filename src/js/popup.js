@@ -19,14 +19,14 @@ function fillField(textData) {
         updating.then(onCreated, onError);
     }
     else {
-        document.getElementById("textField").innerHTML = textData;
+        document.getElementById("textField").value = textData;
     }
 }
 
 function listenForClicks() {
     document.addEventListener("click", (e) => {
         function updateClipboard() {
-            var newClip = document.getElementById("textField").innerText;
+            var newClip = document.getElementById("textField").value;
             if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
                 navigator.clipboard.writeText(newClip);
             }
