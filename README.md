@@ -13,7 +13,8 @@ Use the buttons in the reply box for (left to right):
 - Mass Quote all the replies in the thread.
 - Add "SNEED" at the end.
 - Quote posts with repeating digits.
-- Quote posts with memeflags
+- Quote posts with memeflags (on /pol/)
+- Quote posts from 1-post-by-this-ID users (all boards with IDs)
 - Quote knowyourmeme.com filenames.
 
 Click on the toolbar icon to change settings or to copy a copypasta into the clipboard.
