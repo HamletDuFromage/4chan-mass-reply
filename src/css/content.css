@@ -1,8 +1,13 @@
 .mrBtn {
-  font-size: 18px;
+  font-size: 15px;
+  padding: 3px;
 }
 
 .mrBtn:hover {
   cursor: pointer;
   font-weight: bold;
+}
+
+#sneed-btn {
+  color: red;
 }

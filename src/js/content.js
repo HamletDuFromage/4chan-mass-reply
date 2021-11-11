@@ -121,6 +121,24 @@ function gotFileInput(e) {
     e.addEventListener('change', commentChanged);
 }
 
+function createButton(parentNode, label, title, listener) {
+    const btn = document.createElement('span');
+    btn.classList.add('mrBtn');
+    btn.innerHTML = label;
+    btn.id = title.toLowerCase().replaceAll(' ', '-') + '-btn';
+    btn.title = title;
+    parentNode.appendChild(btn);
+    btn.addEventListener('click', listener);
+}
+
+function addQuotesText(e, action) {
+    if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+    const str = createQuotes(action, null, store.format, store.bttm);
+    e.value += str.replaceAll('<br>', '\n');
+    e.scrollTop = e.scrollHeight;
+    e.focus();
+}
+
 function gotTextArea(e) {
     e.classList.add('comtxt');
     e.addEventListener('change', commentChanged);
@@ -128,23 +146,23 @@ function gotTextArea(e) {
     const ui = document.createElement('span');
     const br = document.createElement('br');
     ui.appendChild(br);
-    const mrBtn = document.createElement('div');
-    mrBtn.classList.add('mrBtn');
-    mrBtn.innerHTML = '⚔';
-    mrBtn.title = 'Mass Reply';
-    ui.appendChild(mrBtn);
-    mrBtn.addEventListener('click', (evt) => {
-        const str = createQuotes('regular', null, store.format, store.bttm);
-        if (store.replace) {
-            e.value = str.replaceAll('<br>', '\n');
-        }
-        else {
-            e.value += str.replaceAll('<br>', '\n');
-        }
+    createButton(ui, '🗑', 'Clear Text', () => e.value = '');
+    createButton(ui, '⚔','Mass Reply', () => {
+        addQuotesText(e, 'regular');
+    });
+    createButton(ui, '🚜', 'SNEED', () => {
+        if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+        e.value += 'SNEED';
         e.scrollTop = e.scrollHeight;
         e.focus();
-    })
-    e.parentNode.insertBefore(ui, e.nextSibling);
+    });
+    createButton(ui, '☝', 'Check em', () => {
+        addQuotesText(e, 'dubs');
+    });
+    createButton(ui, '💩', 'KYM', () => {
+        addQuotesText(e, 'kym');
+    });
+    e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
 }
 
 function mutationChange(mutations) {
@@ -179,7 +197,7 @@ function mutationChange(mutations) {
     });
 };
 
-const storeValues = ['anonymize', 'bypassfilter', 'format', 'replace', 'bttm'];
+const storeValues = ['anonymize', 'bypassfilter', 'format', 'bttm'];
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {
