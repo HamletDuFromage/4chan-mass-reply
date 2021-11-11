@@ -125,6 +125,16 @@ export default function createQuotes(action, format, bttm) {
         if (!dubs.length) return 'No posts with digits found';
         str += createQuotesString(dubs, format, bttm, characterLimit, maxLines);
     }
+    else if (action === "memeflags") {
+        let memeflags = [];
+        for (let i = 0; i < posts.length; i++) {
+            if (posts[i].getElementsByClassName('bfl').length) {
+                memeflags.push(">>" + posts[i].id.slice(2));
+            }
+        }
+        if (!memeflags.length) return 'No memeflags in this thread';
+        str += createQuotesString(memeflags, format, bttm, characterLimit, maxLines);
+    }
     else if (action === "kym") {
         let kym = [];
         let filename = null;

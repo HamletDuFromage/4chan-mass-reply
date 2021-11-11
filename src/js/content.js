@@ -170,6 +170,9 @@ function gotTextArea(e) {
     createButton(ui, '☝', 'Check em', () => {
         addQuotesText(e, 'dubs');
     });
+    createButton(ui, '🏴', 'Quote Memeflags', () => {
+        addQuotesText(e, 'memeflags');
+    });
     createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
     });
