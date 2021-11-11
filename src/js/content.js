@@ -134,7 +134,12 @@ function gotTextArea(e) {
     ui.appendChild(mrBtn);
     mrBtn.addEventListener('click', (evt) => {
         const str = createQuotes('regular', null, store.format, store.bttm);
-        e.value += str.replaceAll('<br>', '\n');
+        if (store.replace) {
+            e.value = str.replaceAll('<br>', '\n');
+        }
+        else {
+            e.value += str.replaceAll('<br>', '\n');
+        }
         e.scrollTop = e.scrollHeight;
         e.focus();
     })
@@ -173,7 +178,7 @@ function mutationChange(mutations) {
     });
 };
 
-const storeValues = ['anonymize', 'bypassfilter', 'format', 'bttm'];
+const storeValues = ['anonymize', 'bypassfilter', 'format', 'replace', 'bttm'];
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {

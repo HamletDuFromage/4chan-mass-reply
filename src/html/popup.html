@@ -10,11 +10,12 @@
 
 <body>
     <div id="popup-content">
-        <div class=header>
+        <h1>
             <img src="/icons/4chan.png">
             4chan Mass Reply - Shitposting suite
-        </div>
+        </h1>
         <br>
+        <h2>Evasion Settings</h2>
         <label><input type="checkbox" id="anonymize" name="anonymize" />Anonymize image uploads</label>
         <div class="tooltip">&#128712
             <span class="tooltiptext">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick reply</span>
@@ -30,8 +31,10 @@
             <span class="tooltiptext">Changes every soy to a string that isn't filtered but looks the same</span>
         </div>
         <hr class="solid">
+        <h2>Mass Replying and Shitposting</h2>
         <div class="container">
             <div id="form">
+                Copypasta:
                 <form>
                     <select id="shitpost-entry">
                         <option value="1">Interjection</option>
@@ -60,11 +63,20 @@
             <div class="button" id="copy">&#x1f4cb Copy to Clipboard</div>
         </div>
         <div>
+            <div id="formfor">
+                Mass-reply format:
+                <form>
+                    <select id="format">
+                        <option value="single">Single Line</option>
+                        <option value="lines">Seperate Lines</option>
+                        <option value="tower">Tower</option>
+                    </select>
+                </form>
+            </div>
             <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
                 posts</label>
             <br>
-            <label><input type="checkbox" id="format" name="format" checked="checked" />Format the quotes to maximize the
-                number of lines</label>
+            <label><input type="checkbox" id="replace" name="replace" />Replace text instead of appending</label>
         </div>
 
         <p id="textField"> </p>

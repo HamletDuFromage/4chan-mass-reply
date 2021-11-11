@@ -37,7 +37,7 @@ function listenForClicks() {
                 action: e.target.id,
                 selected: document.getElementById("shitpost-entry").value,
                 bttm: document.getElementById("bttm").checked,
-                format: document.getElementById("format").checked
+                format: document.getElementById("format").value,
             });
         }
         function reportError(error) {
@@ -70,7 +70,7 @@ function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
 
-for (const button of ["format", "bttm", "anonymize", "bypassfilter", "nocookie"]) {
+for (const button of ["replace", "bttm", "anonymize", "bypassfilter", "nocookie"]) {
     document.getElementById(button).onclick = function () {
         browser.storage.local.set({
             [this.name]: this.checked
@@ -80,6 +80,21 @@ for (const button of ["format", "bttm", "anonymize", "bypassfilter", "nocookie"]
     let buttonGettingState = browser.storage.local.get(button);
     buttonGettingState.then(onGot.bind(null, button), onError);
 }
+
+document.getElementById('format').addEventListener('change', (evt) => {
+    const value = document.getElementById('format').value;
+    browser.storage.local.set({
+        format: value,
+    }).then(console.log(`storage updated`), onError);
+});
+let formatGettingState = browser.storage.local.get('format');
+formatGettingState.then((stor) => {
+    console.log(stor);
+    if (stor && stor.format) {
+        document.getElementById('format').value = stor.format;
+    }
+}, onError);
+
 
 browser.tabs.executeScript({ file: "/js/massQuote.js" })
     .then(listenForClicks)

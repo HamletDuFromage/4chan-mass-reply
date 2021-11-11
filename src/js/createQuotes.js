@@ -67,31 +67,54 @@ function loadShitposts() {
 
 function createQuotesString(strArray, format, bottom, characterLimit, maxLines) {
     let res = "";
+    format = format ? format : 'single';
     const strLength = strArray[0].length;
-    let quotesNumber = Math.min(strArray.length, Math.floor(characterLimit / (strLength + 1))); // +1 to account for spaces and linebreaks
+    const spacing = (format === 'tower') ? 3 : 1; // to account for spaces and linebreaks
+    let quotesNumber = Math.min(strArray.length, Math.floor(characterLimit / (strLength + spacing)));
     const offset = bottom * (strArray.length - quotesNumber);
-    if (format) {
-        const cols = Math.floor(quotesNumber / maxLines);
-        if (cols < 1) {
-            for (let i = 0; i < quotesNumber; i++) {
-                res += strArray[i] + "<br>";
+    switch (format) {
+        case 'lines': {
+            const cols = Math.floor(quotesNumber / maxLines);
+            if (cols < 1) {
+                for (let i = 0; i < quotesNumber; i++) {
+                    res += strArray[i] + "<br>";
+                }
             }
-        }
-        else {
-            let r = Math.floor((quotesNumber - maxLines) / cols) + 1;
-            for (let i = 0 + offset; i < maxLines - r + offset; i++) {
-                res += strArray[i] + "<br>";
+            else {
+                let r = Math.floor((quotesNumber - maxLines) / cols) + 1;
+                for (let i = 0 + offset; i < maxLines - r + offset; i++) {
+                    res += strArray[i] + "<br>";
+                }
+                for (let i = maxLines - r + offset; i < quotesNumber + offset; i++) {
+                    res += strArray[i] + (((i - maxLines - r + offset) % (cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
+                }
             }
-            for (let i = maxLines - r + offset; i < quotesNumber + offset; i++) {
-                res += strArray[i] + (((i - maxLines - r + offset) % (cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
+            break;
+        }
+        case 'tower': {
+            const cols = (quotesNumber / 3 < maxLines - 1) //at least three width
+                ? 3
+                : Math.ceil(quotesNumber / maxLines - 1);
+            let cnt = 0;
+            for (let i = 0 + offset; i < quotesNumber + offset; i++) {
+                if (cnt && cnt % 3 === 2) {
+                    res += strArray[i] + "<br>";
+                }
+                else {
+                    res += strArray[i] + " | ";
+                }
+                cnt++;
             }
+            res += "<br>";
+            break;
         }
-    }
-    else {
-        for (let i = 0 + offset; i < quotesNumber + offset; i++) {
-            res += strArray[i] + " ";
+        default: {
+            for (let i = 0 + offset; i < quotesNumber + offset; i++) {
+                res += strArray[i] + " ";
+            }
+            res += "<br>";
+            break;
         }
-        res += "<br>";
     }
     return res;
 }
