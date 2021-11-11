@@ -40,7 +40,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
                 }
                 cnt++;
             }
-            if (cnt % 3) res += "<br>";
+            if (cnt % 3) res = res.slice(0, -2) + "<br>";
             break;
         }
         default: {
@@ -54,10 +54,28 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
     return res;
 }
 
+function getUIDStats(posts) {
+    const postids = [];
+    for (let i = 0; i < posts.length; i++) {
+        const idelems = posts[i].getElementsByClassName('posteruid');
+        if (idelems.length) {
+            const uid = idelems[0].classList[1].slice(3);
+            if (postids[uid]) {
+                const vals = postids[uid];
+                postids[uid][0].push(posts[i].id.slice(2));
+                postids[uid][1] += 1;
+            } else {
+                postids[uid] = [[posts[i].id.slice(2)], 1];
+            }
+        }
+    }
+    return postids;
+}
+
 export function getBoardLimits(board) {
     let maxLines = 100;
     let characterLimit = 2000;
-    switch (board[1]) {
+    switch (board) {
         case "pol":
             maxLines = 70;
             break;
@@ -136,23 +154,9 @@ export default function createQuotes(action, format, bttm) {
         str += createQuotesString(memeflags, format, bttm, characterLimit, maxLines);
     }
     else if (action === "1pbtid") {
-        const postids = {};
-        for (let i = 0; i < posts.length; i++) {
-            const idelems = posts[i].getElementsByClassName('posteruid');
-            if (idelems.length) {
-                const uid = idelems[0].classList[1].slice(3);
-                if (postids[uid]) {
-                    const vals = postids[uid];
-                    postids[uid][0].push(posts[i].id.slice(2));
-                    postids[uid][1] += 1;
-                } else {
-                    postids[uid] = [[posts[i].id.slice(2)], 1];
-                }
-            }
-        }
-
-        const uids = Object.keys(postids);
         const onepbtid = [];
+        const postids = getUIDStats(posts);
+        const uids = Object.keys(postids);
         for (let c = 0; c < uids.length; c++) {
             const posts = postids[uids[c]];
             if (posts[1] === 1) {
@@ -161,6 +165,32 @@ export default function createQuotes(action, format, bttm) {
         }
         if (!onepbtid.length) return "No 1pbtids";
         str += createQuotesString(onepbtid, format, bttm, characterLimit, maxLines);
+    }
+    else if (action === "rankings") {
+        const ranking = [];
+        const postids = getUIDStats(posts);
+        const uids = Object.keys(postids);
+        for (let c = 0; c < uids.length; c++) {
+            const posts = postids[uids[c]];
+            ranking.push([uids[c], posts[0], posts[1]]);
+        }
+        ranking.sort((e1, e2) => e2[2] - e1[2]);
+        for (let v = 0; v < ranking.length; v++) {
+            if ((v + 1) * 4 + 1 > maxLines) {
+                break;
+            }
+            const uidStat = ranking[v];
+            console.log(`Rank ${v}: ${uidStat[0]} with ${uidStat[2]} Postings`);
+            let addStr = '\n';
+            addStr += `Rank ${v+1}.:\n${uidStat[0]} with ${uidStat[2]} Postings:\n`;
+            addStr += createQuotesString(uidStat[1].map((e) => '>>' + e), 'single', bttm, characterLimit, maxLines);
+            if (str.length + addStr.length > characterLimit) {
+                break;
+            }
+            str += addStr;
+        }
+        if (!str.length) return "Couldn't rank users";
+        return str;
     }
     else if (action === "kym") {
         let kym = [];

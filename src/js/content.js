@@ -179,6 +179,9 @@ function gotTextArea(e) {
         createButton(ui, '❶', 'Quote 1pbtIDs', () => {
             addQuotesText(e, '1pbtid');
         });
+        createButton(ui, '🏆', 'Rankings', () => {
+            addQuotesText(e, 'rankings');
+        });
     }
     createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
