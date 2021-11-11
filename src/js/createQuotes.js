@@ -105,7 +105,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
                 }
                 cnt++;
             }
-            res += "<br>";
+            if (cnt % 3) res += "<br>";
             break;
         }
         default: {
