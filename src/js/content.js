@@ -131,6 +131,7 @@ function gotTextArea(e) {
     const mrBtn = document.createElement('div');
     mrBtn.classList.add('mrBtn');
     mrBtn.innerHTML = '⚔';
+    mrBtn.title = 'Mass Reply';
     ui.appendChild(mrBtn);
     mrBtn.addEventListener('click', (evt) => {
         const str = createQuotes('regular', null, store.format, store.bttm);
