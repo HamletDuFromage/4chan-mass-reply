@@ -13,6 +13,7 @@
     "*://*.4channel.org/*",
     "*://*.4chan.org/*",
     "activeTab",
+    "clipboardRead",
     "clipboardWrite",
     "storage",
     "contextMenus",
