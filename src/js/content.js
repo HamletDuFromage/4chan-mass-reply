@@ -133,7 +133,7 @@ function createButton(parentNode, label, title, listener) {
 
 function addQuotesText(e, action) {
     if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-    const str = createQuotes(action, null, store.format, store.bttm);
+    const str = createQuotes(action, store.format, store.bttm);
     e.value += str.replaceAll('<br>', '\n');
     e.scrollTop = e.scrollHeight;
     e.focus();

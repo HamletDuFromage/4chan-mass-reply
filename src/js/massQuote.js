@@ -8,7 +8,7 @@ import createQuotes from './createQuotes';
             return;
         }
 
-        const str = createQuotes(message.action, message.selected, message.format, message.bttm);
+        const str = createQuotes(message.action, message.format, message.bttm);
         if (str != "") { chrome.runtime.sendMessage(str); }
     });
 

@@ -1,3 +1,8 @@
+'use strict';
+
+// url of JSON with copypastas
+const url = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+
 browser.contextMenus.create({
     id: "rm-cookies",
     title: "Delete cookies",
@@ -32,9 +37,9 @@ function spoofCookie(item) {
     return { requestHeaders: item.requestHeaders };
 }
 
-function setCookieSpoofingState(nocookie, isFirefox) {
+function setCookieSpoofingState(nocookie) {
     if (nocookie) {
-        let extraInfo = isFirefox ? ["blocking", "requestHeaders"] : ["blocking", "requestHeaders", "extraHeaders"];
+        const extraInfo = ["blocking", "requestHeaders", "extraHeaders"];
         browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
     }
     else {
@@ -44,18 +49,19 @@ function setCookieSpoofingState(nocookie, isFirefox) {
 
 (function () {
     let nocookie = false;
-    isFirefox = browser.runtime.getBrowserInfo;
+
     browser.storage.local.get("nocookie").then((item) => {
         nocookie = item.hasOwnProperty("nocookie") ? item.nocookie : nocookie;
-        setCookieSpoofingState(nocookie, isFirefox);
+        setCookieSpoofingState(nocookie);
     }, (error) => { console.log(`Error: ${error}`); });
 
     browser.storage.onChanged.addListener((changes, area) => {
         if (changes.hasOwnProperty("nocookie")) {
             nocookie = changes["nocookie"].newValue;
-            setCookieSpoofingState(nocookie, isFirefox);
+            setCookieSpoofingState(nocookie);
         }
     });
+
     browser.contextMenus.onClicked.addListener(function (info) {
         if (info.menuItemId == "rm-cookies") {
             for (const url of ["https://4channel.org", "https://4chan.org"])
@@ -68,4 +74,15 @@ function setCookieSpoofingState(nocookie, isFirefox) {
                     .then(onRemoved, onError);
         }
     });
+
+    fetch(url).then((resp) => {
+            if(!resp.ok) {
+                throw new Error("HTTP error " + resp.status);
+            }
+            resp.text().then((txt) => {
+                browser.storage.local.set({shitposts: txt});
+            });
+        }).catch((error) => {
+            console.log(`Error fetching shitposts: ${error}`);
+        });
 })();
