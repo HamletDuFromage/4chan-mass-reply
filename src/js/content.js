@@ -175,6 +175,11 @@ function gotTextArea(e) {
             addQuotesText(e, 'memeflags');
         });
     }
+    if (['/bant/', '/biz', '/pol/', '/qst/', '/soc/'].some((e) => window.location.href.includes(e))) {
+        createButton(ui, '❶', 'Quote 1pbtIDs', () => {
+            addQuotesText(e, '1pbtid');
+        });
+    }
     createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
     });

@@ -135,6 +135,33 @@ export default function createQuotes(action, format, bttm) {
         if (!memeflags.length) return 'No memeflags in this thread';
         str += createQuotesString(memeflags, format, bttm, characterLimit, maxLines);
     }
+    else if (action === "1pbtid") {
+        const postids = {};
+        for (let i = 0; i < posts.length; i++) {
+            const idelems = posts[i].getElementsByClassName('posteruid');
+            if (idelems.length) {
+                const uid = idelems[0].classList[1].slice(3);
+                if (postids[uid]) {
+                    const vals = postids[uid];
+                    postids[uid][0].push(posts[i].id.slice(2));
+                    postids[uid][1] += 1;
+                } else {
+                    postids[uid] = [[posts[i].id.slice(2)], 1];
+                }
+            }
+        }
+
+        const uids = Object.keys(postids);
+        const onepbtid = [];
+        for (let c = 0; c < uids.length; c++) {
+            const posts = postids[uids[c]];
+            if (posts[1] === 1) {
+                onepbtid.push(">>" + posts[0][0]);
+            }
+        }
+        if (!onepbtid.length) return "No 1pbtids";
+        str += createQuotesString(onepbtid, format, bttm, characterLimit, maxLines);
+    }
     else if (action === "kym") {
         let kym = [];
         let filename = null;
