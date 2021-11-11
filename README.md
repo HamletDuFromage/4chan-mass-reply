@@ -17,6 +17,7 @@ Use the buttons in the reply box for (left to right):
 - Quote posts from 1-post-by-this-ID users (all boards with IDs)
 - Print rank of users by post amount (all boars with IDs)
 - Quote knowyourmeme.com filenames.
+- Convert quotelinks into soyquotes (in example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
 
 Click on the toolbar icon to change settings or to copy a copypasta into the clipboard.
 
