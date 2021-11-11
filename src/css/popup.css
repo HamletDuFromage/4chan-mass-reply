@@ -14,10 +14,16 @@ form {
   display: inline-block;
 }
 
-.header {
+h1 {
   color: #789922;
   font-weight: bold;
   text-align: center;
+  font-size: 1em;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 1.2em;
 }
 
 .button {
