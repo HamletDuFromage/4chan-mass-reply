@@ -4,22 +4,32 @@
 Inspired by /tv/'s posting culture, this browser extension aims to facilitate the creation of mass replies on 4chan.org and 4channel.org, and also reply to dubs.
 
 ## Usage
-Click on the toolbar icon when in a thread, and select one of four options.
+Use the buttons in the reply box for (left to right):
 
-- "Quote" quotes all the replies in the thread.
-- "Sneed" adds "sneed" at the end.
-- "Check 'em" only quotes post with repeating digits.
-- "KnowYourMeme" quotes knowyourmeme.com filenames.
-- "Copy To Clipboard" is self explanatory.
+![replybox](screenshots/replybox.png)
 
-## Additional features
-- Anonymize image uploads by changing hash and randomizing filename (toggleable).
-- Strip cookies from post uploads (toggleable).
-- Delete cookies through a context menu item.
-- Highlights knowyourmeme filenames.
+- Clear comment box
+- Paste clipboard into comment box
+- Mass Quote all the replies in the thread.
+- Add "SNEED" at the end.
+- Quote posts with repeating digits.
+- Quote knowyourmeme.com filenames.
 
-## Screenshots
-![screenshot](https://user-images.githubusercontent.com/61667930/140670643-ab781714-92ed-4840-8256-c0fe3bd9de3c.png)
+Click on the toolbar icon to change settings or to copy a copypasta into the clipboard.
+
+![popup](screenshots/popup.png)
+
+Available features:
+
+* Evasion 
+  - Anonymize image uploads by changing hash and randomizing filename (toggleable).
+  - Strip cookies from post uploads (toggleable).
+  - Evade soy wordfilters by replacing it with a different but equally readable text.
+* Mass Quote settings
+  - Format of the mass-quote (one quote per line, multiple, etc.)
+  - If thread is too large, which quotes to skip
+* Copypastas
+  - Check out copypastas and copy them into the clipboard
 
 ## Permissions:
 - Clipboard to copy copypastas into the clipboard and for the button to paste the clipboard into the comment
