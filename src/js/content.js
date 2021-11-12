@@ -1,6 +1,8 @@
 'use strict';
 
 import createQuotes from './createQuotes';
+import { initDB, saveFile, loadFile } from './indexedStore';
+import { anonFilename, anonHash } from './anonFiles';
 
 const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
 
@@ -62,54 +64,29 @@ function createFileList(a) {
     return b.files
 }
 
-function getFilename() {
-    const curtime = new Date().getTime();
-    return curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
-}
-
-function anonymizeFile() {
-    const element = this;
-    if (!store.anonymize || element.files.length === 0) {
+function fileChanged(evt) {
+    const element = evt.target;
+    if (element.files.length === 0) {
         return;
     }
-    let mimetype = element.files[0].type;
-    let filename = getFilename() + '.' + element.files[0].name.split('.')[1];
+    let file = element.files[0];
+    if (store.reuse) {
+        saveFile(file).catch(console.log);
+    }
+    if (!store.anonymize) {
+        return;
+    }
+    file = anonFilename(file);
     //change name and write element first immediately because fast responding sites
     //would not catch after hash change
-    let file = new File([element.files[0]], filename, { type: mimetype });
     element.files = createFileList(file);
-    console.log("Change filename to " + filename);
-    //change hash of images
-    if (mimetype == 'image/png' || mimetype == 'image/jpeg' || mimetype == 'image/webp') {
-        if (mimetype === 'image/webp') mimetype = 'image/jpeg';
-        const ext = (mimetype === 'image/png') ? 'png' : 'jpg';
-        filename = filename.split('.')[0] + '.' + ext;
-
-        const reader = new FileReader();
-        reader.addEventListener("load", function () {
-            const imgs = new Image();
-            imgs.src = reader.result;
-            imgs.onload = function () {
-                const cvs = document.createElement('canvas');
-                cvs.width = imgs.naturalWidth;
-                cvs.height = imgs.naturalHeight;
-                const canvas = cvs.getContext("2d");
-                console.log("Change Imagehash");
-                canvas.drawImage(imgs, 0, 0);
-                canvas.fillStyle = "rgba(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ",255)";
-                canvas.fillRect(Math.floor(Math.random() * cvs.width), Math.floor(Math.random() * cvs.height), 1, 1);
-                const newImageData = cvs.toBlob(function (blob) {
-                    file = new File([blob], filename, { type: mimetype });
-                    element.files = createFileList(file);
-                }, mimetype, 0.9);
-            }
-        }, false)
-        reader.readAsDataURL(element.files[0]);
-    }
+    anonHash(file).then((anonFile) => {
+        element.files = createFileList(anonFile);
+    });
 }
 
-function commentChanged() {
-    const element = this;
+function commentChanged(evt) {
+    const element = evt.target;
     if (store.bypassfilter) {
         let comment = element.value.replaceAll('soy', 'ꜱoy');
         comment = comment.replaceAll('SOY', 'SÖY');
@@ -118,7 +95,20 @@ function commentChanged() {
 }
 
 function gotFileInput(e) {
-    e.addEventListener('change', commentChanged);
+    e.addEventListener('change', fileChanged);
+    if (store.reuse && e.files.length === 0) {
+        loadFile().then((file) => {
+            console.log(`Loaded previously used file ${file.name}.`);
+            if (store.anonymize) {
+                anonHash(anonFilename(file)).then((anonFile) => {
+                    e.files = createFileList(anonFile);
+                });
+            }
+            else {
+                e.files = createFileList(file);
+            }
+        }).catch(console.log);
+    }
 }
 
 function createButton(parentNode, label, title, listener) {
@@ -208,7 +198,7 @@ function mutationChange(mutations) {
             const node = nodes[n];
             if (isFileInput(node)) {
                 //if element itself is input=file
-                node.addEventListener('change', anonymizeFile);
+                gotFileInput(node);
             }
             else if (isCommentArea(node)) {
                 //if element itself is comment textarea
@@ -219,7 +209,7 @@ function mutationChange(mutations) {
                 let nodesl = node.getElementsByTagName("input");
                 for (let i = 0; i < nodesl.length; i++) {
                     if (isFileInput(nodesl[i])) {
-                        nodesl[i].addEventListener('change', anonymizeFile);
+                        gotFileInput(nodesl[i]);
                     }
                 }
                 nodesl = node.getElementsByTagName("textarea");
@@ -233,7 +223,7 @@ function mutationChange(mutations) {
     });
 };
 
-const storeValues = ['anonymize', 'bypassfilter', 'format', 'bttm'];
+const storeValues = ['anonymize', 'reuse', 'bypassfilter', 'format', 'bttm'];
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {
@@ -255,18 +245,20 @@ browser.storage.local.get(storeValues).then((item) => {
 
     spotKym(document);
 
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-        if (isFileInput(inputs[i])) {
-            inputs[i].addEventListener('change', anonymizeFile);
+    initDB().catch().then(() => {
+        let inputs = document.getElementsByTagName('input');
+        for (let i = 0; i < inputs.length; i++) {
+            if (isFileInput(inputs[i])) {
+                gotFileInput(inputs[i]);
+            }
         }
-    }
-    inputs = document.getElementsByTagName('textarea');
-    for (let i = 0; i < inputs.length; i++) {
-        if (isCommentArea(inputs[i])) {
-            gotTextArea(inputs[i]);
+        inputs = document.getElementsByTagName('textarea');
+        for (let i = 0; i < inputs.length; i++) {
+            if (isCommentArea(inputs[i])) {
+                gotTextArea(inputs[i]);
+            }
         }
-    }
+    });
 
     let observer = new MutationObserver((mutations) => { mutationChange(mutations); });
     observer.observe(document, { childList: true, subtree: true });

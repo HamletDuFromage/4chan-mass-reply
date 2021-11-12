@@ -42,7 +42,7 @@ document.getElementById('copy').addEventListener("click", (e) => {
 function onGot(name, item) {
     document.getElementById(name).checked = item[name];
 }
-for (const button of ["bttm", "anonymize", "bypassfilter", "nocookie"]) {
+for (const button of ["bttm", "anonymize", "reuse", "bypassfilter", "nocookie"]) {
     document.getElementById(button).onclick = function () {
         browser.storage.local.set({
             [this.name]: this.checked
