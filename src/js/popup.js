@@ -84,11 +84,13 @@ browser.storage.local.get(['shitposts', 'selectedsp']).then((item) => {
         shitposts = JSON.parse(item.shitposts);
         if (!shitposts.length) return;
         const select = document.getElementById('shitpost-entry');
-        select.innerHTML = '';
+        while (select.firstChild) {
+            select.removeChild(select.firstChild);
+        }
         for (let i = 0; i < shitposts.length; i++) {
             const opt = document.createElement('option');
             const name = shitposts[i].name;
-            opt.innerHTML = opt.value = name;
+            opt.textContent = opt.value = name;
             select.appendChild(opt);
             if (name === selected) {
               select.value = name;

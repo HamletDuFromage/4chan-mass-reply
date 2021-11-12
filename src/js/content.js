@@ -114,7 +114,7 @@ function gotFileInput(e) {
 function createButton(parentNode, label, title, listener) {
     const btn = document.createElement('span');
     btn.classList.add('mrBtn');
-    btn.innerHTML = label;
+    btn.textContent = label;
     btn.id = title.toLowerCase().replaceAll(' ', '-') + '-btn';
     btn.title = title;
     parentNode.appendChild(btn);
