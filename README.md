@@ -29,6 +29,7 @@ Available features:
   - Anonymize image uploads by changing hash and randomizing filename (toggleable).
   - Strip cookies from post uploads (toggleable).
   - Evade soy wordfilters by replacing it with a different but equally readable text.
+  - Auto-select the last used file
 * Mass Quote settings
   - Format of the mass-quote (one quote per line, multiple, etc.)
   - If thread is too large, which quotes to skip
