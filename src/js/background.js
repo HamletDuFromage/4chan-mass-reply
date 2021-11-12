@@ -30,8 +30,30 @@ function randomString(length) {
 function spoofCookie(item) {
     console.log("spoofing cookies!");
     for (var header of item.requestHeaders) {
-        if (header.name.toLowerCase() === "cookie") {
-            header.value = "4chan_pass=" + randomString(124);
+        switch (header.name.toLowerCase()) {
+            case 'cookie': {
+                header.value = "4chan_pass=" + randomString(124);
+                break;
+            }
+            case 'user-agent': {
+                let newValue = '';
+                // randomly increase every integer in user-agent
+                // don't decrease cause that could get you blocked
+                for (let c = 0; c < header.value.length; c++) {
+                    const curChar = header.value.charAt(c);
+                    const curNum = parseInt(curChar);
+                    if (Number.isNaN(curNum)) {
+                        newValue += curChar;
+                    }
+                    else {
+                        newValue += String(curNum
+                            + Math.floor(Math.random() * (10 - curNum)
+                        ));
+                    }
+                }
+                header.value = newValue;
+                break;
+            }
         }
     }
     return { requestHeaders: item.requestHeaders };
