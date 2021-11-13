@@ -96,7 +96,7 @@ function commentChanged(evt) {
 
 function gotFileInput(e) {
     e.addEventListener('change', fileChanged);
-    if (store.reuse && e.files.length === 0) {
+    if (store.reuse) {
         loadFile().then((file) => {
             console.log(`Loaded previously used file ${file.name}.`);
             if (store.anonymize) {
