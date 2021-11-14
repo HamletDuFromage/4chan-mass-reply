@@ -57,10 +57,10 @@ document.getElementById('copy').addEventListener("click", (e) => {
         const keys = Object.keys(localstore);
         for (let i = 0; i < keys.length; i++) {
             const button = keys[i];
-            document.getElementById(button).onclick = function () {
-                valueUpdated(this.name, this.checked);
+            document.getElementById(button).onclick = function (evt) {
+                valueUpdated(evt.target.name, evt.target.checked);
                 browser.storage.local.set({
-                    [this.name]: this.checked
+                    [evt.target.name]: evt.target.checked
                 }).then(console.log(`storage updated`), onError);
             };
             valueUpdated(button, localstore[button]);
@@ -71,7 +71,7 @@ document.getElementById('copy').addEventListener("click", (e) => {
 
 // load and store mass-reply format
 document.getElementById('format').addEventListener('change', (evt) => {
-    const value = document.getElementById('format').value;
+    const value = evt.target.value;
     browser.storage.local.set({
         format: value,
     }).then(console.log(`storage updated`), onError);
@@ -85,7 +85,7 @@ formatGettingState.then((stor) => {
 
 // load shitposts and populate select
 document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
-    const value = document.getElementById('shitpost-entry').value;
+    const value = evt.target.value;
     for (let i = 0; i < shitposts.length; i++) {
         const name = shitposts[i].name;
         if (name === value) {
