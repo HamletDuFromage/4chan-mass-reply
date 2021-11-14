@@ -36,20 +36,22 @@
         </div>
         <hr class="solid">
         <h2>Mass Reply Settings</h2>
-        <label><input type="checkbox" id="showbtns" name="showbtns"/>Show buttons in reply box
+        <label><input type="checkbox" id="showbtns" name="showbtns"/>Show buttons in reply box</label>
         <br>
         <div>
-            Mass-reply format:
-            <form>
-                <select id="format">
-                    <option value="single">Single Line</option>
-                    <option value="lines">Seperate Lines</option>
-                    <option value="tower">Tower</option>
-                </select>
-            </form>
-            <br>
-            <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
-                posts</label>
+            <fieldset id="btnsFieldset">
+                Mass-reply format:
+                <form>
+                    <select id="format">
+                        <option value="single">Single Line</option>
+                        <option value="lines">Seperate Lines</option>
+                        <option value="tower">Tower</option>
+                    </select>
+                </form>
+                <br>
+                <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
+                    posts</label>
+            </fieldset>
         </div>
         <hr class="solid">
         <h2>Copypastas</h2>
@@ -60,7 +62,7 @@
             <div class="button" title="Copy to Clipboard" id="copy">&#x2398</div>
         </form>
         <br>
-        <textarea id="textField" rows=15 readonly>Select something above</textarea>
+        <textarea id="textField" rows=9 readonly>Select something above</textarea>
     </div>
     <div id="error-content" class="hidden">
         <p>Can't mass reply on this web page.</p>

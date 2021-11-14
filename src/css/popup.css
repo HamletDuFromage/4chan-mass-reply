@@ -26,6 +26,17 @@ h2 {
   font-size: 1.2em;
 }
 
+fieldset {
+  margin-top: 5px;
+  border-style: solid;
+  border-color: #dbdbdb;
+  border-width: 1px;
+}
+
+fieldset[disabled] {
+  color: #8f8f8f;
+}
+
 .button {
   text-align: center;
   box-shadow: inset 0px 1px 0px 0px #ffffff;

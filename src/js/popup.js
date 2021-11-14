@@ -40,6 +40,12 @@ document.getElementById('copy').addEventListener("click", (e) => {
 
 // listen to checkbox events
 (function(){
+    function valueUpdated(key, value) {
+        if (key === 'showbtns') {
+            document.getElementById('btnsFieldset').disabled = !value;
+        }
+    }
+
     browser.storage.local.get({
         "anonymize": false,
         "nocookie": true,
@@ -52,10 +58,12 @@ document.getElementById('copy').addEventListener("click", (e) => {
         for (let i = 0; i < keys.length; i++) {
             const button = keys[i];
             document.getElementById(button).onclick = function () {
+                valueUpdated(this.name, this.checked);
                 browser.storage.local.set({
                     [this.name]: this.checked
                 }).then(console.log(`storage updated`), onError);
             };
+            valueUpdated(button, localstore[button]);
             document.getElementById(button).checked = localstore[button];
         }
     });
