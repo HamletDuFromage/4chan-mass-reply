@@ -132,62 +132,64 @@ function addQuotesText(e, action) {
 function gotTextArea(e) {
     e.classList.add('comtxt');
     e.addEventListener('change', commentChanged);
-    // build UI after comment textarea
-    const ui = document.createElement('span');
-    const br = document.createElement('br');
-    ui.appendChild(br);
-    createButton(ui, '🗑', 'Clear Text', () => {
-        e.value = ''
-        e.focus();
-    });
-    createButton(ui, '📋', 'Paste from Clipboard', () => {
-        navigator.clipboard.readText().then((txt) => {
+    if (store.showbtns) {
+        // build UI after comment textarea
+        const ui = document.createElement('span');
+        const br = document.createElement('br');
+        ui.appendChild(br);
+        createButton(ui, '🗑', 'Clear Text', () => {
+            e.value = ''
+            e.focus();
+        });
+        createButton(ui, '📋', 'Paste from Clipboard', () => {
+            navigator.clipboard.readText().then((txt) => {
+                if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+                e.value += txt;
+                e.scrollTop = e.scrollHeight;
+                e.focus();
+            });
+        });
+        createButton(ui, '⚔','Mass Reply', () => {
+            addQuotesText(e, 'regular');
+        });
+        createButton(ui, '🚜', 'SNEED', () => {
             if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-            e.value += txt;
+            e.value += 'SNEED';
             e.scrollTop = e.scrollHeight;
             e.focus();
         });
-    });
-    createButton(ui, '⚔','Mass Reply', () => {
-        addQuotesText(e, 'regular');
-    });
-    createButton(ui, '🚜', 'SNEED', () => {
-        if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-        e.value += 'SNEED';
-        e.scrollTop = e.scrollHeight;
-        e.focus();
-    });
-    createButton(ui, '☝', 'Check em', () => {
-        addQuotesText(e, 'dubs');
-    });
-    if (window.location.href.includes('pol')) {
-        createButton(ui, '🏴', 'Quote Memeflags', () => {
-            addQuotesText(e, 'memeflags');
+        createButton(ui, '☝', 'Check em', () => {
+            addQuotesText(e, 'dubs');
         });
+        if (window.location.href.includes('pol')) {
+            createButton(ui, '🏴', 'Quote Memeflags', () => {
+                addQuotesText(e, 'memeflags');
+            });
+        }
+        if (['/bant/', '/biz', '/pol/', '/qst/', '/soc/'].some((e) => window.location.href.includes(e))) {
+            createButton(ui, '❶', 'Quote 1pbtIDs', () => {
+                addQuotesText(e, '1pbtid');
+            });
+            createButton(ui, '🏆', 'Rankings', () => {
+                addQuotesText(e, 'rankings');
+            });
+        }
+        createButton(ui, '💩', 'KYM', () => {
+            addQuotesText(e, 'kym');
+        });
+        createButton(ui, '😮', 'Soyquote', () => {
+            e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+                let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
+                str += '>' + document.getElementById('m' + repl).innerText
+                    .replaceAll('\n', '\n>');
+                if (offset + match.length + 1 < value.length) str += '\n';
+                return str;
+            });
+            e.scrollTop = e.scrollHeight;
+            e.focus();
+        });
+        e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
     }
-    if (['/bant/', '/biz', '/pol/', '/qst/', '/soc/'].some((e) => window.location.href.includes(e))) {
-        createButton(ui, '❶', 'Quote 1pbtIDs', () => {
-            addQuotesText(e, '1pbtid');
-        });
-        createButton(ui, '🏆', 'Rankings', () => {
-            addQuotesText(e, 'rankings');
-        });
-    }
-    createButton(ui, '💩', 'KYM', () => {
-        addQuotesText(e, 'kym');
-    });
-    createButton(ui, '😮', 'Soyquote', () => {
-        e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
-            let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
-            str += '>' + document.getElementById('m' + repl).innerText
-                .replaceAll('\n', '\n>');
-            if (offset + match.length + 1 < value.length) str += '\n';
-            return str;
-        });
-        e.scrollTop = e.scrollHeight;
-        e.focus();
-    });
-    e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
 }
 
 function mutationChange(mutations) {
@@ -223,7 +225,7 @@ function mutationChange(mutations) {
     });
 };
 
-const storeValues = ['anonymize', 'reuse', 'bypassfilter', 'format', 'bttm'];
+const storeValues = ['showbtns', 'anonymize', 'reuse', 'bypassfilter', 'format', 'bttm'];
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {
