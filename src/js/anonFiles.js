@@ -35,7 +35,7 @@ export function anonHash(file) {
                     canvas.fillRect(Math.floor(Math.random() * cvs.width), Math.floor(Math.random() * cvs.height), 1, 1);
                     const newImageData = cvs.toBlob(function (blob) {
                         file = new File([blob], filename, { type: mimetype });
-                        resolve(file);
+                        return resolve(file);
                     }, mimetype, 0.9);
                 }
             }, false)

@@ -5,7 +5,7 @@ var db = null;
 export function initDB() {
     return new Promise((resolve) => {
         if (!window.indexedDB) {
-            resolve(false);
+            return resolve(false);
         }
         const dbVersion = 1;
         const request = window.indexedDB.open('mrextension', dbVersion);
@@ -13,7 +13,7 @@ export function initDB() {
         request.onsuccess = function (evt) {
             console.log('Opened indexedDB');
             db = evt.target.result;
-            resolve(true);
+            return resolve(true);
         }
 
         request.onupgradeneeded = function (evt) {
@@ -23,7 +23,7 @@ export function initDB() {
 
         request.onerror = function (evt) {
             console.log("Error creating/accessing IndexedDB database");
-            resolve(false);
+            return resolve(false);
         }
     });
 }
@@ -33,10 +33,10 @@ export function saveFile(file) {
         const transaction = db.transaction(['file'], "readwrite");
         const request = transaction.objectStore('file').put(file, 'data');
         request.onsuccess = (evt) => {
-            resolve();
+            return resolve();
         }
         request.onerror = (evt) => {
-            reject('Could not save file.');
+            return reject('Could not save file.');
         }
     });
 }
@@ -47,12 +47,12 @@ export function loadFile() {
         const request = transaction.objectStore('file').get('data');
         request.onsuccess = (evt) => {
             if (evt.target.result) {
-              resolve(evt.target.result);
+              return resolve(evt.target.result);
             }
-            reject('No previously used file stored.');
+            return reject('No previously used file stored.');
         };
         request.onerror = (evt) => {
-            reject('Could not load previously used file.');
+            return reject('Could not load previously used file.');
         }
     });
 }
