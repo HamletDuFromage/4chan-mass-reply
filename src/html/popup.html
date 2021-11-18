@@ -54,7 +54,17 @@
             </fieldset>
         </div>
         <hr class="solid">
-        <h2>Copypastas</h2>
+        <h2>Copypastas <div class="smallbtn" title="Change copypasta url" id ="showurl">⚙</div></h2>
+        <div id="divurl" class="hidden">
+            <form id="formurl">
+                <input type="text" id="cpurl" name="cpurl">
+                <div class="button" id="urlok">OK</div>
+                <div class="tooltip">&#9432
+                    <span class="tooltiptext">URL to copypastas.json (leave empty for defaults)</span>
+                </div> 
+            </form>
+            <br>
+        </div>
         <form id="formsp">
             <select id="shitpost-entry">
                 <option value="...">Loading...</option>

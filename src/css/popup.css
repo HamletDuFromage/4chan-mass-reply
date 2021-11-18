@@ -65,7 +65,15 @@ fieldset[disabled] {
   top: 1px;
 }
 
-#formsp {
+#formsp, #formurl {
+  display: flex;
+}
+
+#formurl {
+  border: solid;
+  padding: 10px;
+  border-style: groove;
+  border-width: thin;
   display: flex;
 }
 
@@ -80,6 +88,17 @@ fieldset[disabled] {
 
 hr.solid {
   border: 1px solid rgb(221, 221, 221);
+}
+
+.smallbtn {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.smallbtn.selected {
+  font-weight: bold;
+  color: #9f2f71;
 }
 
 .tooltip {

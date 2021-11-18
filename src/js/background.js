@@ -1,7 +1,6 @@
 'use strict';
 
-// url of JSON with copypastas
-const url = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+const cpurl = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
 
 browser.contextMenus.create({
     id: "rm-cookies",
@@ -69,18 +68,34 @@ function setCookieSpoofingState(nocookie) {
     }
 }
 
-(function () {
-    let nocookie = false;
+function fetchShitposts(url) {
+    fetch(url).then((resp) => {
+            if(!resp.ok) {
+                throw new Error("HTTP error " + resp.status);
+            }
+            resp.text().then((txt) => {
+                browser.storage.local.set({shitposts: txt});
+            });
+        }).catch((error) => {
+            console.log(`Error fetching shitposts: ${error}`);
+        });
+}
 
-    browser.storage.local.get("nocookie").then((item) => {
-        nocookie = item.hasOwnProperty("nocookie") ? item.nocookie : nocookie;
-        setCookieSpoofingState(nocookie);
+(function () {
+    browser.storage.local.get({
+        nocookie: false,
+        cpurl: cpurl,
+    }).then((item) => {
+        setCookieSpoofingState(item.nocookie);
+        fetchShitposts(item.cpurl.trim());
     }, (error) => { console.log(`Error: ${error}`); });
 
     browser.storage.onChanged.addListener((changes, area) => {
         if (changes.hasOwnProperty("nocookie")) {
-            nocookie = changes["nocookie"].newValue;
-            setCookieSpoofingState(nocookie);
+            setCookieSpoofingState(changes.nocookie.newValue);
+        }
+        if (changes.hasOwnProperty("cpurl")) {
+            fetchShitposts(changes.cpurl.newValue);
         }
     });
 
@@ -96,15 +111,4 @@ function setCookieSpoofingState(nocookie) {
                     .then(onRemoved, onError);
         }
     });
-
-    fetch(url).then((resp) => {
-            if(!resp.ok) {
-                throw new Error("HTTP error " + resp.status);
-            }
-            resp.text().then((txt) => {
-                browser.storage.local.set({shitposts: txt});
-            });
-        }).catch((error) => {
-            console.log(`Error fetching shitposts: ${error}`);
-        });
 })();

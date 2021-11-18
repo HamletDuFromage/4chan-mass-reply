@@ -1,3 +1,7 @@
+'use strict';
+
+const cpurl = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+
 function onCreated(tab) {
     console.log("tg");
 }
@@ -76,14 +80,11 @@ document.getElementById('format').addEventListener('change', (evt) => {
         format: value,
     }).then(console.log(`storage updated`), onError);
 });
-let formatGettingState = browser.storage.local.get('format');
-formatGettingState.then((stor) => {
-    if (stor && stor.format) {
-        document.getElementById('format').value = stor.format;
-    }
-}, onError);
+browser.storage.local.get({format: 'single'}).then((item) => {
+    document.getElementById('format').value = item.format;
+});
 
-// load shitposts and populate select
+// load selected shitpost into textarea
 document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
     const value = evt.target.value;
     for (let i = 0; i < shitposts.length; i++) {
@@ -94,23 +95,68 @@ document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
         }
     }
 });
-browser.storage.local.get(['shitposts', 'selectedsp']).then((item) => {
-    const selected =(item.hasOwnProperty('selectedsp')) ? item.selectedsp : 'Contribute';
-    if (item.hasOwnProperty('shitposts')) {
-        shitposts = JSON.parse(item.shitposts);
-        if (!shitposts.length) return;
-        const select = document.getElementById('shitpost-entry');
-        while (select.firstChild) {
-            select.removeChild(select.firstChild);
-        }
-        for (let i = 0; i < shitposts.length; i++) {
-            const opt = document.createElement('option');
-            const name = shitposts[i].name;
-            opt.textContent = opt.value = name;
-            select.appendChild(opt);
-            if (name === selected) {
-              select.value = name;
-            }
+
+// populate shitposts into select
+function parseShitposts(shitpostsJson) {
+    shitposts = [];
+    shitposts = JSON.parse(shitpostsJson);
+    if (!shitposts.length) return;
+    const select = document.getElementById('shitpost-entry');
+    const selected = select.value;
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+    for (let i = 0; i < shitposts.length; i++) {
+        const opt = document.createElement('option');
+        const name = shitposts[i].name;
+        opt.textContent = opt.value = name;
+        select.appendChild(opt);
+        if (name === selected) {
+          select.value = name;
         }
     }
+};
+
+browser.storage.local.get({
+    "cpurl": cpurl,
+    "shitposts": null,
+    "selectedsp": 'Contribute',
+}).then((item) => {
+    const selected = item.selectedsp;
+    if (item.shitposts) {
+        parseShitposts(item.shitposts);
+    }
+    document.getElementById('cpurl').value = item.cpurl;
 }, (error) => { console.log(`Error: ${error}`); });
+
+browser.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') {
+      return;
+    }
+    if (changes.shitposts) {
+        parseShitposts(changes.shitposts.newValue);
+    }
+});
+
+// button to show cpurl input
+document.getElementById('showurl').onclick = (evt) => {
+    const divUrl = document.getElementById('divurl');
+    if (divUrl.classList.contains('hidden')) {
+        divUrl.classList.remove('hidden');
+        evt.target.classList.add('selected');
+    }
+    else {
+        divUrl.classList.add('hidden');
+        evt.target.classList.remove('selected');
+    }
+}
+
+// ok button to save entered cpurl
+document.getElementById('urlok').onclick = () => {
+    let url = document.getElementById('cpurl').value;
+    if (!url.trim()) {
+        url = cpurl;
+        document.getElementById('cpurl').value = cpurl;
+    }
+    browser.storage.local.set({cpurl: url});
+}
