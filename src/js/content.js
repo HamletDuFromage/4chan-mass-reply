@@ -6,7 +6,17 @@ import { anonFilename, anonHash } from './anonFiles';
 
 const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
 
-const store = {};
+/*
+ * default values, make sure its the same as in popup.js
+ */
+const store = {
+    "anonymize": false,
+    "bypassfilter": true,
+    "reuse": false,
+    "showbtns": true,
+    "bttm": false,
+    "format": 'single',
+};
 
 function spotKym(element) {
     let filenameDOMs = null;
@@ -225,12 +235,12 @@ function mutationChange(mutations) {
     });
 };
 
-const storeValues = ['showbtns', 'anonymize', 'reuse', 'bypassfilter', 'format', 'bttm'];
-
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {
       return;
     }
+
+    const storeValues = Object.keys(store);
     for (let i = 0; i < storeValues.length; i++) {
         const key = storeValues[i];
         if (changes.hasOwnProperty(key)) {
@@ -239,7 +249,8 @@ browser.storage.onChanged.addListener((changes, area) => {
     }
 });
 
-browser.storage.local.get(storeValues).then((item) => {
+browser.storage.local.get(store).then((item) => {
+    const storeValues = Object.keys(store);
     for (let i = 0; i < storeValues.length; i++) {
         const key = storeValues[i];
         store[key] = item.hasOwnProperty(key) ? item[key] : false;

@@ -50,6 +50,9 @@ document.getElementById('copy').addEventListener("click", (e) => {
         }
     }
 
+    /*
+     * default values, make sure its the same as in content.js
+     */
     browser.storage.local.get({
         "anonymize": false,
         "nocookie": true,
