@@ -12,7 +12,6 @@ module.exports = {
     background: "./src/js/background.js",
     content: "./src/js/content.js",
     popup: "./src/js/popup.js",
-    massQuote: "./src/js/massQuote.js"
   },
   output: {
     path: path.resolve(__dirname, "dist"),

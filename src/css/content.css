@@ -1,0 +1,17 @@
+.mrBtn {
+  font-size: 15px;
+  padding: 3px;
+}
+
+.mrBtn:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.comtxt {
+  height: 15em;
+}
+
+#sneed-btn {
+  color: red;
+}

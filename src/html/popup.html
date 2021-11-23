@@ -10,60 +10,69 @@
 
 <body>
     <div id="popup-content">
-        <div class=header>
+        <h1>
             <img src="/icons/4chan.png">
             4chan Mass Reply - Shitposting suite
-        </div>
-        <br>
+        </h1>
+        <h2>Evasion Settings</h2>
         <label><input type="checkbox" id="anonymize" name="anonymize" />Anonymize image uploads</label>
-        <div class="tooltip">&#128712
-            <span class="tooltiptext">Randomize hash and filename.<br>You WILL NOT use this with 4chanx's quick reply</span>
+        <div class="tooltip">&#9432
+            <span class="tooltiptext">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick reply</span>
         </div>
         <br>
-        <label><input type="checkbox" id="nocookie" name="nocookie" />Strip cookies from post uploads</label>
-        <div class="tooltip">&#128712
+        <label><input type="checkbox" id="nocookie" name="nocookie" />Bypass ban-evasion detection</label>
+        <div class="tooltip">&#9432
             <span class="tooltiptext">Strips `4chan_pass` cookie for post upload, thus bypassing ban evasion prevention</span>
         </div>
+        <br>
+        <label><input type="checkbox" id="bypassfilter" name="bypassfilter" />Bypass SOY wordfilter</label>
+        <div class="tooltip">&#9432
+            <span class="tooltiptext">Changes every soy to a string that isn't filtered but looks the same</span>
+        </div>
+        <br>
+        <label><input type="checkbox" id="reuse" name="reuse" />Remember last used file</label>
+        <div class="tooltip">&#9432
+            <span class="tooltiptext">The last selected file will stay selected even on refresh or after posting</span>
+        </div>
         <hr class="solid">
-        <div class="container">
-            <div id="form">
-                <form>
-                    <select id="shitpost-entry">
-                        <option value="1">Interjection</option>
-                        <option value="2">No Richard</option>
-                        <option value="3">No one:</option>
-                        <option value="4">Indian Intellectuals</option>
-                        <option value="5">Navy Seals</option>
-                        <option value="6">Rick & Morty</option>
-                        <option value="7">Cinema genres</option>
-                        <option value="8">Genres shitpost</option>
-                        <option value="9">Top 10 Kino</option>
-                        <option value="10">>mfw you hurting</option>
-                        <option value="11">AWOOOOGA</option>
-                        <option value="12">Does it for free</option>
-                        <option value="13">MacToddlers BTFO</option>
-                        <option value="14">Soy tropes</option>
-                        <option value="0">>Contribute</option>
-                    </select>
-                    <div class="button action" id="shitpost">Select</div>
-                </form>
-            </div>
-            <div class="button action" id="regular">Quote all</div>
-            <div class="button action" id="sneed">Sneed</div>
-            <div class="button action" id="dubs">Check 'em</div>
-            <div class="button action" id="kym">KnowYourMeme</div>
-            <div class="button" id="copy">&#x1f4cb Copy to Clipboard</div>
-        </div>
+        <h2>Mass Reply Settings</h2>
+        <label><input type="checkbox" id="showbtns" name="showbtns"/>Show buttons in reply box</label>
+        <br>
         <div>
-            <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
-                posts</label>
-            <br>
-            <label><input type="checkbox" id="format" name="format" checked="checked" />Format the quotes to maximize the
-                number of lines</label>
+            <fieldset id="btnsFieldset">
+                Mass-reply format:
+                <form>
+                    <select id="format">
+                        <option value="single">Single Line</option>
+                        <option value="lines">Seperate Lines</option>
+                        <option value="tower">Tower</option>
+                    </select>
+                </form>
+                <br>
+                <label><input type="checkbox" id="bttm" name="bttm" />In case the thread is too big, quote the bottom
+                    posts</label>
+            </fieldset>
         </div>
-
-        <p id="textField"> </p>
-
+        <hr class="solid">
+        <h2>Copypastas <div class="smallbtn" title="Change copypasta url" id ="showurl">⚙</div></h2>
+        <div id="divurl" class="hidden">
+            <form id="formurl">
+                <input type="text" id="cpurl" name="cpurl">
+                <div class="button" id="urlok">OK</div>
+                <div class="tooltip">&#9432
+                    <span class="tooltiptext">URL to copypastas.json (leave empty for defaults)</span>
+                </div> 
+            </form>
+            <br>
+        </div>
+        <form id="formsp">
+            <select id="shitpost-entry">
+                <option value="...">Loading...</option>
+            </select>
+            <div class="button" title="Copy to Clipboard" id="copy">&#x2398</div>
+        </form>
+        <br>
+        <textarea id="textField" rows=9 readonly>Select something above</textarea>
     </div>
     <div id="error-content" class="hidden">
         <p>Can't mass reply on this web page.</p>

@@ -1,3 +1,7 @@
+'use strict';
+
+const cpurl = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+
 browser.contextMenus.create({
     id: "rm-cookies",
     title: "Delete cookies",
@@ -25,16 +29,38 @@ function randomString(length) {
 function spoofCookie(item) {
     console.log("spoofing cookies!");
     for (var header of item.requestHeaders) {
-        if (header.name.toLowerCase() === "cookie") {
-            header.value = "4chan_pass=" + randomString(124);
+        switch (header.name.toLowerCase()) {
+            case 'cookie': {
+                header.value = "4chan_pass=" + randomString(124);
+                break;
+            }
+            case 'user-agent': {
+                let newValue = '';
+                // randomly increase every integer in user-agent
+                // don't decrease cause that could get you blocked
+                for (let c = 0; c < header.value.length; c++) {
+                    const curChar = header.value.charAt(c);
+                    const curNum = parseInt(curChar);
+                    if (Number.isNaN(curNum)) {
+                        newValue += curChar;
+                    }
+                    else {
+                        newValue += String(curNum
+                            + Math.floor(Math.random() * (10 - curNum)
+                        ));
+                    }
+                }
+                header.value = newValue;
+                break;
+            }
         }
     }
     return { requestHeaders: item.requestHeaders };
 }
 
-function setCookieSpoofingState(nocookie, isFirefox) {
+function setCookieSpoofingState(nocookie) {
     if (nocookie) {
-        let extraInfo = isFirefox ? ["blocking", "requestHeaders"] : ["blocking", "requestHeaders", "extraHeaders"];
+        const extraInfo = ["blocking", "requestHeaders", "extraHeaders"];
         browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
     }
     else {
@@ -42,20 +68,37 @@ function setCookieSpoofingState(nocookie, isFirefox) {
     }
 }
 
+function fetchShitposts(url) {
+    fetch(url).then((resp) => {
+            if(!resp.ok) {
+                throw new Error("HTTP error " + resp.status);
+            }
+            resp.text().then((txt) => {
+                browser.storage.local.set({shitposts: txt});
+            });
+        }).catch((error) => {
+            console.log(`Error fetching shitposts: ${error}`);
+        });
+}
+
 (function () {
-    let nocookie = false;
-    isFirefox = browser.runtime.getBrowserInfo;
-    browser.storage.local.get("nocookie").then((item) => {
-        nocookie = item.hasOwnProperty("nocookie") ? item.nocookie : nocookie;
-        setCookieSpoofingState(nocookie, isFirefox);
+    browser.storage.local.get({
+        nocookie: false,
+        cpurl: cpurl,
+    }).then((item) => {
+        setCookieSpoofingState(item.nocookie);
+        fetchShitposts(item.cpurl.trim());
     }, (error) => { console.log(`Error: ${error}`); });
 
     browser.storage.onChanged.addListener((changes, area) => {
         if (changes.hasOwnProperty("nocookie")) {
-            nocookie = changes["nocookie"].newValue;
-            setCookieSpoofingState(nocookie, isFirefox);
+            setCookieSpoofingState(changes.nocookie.newValue);
+        }
+        if (changes.hasOwnProperty("cpurl")) {
+            fetchShitposts(changes.cpurl.newValue);
         }
     });
+
     browser.contextMenus.onClicked.addListener(function (info) {
         if (info.menuItemId == "rm-cookies") {
             for (const url of ["https://4channel.org", "https://4chan.org"])

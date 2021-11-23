@@ -13,6 +13,7 @@
     "*://*.4channel.org/*",
     "*://*.4chan.org/*",
     "activeTab",
+    "clipboardRead",
     "clipboardWrite",
     "storage",
     "contextMenus",
@@ -35,6 +36,9 @@
       "js": [
         "js/browser-polyfill.min.js",
         "js/content.js"
+      ],
+      "css": [
+        "css/content.css"
       ]
     }
   ],

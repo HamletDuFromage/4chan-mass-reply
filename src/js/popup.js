@@ -1,3 +1,7 @@
+'use strict';
+
+const cpurl = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+
 function onCreated(tab) {
     console.log("tg");
 }
@@ -5,6 +9,8 @@ function onCreated(tab) {
 function onError(error) {
     console.log(`Error: ${error}`);
 }
+
+let shitposts = [];
 
 // fill the <p> with the quotes
 function fillField(textData) {
@@ -17,77 +23,143 @@ function fillField(textData) {
         updating.then(onCreated, onError);
     }
     else {
-        document.getElementById("textField").innerHTML = textData;
+        document.getElementById("textField").value = textData;
     }
 }
 
-function listenForClicks() {
-    document.addEventListener("click", (e) => {
-        function updateClipboard() {
-            var newClip = document.getElementById("textField").innerText;
-            if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
-                navigator.clipboard.writeText(newClip);
-            }
+// listn to copy button
+document.getElementById('copy').addEventListener("click", (e) => {
+    function updateClipboard() {
+        var newClip = document.getElementById("textField").value;
+        if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
+            navigator.clipboard.writeText(newClip);
         }
+    }
 
-        function sendQuoteInstruction(tabs) {
-            // send a message with the kind of quote that must be performed
-            browser.tabs.sendMessage(tabs[0].id, {
-                command: "massQuote",
-                action: e.target.id,
-                selected: document.getElementById("shitpost-entry").value,
-                bttm: document.getElementById("bttm").checked,
-                format: document.getElementById("format").checked
-            });
-        }
-        function reportError(error) {
-            console.error(`Could not mass quote: ${error}`);
-        }
+    console.log("Copying to clipboard");
+    browser.tabs.query({ active: true, currentWindow: true })
+        .then(updateClipboard)
+        .catch(reportError);
+});
 
-        // Check if buttons are clicked
-        if (e.target.classList.contains("action")) {
-            browser.tabs.query({ active: true, currentWindow: true })
-                .then(sendQuoteInstruction)
-                .catch(reportError);
+// listen to checkbox events
+(function(){
+    function valueUpdated(key, value) {
+        if (key === 'showbtns') {
+            document.getElementById('btnsFieldset').disabled = !value;
         }
+    }
 
-        else if (e.target.id === "copy") {
-            console.log("Copying to clipboard");
-            browser.tabs.query({ active: true, currentWindow: true })
-                .then(updateClipboard)
-                .catch(reportError);
+    /*
+     * default values, make sure its the same as in content.js
+     */
+    browser.storage.local.get({
+        "anonymize": false,
+        "nocookie": true,
+        "bypassfilter": true,
+        "reuse": false,
+        "showbtns": true,
+        "bttm": false,
+    }).then((localstore) => {
+        const keys = Object.keys(localstore);
+        for (let i = 0; i < keys.length; i++) {
+            const button = keys[i];
+            document.getElementById(button).onclick = function (evt) {
+                valueUpdated(evt.target.name, evt.target.checked);
+                browser.storage.local.set({
+                    [evt.target.name]: evt.target.checked
+                }).then(console.log(`storage updated`), onError);
+            };
+            valueUpdated(button, localstore[button]);
+            document.getElementById(button).checked = localstore[button];
         }
     });
+})()
+
+// load and store mass-reply format
+document.getElementById('format').addEventListener('change', (evt) => {
+    const value = evt.target.value;
+    browser.storage.local.set({
+        format: value,
+    }).then(console.log(`storage updated`), onError);
+});
+browser.storage.local.get({format: 'single'}).then((item) => {
+    document.getElementById('format').value = item.format;
+});
+
+// load selected shitpost into textarea
+document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
+    const value = evt.target.value;
+    for (let i = 0; i < shitposts.length; i++) {
+        const name = shitposts[i].name;
+        if (name === value) {
+          fillField(shitposts[i].content);
+          return;
+        }
+    }
+});
+
+// populate shitposts into select
+function parseShitposts(shitpostsJson) {
+    shitposts = [];
+    shitposts = JSON.parse(shitpostsJson);
+    if (!shitposts.length) return;
+    const select = document.getElementById('shitpost-entry');
+    const selected = select.value;
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+    for (let i = 0; i < shitposts.length; i++) {
+        const opt = document.createElement('option');
+        const name = shitposts[i].name;
+        opt.textContent = opt.value = name;
+        select.appendChild(opt);
+        if (name === selected) {
+          select.value = name;
+        }
+    }
+};
+
+browser.storage.local.get({
+    "cpurl": cpurl,
+    "shitposts": null,
+    "selectedsp": 'Contribute',
+}).then((item) => {
+    const selected = item.selectedsp;
+    if (item.shitposts) {
+        parseShitposts(item.shitposts);
+    }
+    document.getElementById('cpurl').value = item.cpurl;
+}, (error) => { console.log(`Error: ${error}`); });
+
+browser.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') {
+      return;
+    }
+    if (changes.shitposts) {
+        parseShitposts(changes.shitposts.newValue);
+    }
+});
+
+// button to show cpurl input
+document.getElementById('showurl').onclick = (evt) => {
+    const divUrl = document.getElementById('divurl');
+    if (divUrl.classList.contains('hidden')) {
+        divUrl.classList.remove('hidden');
+        evt.target.classList.add('selected');
+    }
+    else {
+        divUrl.classList.add('hidden');
+        evt.target.classList.remove('selected');
+    }
 }
 
-function reportExecuteScriptError(error) {
-    document.querySelector("#popup-content").classList.add("hidden");
-    document.querySelector("#error-content").classList.remove("hidden");
-    console.error(`Failed to execute massQuote content script: ${error.message}`);
+// ok button to save entered cpurl
+document.getElementById('urlok').onclick = () => {
+    let url = document.getElementById('cpurl').value;
+    if (!url.trim()) {
+        url = cpurl;
+        document.getElementById('cpurl').value = cpurl;
+    }
+    browser.storage.local.set({cpurl: url});
 }
-
-function onGot(name, item) {
-    document.getElementById(name).checked = item[name];
-}
-
-for (const button of ["format", "bttm", "anonymize", "nocookie"]) {
-    document.getElementById(button).onclick = function () {
-        browser.storage.local.set({
-            [this.name]: this.checked
-        }).then(console.log(`storage updated`), onError);
-    };
-
-    let buttonGettingState = browser.storage.local.get(button);
-    buttonGettingState.then(onGot.bind(null, button), onError);
-}
-
-browser.tabs.executeScript({ file: "/js/massQuote.js" })
-    .then(listenForClicks)
-    .catch(reportExecuteScriptError);
-
-function handleMessage(message, sender, sendResponse) {
-    fillField(message);
-}
-
-// get the message from contents
-browser.runtime.onMessage.addListener(handleMessage)

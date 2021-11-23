@@ -14,47 +14,27 @@ form {
   display: inline-block;
 }
 
-.header {
+h1 {
   color: #789922;
   font-weight: bold;
   text-align: center;
+  font-size: 1em;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.3em;
+h2 {
+  font-weight: bold;
+  font-size: 1.2em;
 }
 
-#form {
-  text-align: center;
-  grid-column: 1/3;
-  grid-row: 1;
+fieldset {
+  margin-top: 5px;
+  border-style: solid;
+  border-color: #dbdbdb;
+  border-width: 1px;
 }
 
-#regular {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-#sneed {
-  grid-column: 1;
-  grid-row: 3;
-}
-
-#dubs {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-#kym {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-#copy {
-  grid-column: 1/3;
-  grid-row: 4;
+fieldset[disabled] {
+  color: #8f8f8f;
 }
 
 .button {
@@ -85,6 +65,18 @@ form {
   top: 1px;
 }
 
+#formsp, #formurl {
+  display: flex;
+}
+
+#formurl {
+  border: solid;
+  padding: 10px;
+  border-style: groove;
+  border-width: thin;
+  display: flex;
+}
+
 #sneed {
   color: #d00 !important;
 }
@@ -96,6 +88,17 @@ form {
 
 hr.solid {
   border: 1px solid rgb(221, 221, 221);
+}
+
+.smallbtn {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.smallbtn.selected {
+  font-weight: bold;
+  color: #9f2f71;
 }
 
 .tooltip {
