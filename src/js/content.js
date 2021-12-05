@@ -2,7 +2,8 @@
 
 import createQuotes from './createQuotes';
 import { initDB, saveFile, loadFile } from './indexedStore';
-import { anonFilename, anonHash } from './anonFiles';
+import { anonFilename, anonHash, checkFilesize } from './anonFiles';
+import { getBoard, getBoardLimits } from './boardLimits';
 
 const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
 
@@ -79,6 +80,10 @@ function fileChanged(evt) {
     if (element.files.length === 0) {
         return;
     }
+    const board = getBoard();
+    if (!board) {
+      return;
+    }
     let file = element.files[0];
     if (store.reuse) {
         saveFile(file).catch(console.log);
@@ -86,12 +91,15 @@ function fileChanged(evt) {
     if (!store.anonymize) {
         return;
     }
+    const maxImageSize = getBoardLimits(board).maxImageFilesize;
     file = anonFilename(file);
     //change name and write element first immediately because fast responding sites
     //would not catch after hash change
     element.files = createFileList(file);
     anonHash(file).then((anonFile) => {
-        element.files = createFileList(anonFile);
+        checkFilesize(anonFile, maxImageSize).then((newFile) => {
+            element.files = createFileList(newFile);
+        });
     });
 }
 
@@ -111,7 +119,12 @@ function gotFileInput(e) {
             console.log(`Loaded previously used file ${file.name}.`);
             if (store.anonymize) {
                 anonHash(anonFilename(file)).then((anonFile) => {
-                    e.files = createFileList(anonFile);
+                    const board = getBoard();
+                    if (!board) return;
+                    const maxImageSize = getBoardLimits(board).maxImageFilesize;
+                    checkFilesize(anonFile, maxImageSize).then((newFile) => {
+                        e.files = createFileList(newFile);
+                    });
                 });
             }
             else {

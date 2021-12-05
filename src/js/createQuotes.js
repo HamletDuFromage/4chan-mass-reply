@@ -1,5 +1,7 @@
 'use strict';
 
+import { getBoard, getBoardLimits } from './boardLimits';
+
 function createQuotesString(strArray, format, bottom, characterLimit, maxLines) {
     let res = "";
     format = format ? format : 'single';
@@ -72,52 +74,13 @@ function getUIDStats(posts) {
     return postids;
 }
 
-export function getBoardLimits(board) {
-    let maxLines = 100;
-    let characterLimit = 2000;
-    switch (board) {
-        case "pol":
-            maxLines = 70;
-            break;
-        case "v":
-            maxLines = 25;
-            break;
-        case "bant":
-            maxLines = 49;
-            break;
-
-        case "jp":
-            characterLimit = 5000;
-            break;
-        case "lit":
-            characterLimit = 3000;
-            break;
-        case "vt":
-            characterLimit = 5000;
-            break;
-        case "qst":
-            characterLimit = 3000;
-            break;
-        case "vt":
-            characterLimit = 5000;
-            break;
-        case "mlp":
-            characterLimit = 3000;
-            break;
-    }
-    return {
-      maxLines,
-      characterLimit,
-    };
-}
-
 export default function createQuotes(action, format, bttm) {
-    let board = window.location.href.match(/boards.4chan(?:nel)?.org\/([a-z]+)\/.*thread.*/);
+    const board = getBoard();
     if (!board) return 'This is not a recongized 4chan thread';
 
     let str = "";
     let fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
-    const limits = getBoardLimits(board[1]);
+    const limits = getBoardLimits(board);
     const maxLines = limits.maxLines;
     const characterLimit = limits.characterLimit;
 
