@@ -5,12 +5,19 @@ function getFilename() {
     return curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
 }
 
+/*
+ * change filename to random timestamp of the past year
+ */
 export function anonFilename(file) {
-    const filename = getFilename() + '.' + file.name.split('.')[1];
+    const filename = getFilename() + '.' + file.name.split('.').slice(-1);
     console.log("Change filename to " + filename);
     return new File([file], filename, { type: file.type });
 }
 
+/*
+ * changes image hash by adding a random pixel and recompressing
+ * also converts webp into png
+ */
 export function anonHash(file) {
     return new Promise((resolve) => {
         let mimetype = file.type;
@@ -41,5 +48,59 @@ export function anonHash(file) {
             }, false)
             reader.readAsDataURL(file);
         }
+    });
+}
+
+/*
+ * checks if file is within filesize limit,
+ * recompresses into jpg if not.
+ * If jpeg is still too large, reduce it's compression level till it fits
+ */
+export function checkFilesize(file, maxImageSize, compressionLevel) {
+    return new Promise((resolve) => {
+        if (file.size < maxImageSize) {
+            return resolve(file);
+        }
+        if (file.type !== 'image/png' && file.type !== 'image/jpeg' && file.type !== 'image/webp') {
+            /* not an image */
+            return resolve(file);
+        }
+        console.log(`File size ${file.size} is too large (${maxImageSize})`);
+        let newFile = file;
+        let cl = compressionLevel || 0.9;
+        let filename = file.name;
+        const mimetype = 'image/jpeg';
+        if (file.type === mimetype) {
+            compressionLevel -= 20;
+            if (compressionLevel < 5) {
+                console.log('Can not reduce filesize further');
+                return resolve(file);
+            }
+            console.log(`Reducing filesize by compressing to jpeg quality ${cl}`);
+        } else {
+            filename = filename.split('.')[0] + '.' + 'jpg';
+            console.log('Reducing filesize by compressing to jpeg');
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener("load", function () {
+            const imgs = new Image();
+            imgs.src = reader.result;
+            imgs.onload = function () {
+                const cvs = document.createElement('canvas');
+                cvs.width = imgs.naturalWidth;
+                cvs.height = imgs.naturalHeight;
+                const canvas = cvs.getContext("2d");
+                canvas.drawImage(imgs, 0, 0);
+                const newImageData = cvs.toBlob(function (blob) {
+                    newFile = new File([blob], filename, { type: mimetype });
+                    console.log(`New Filesize: ${newFile.size}`);
+                    checkFilesize(newFile, maxImageSize, cl).then((file) => {
+                        return resolve(file);
+                    });
+                }, mimetype, cl);
+            }
+        }, false)
+        reader.readAsDataURL(newFile);
     });
 }

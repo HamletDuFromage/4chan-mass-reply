@@ -1,6 +1,6 @@
 'use strict';
 
-const cpurl = 'https://raw.githubusercontent.com/pixelplanetdev/4chan-mass-reply/master/copypastas.json';
+const cpurl = 'https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json';
 
 browser.contextMenus.create({
     id: "rm-cookies",
