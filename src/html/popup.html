@@ -17,12 +17,14 @@
         <h2>Evasion Settings</h2>
         <label><input type="checkbox" id="anonymize" name="anonymize" />Anonymize image uploads</label>
         <div class="tooltip">&#9432
-            <span class="tooltiptext">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick reply</span>
+            <span class="tooltiptext">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick
+                reply</span>
         </div>
         <br>
         <label><input type="checkbox" id="nocookie" name="nocookie" />Bypass ban-evasion detection</label>
         <div class="tooltip">&#9432
-            <span class="tooltiptext">Strips `4chan_pass` cookie for post upload, thus bypassing ban evasion prevention</span>
+            <span class="tooltiptext">Strips `4chan_pass` cookie for post upload, thus bypassing ban evasion
+                prevention</span>
         </div>
         <br>
         <label><input type="checkbox" id="bypassfilter" name="bypassfilter" />Bypass SOY wordfilter</label>
@@ -36,7 +38,7 @@
         </div>
         <hr class="solid">
         <h2>Mass Reply Settings</h2>
-        <label><input type="checkbox" id="showbtns" name="showbtns"/>Show buttons in reply box</label>
+        <label><input type="checkbox" id="showbtns" name="showbtns" />Show buttons in reply box</label>
         <br>
         <div>
             <fieldset id="btnsFieldset">
@@ -53,15 +55,20 @@
                     posts</label>
             </fieldset>
         </div>
+        <br>
+        <div class="button" title="Mass reply" id="regular">Mass Reply</div>
+        <div class="button" title="Sneed" id="sneed">Sneed</div>
+        <div class="button" title="Dubs" id="dubs">Check 'em</div>
         <hr class="solid">
-        <h2>Copypastas <div class="smallbtn" title="Change copypasta url" id ="showurl">⚙</div></h2>
+        <h2>Copypastas <div class="smallbtn" title="Change copypasta url" id="showurl">⚙</div>
+        </h2>
         <div id="divurl" class="hidden">
             <form id="formurl">
                 <input type="text" id="cpurl" name="cpurl">
                 <div class="button" id="urlok">OK</div>
                 <div class="tooltip">&#9432
                     <span class="tooltiptext">URL to copypastas.json (leave empty for defaults)</span>
-                </div> 
+                </div>
             </form>
             <br>
         </div>

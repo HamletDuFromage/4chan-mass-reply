@@ -43,7 +43,7 @@ document.getElementById('copy').addEventListener("click", (e) => {
 });
 
 // listen to checkbox events
-(function(){
+(function () {
     function valueUpdated(key, value) {
         if (key === 'showbtns') {
             document.getElementById('btnsFieldset').disabled = !value;
@@ -83,7 +83,7 @@ document.getElementById('format').addEventListener('change', (evt) => {
         format: value,
     }).then(console.log(`storage updated`), onError);
 });
-browser.storage.local.get({format: 'single'}).then((item) => {
+browser.storage.local.get({ format: 'single' }).then((item) => {
     document.getElementById('format').value = item.format;
 });
 
@@ -93,8 +93,8 @@ document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
     for (let i = 0; i < shitposts.length; i++) {
         const name = shitposts[i].name;
         if (name === value) {
-          fillField(shitposts[i].content);
-          return;
+            fillField(shitposts[i].content);
+            return;
         }
     }
 });
@@ -115,7 +115,7 @@ function parseShitposts(shitpostsJson) {
         opt.textContent = opt.value = name;
         select.appendChild(opt);
         if (name === selected) {
-          select.value = name;
+            select.value = name;
         }
     }
 };
@@ -134,12 +134,32 @@ browser.storage.local.get({
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {
-      return;
+        return;
     }
     if (changes.shitposts) {
         parseShitposts(changes.shitposts.newValue);
     }
 });
+
+function sendMessage(messageType) {
+    browser.tabs.query({
+        currentWindow: true,
+        active: true
+    }).then(tabs => {
+        browser.tabs.sendMessage(tabs[0].id, {
+            command: messageType
+        }).then(response => {
+            fillField(response.response);
+        });
+    });
+}
+
+// buttons to get mass quotes
+for (let messageType of ["regular", "sneed", "dubs"]) {
+    document.getElementById(messageType).onclick = () => {
+        sendMessage(messageType);
+    }
+}
 
 // button to show cpurl input
 document.getElementById('showurl').onclick = (evt) => {
@@ -161,5 +181,5 @@ document.getElementById('urlok').onclick = () => {
         url = cpurl;
         document.getElementById('cpurl').value = cpurl;
     }
-    browser.storage.local.set({cpurl: url});
+    browser.storage.local.set({ cpurl: url });
 }

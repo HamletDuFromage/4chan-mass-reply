@@ -147,7 +147,7 @@ function createButton(parentNode, label, title, listener) {
 function addQuotesText(e, action) {
     if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
     const str = createQuotes(action, store.format, store.bttm);
-    e.value += str.replaceAll('<br>', '\n');
+    e.value += str;
     e.scrollTop = e.scrollHeight;
     e.focus();
 }
@@ -181,7 +181,7 @@ function gotTextArea(e) {
             e.scrollTop = e.scrollHeight;
             e.focus();
         });
-        createButton(ui, '☝', 'Check em', () => {
+        createButton(ui, '☝', 'Check \'em', () => {
             addQuotesText(e, 'dubs');
         });
         if (window.location.href.includes('pol')) {
@@ -247,6 +247,11 @@ function mutationChange(mutations) {
         }
     });
 };
+
+browser.runtime.onMessage.addListener((message) => {
+    const str = createQuotes(message.command, store.format, store.bttm);
+    return Promise.resolve({response: str});
+});
 
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') {

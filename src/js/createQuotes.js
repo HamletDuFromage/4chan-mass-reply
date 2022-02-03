@@ -14,16 +14,16 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
             const cols = Math.floor(quotesNumber / maxLines);
             if (cols < 1) {
                 for (let i = 0; i < quotesNumber; i++) {
-                    res += strArray[i] + "<br>";
+                    res += strArray[i] + "\n";
                 }
             }
             else {
                 let r = Math.floor((quotesNumber - maxLines) / cols) + 1;
                 for (let i = 0 + offset; i < maxLines - r + offset; i++) {
-                    res += strArray[i] + "<br>";
+                    res += strArray[i] + "\n";
                 }
                 for (let i = maxLines - r + offset; i < quotesNumber + offset; i++) {
-                    res += strArray[i] + (((i - maxLines - r + offset) % (cols + 1) === 0 || i === quotesNumber + offset - 1) ? "<br>" : " ");
+                    res += strArray[i] + (((i - maxLines - r + offset) % (cols + 1) === 0 || i === quotesNumber + offset - 1) ? "\n" : " ");
                 }
             }
             break;
@@ -35,21 +35,21 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
             let cnt = 0;
             for (let i = 0 + offset; i < quotesNumber + offset; i++) {
                 if (cnt && cnt % 3 === 2) {
-                    res += strArray[i] + "<br>";
+                    res += strArray[i] + "\n";
                 }
                 else {
                     res += strArray[i] + " | ";
                 }
                 cnt++;
             }
-            if (cnt % 3) res = res.slice(0, -2) + "<br>";
+            if (cnt % 3) res = res.slice(0, -2) + "\n";
             break;
         }
         default: {
             for (let i = 0 + offset; i < quotesNumber + offset; i++) {
                 res += strArray[i] + " ";
             }
-            res += "<br>";
+            res += "\n";
             break;
         }
     }

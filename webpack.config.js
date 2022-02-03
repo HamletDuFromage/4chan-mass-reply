@@ -13,6 +13,9 @@ module.exports = {
     content: "./src/js/content.js",
     popup: "./src/js/popup.js",
   },
+  optimization: {
+    minimize: true
+  },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "js/[name].js",
