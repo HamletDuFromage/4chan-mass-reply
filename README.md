@@ -49,12 +49,12 @@ Available features:
 - https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
 
 ### Chrome/Chromium/Brave
-The extension has been ported to Chromium based browser. Download the zip file in the release and sideload it. 
+The extension has been ported to Chromium based browsers. Download the zip file in the release and sideload it. 
 
 ## How to build
 ```
 $ npm install --save-dev
-$ npm npm run build
+$ npm run build
 ```
 The resulting extension will be in `dist/`.
 
