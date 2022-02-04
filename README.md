@@ -43,7 +43,7 @@ Available features:
 
 ## Install
 ### Firefox
-- https://github.com/HamletDuFromage/4chan-mass-reply/releases/download/latest/4chan_mass_reply.xpi
+- https://github.com/HamletDuFromage/4chan-mass-reply/releases/latest/download/4chan_mass_reply.xpi
 
 ### MS Edge
 - https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
