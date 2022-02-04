@@ -51,6 +51,9 @@ Available features:
 ### Chrome/Chromium/Brave
 The extension has been ported to Chromium based browsers. Download the zip file in the release and sideload it. 
 
+### Android
+Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files. Go to `about:config` and set `xpinstall.signatures.required` to `false` and then sideload the app in the settings (Advanced settings > Sideload XPI).
+
 ## How to build
 ```
 $ npm install --save-dev
