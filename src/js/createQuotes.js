@@ -168,7 +168,7 @@ export default function createQuotes(action, format, bttm) {
             }
             if (filenameDOM !== null) {
                 filename = filenameDOM.textContent
-                if (/^\b\w{3}\./.test(filename)) {
+                if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+/.test(filename)) {
                     kym.push(">" + filename);
                 }
             }

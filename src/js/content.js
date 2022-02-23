@@ -28,7 +28,7 @@ function spotKym(element) {
         filenameDOMs = element.querySelectorAll('div[class~="fileText"] > a[target]');
     }
     for (const filenameDOM of filenameDOMs) {
-        if (/^\b\w{3}\./.test(filenameDOM.textContent)) {
+        if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+/.test(filenameDOM.textContent)) {
             filenameDOM.style.backgroundColor = "#FDFF47";
         }
     }
