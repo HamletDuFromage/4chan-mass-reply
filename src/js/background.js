@@ -60,8 +60,15 @@ function spoofCookie(item) {
 
 function setCookieSpoofingState(nocookie) {
     if (nocookie) {
-        const extraInfo = ["blocking", "requestHeaders", "extraHeaders"];
-        browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
+		try {
+			// extraHeaders isn't supported on firefox and throws an error
+			const extraInfo = ["blocking", "requestHeaders", "extraHeaders"];
+			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
+		}
+		catch (e) {
+			const extraInfo = ["blocking", "requestHeaders"];
+			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
+		}
     }
     else {
         browser.webRequest.onBeforeSendHeaders.removeListener(spoofCookie);
