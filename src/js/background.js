@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const cpurl = 'https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json';
+const cpurl = "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json";
 
 browser.contextMenus.create({
     id: "rm-cookies",
@@ -17,8 +17,8 @@ function onError(error) {
 }
 
 function randomString(length) {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -30,14 +30,14 @@ function spoofCookie(item) {
     console.log("spoofing cookies!");
     for (var header of item.requestHeaders) {
         switch (header.name.toLowerCase()) {
-            case 'cookie': {
+            case "cookie": {
                 header.value = "4chan_pass=" + randomString(124);
                 break;
             }
-            case 'user-agent': {
-                let newValue = '';
+            case "user-agent": {
+                let newValue = "";
                 // randomly increase every integer in user-agent
-                // don't decrease cause that could get you blocked
+                // don"t decrease cause that could get you blocked
                 for (let c = 0; c < header.value.length; c++) {
                     const curChar = header.value.charAt(c);
                     const curNum = parseInt(curChar);

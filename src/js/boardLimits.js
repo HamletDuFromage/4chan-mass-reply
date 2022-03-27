@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 export function getBoard() {
-    const board = window.location.href.match(/(?<=boards.4chan(?:nel)?.org\/)[a-z]+(?=\/.*thread.*)/);
+    const board = window.location.href.match(/(?<=boards.4chan(?:nel)?.org\/)[a-z0-9]+(?=\/)/);
     if (board.length) {
       return board[0];
     }
@@ -12,9 +12,13 @@ export function getBoardLimits(board) {
     let maxLines = 100;
     let characterLimit = 2000;
     let maxImageFilesize = 4194304;
+	let hasUserIDs = false;
     switch (board) {
         case "b":
             maxImageFilesize = 2097152;
+            break;
+        case "biz":
+			hasUserIDs = true;
             break;
         case "gd":
             maxImageFilesize = 8388608;
@@ -54,6 +58,7 @@ export function getBoardLimits(board) {
             break;
         case "soc":
             maxImageFilesize = 5242880;
+			hasUserIDs = true;
             break;
         case "po":
             maxImageFilesize = 8388608;
@@ -69,6 +74,7 @@ export function getBoardLimits(board) {
             break;
         case "pol":
             maxLines = 70;
+			hasUserIDs = true;
             break;
         case "v":
             maxLines = 25;
@@ -76,6 +82,7 @@ export function getBoardLimits(board) {
         case "bant":
             maxLines = 49;
             maxImageFilesize = 2097152;
+			hasUserIDs = true;
             break;
         case "jp":
             characterLimit = 5000;
@@ -89,6 +96,7 @@ export function getBoardLimits(board) {
         case "qst":
             characterLimit = 3000;
             maxImageFilesize = 8388608;
+			hasUserIDs = true;
             break;
         case "vt":
             characterLimit = 5000;
@@ -101,5 +109,6 @@ export function getBoardLimits(board) {
       maxLines,
       characterLimit,
       maxImageFilesize,
+	  hasUserIDs
     };
 }
