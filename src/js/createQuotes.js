@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-import { getBoard, getBoardLimits } from './boardLimits';
+import { getBoard, getBoardInfo } from "./boardLimits";
 
 function createQuotesString(strArray, format, bottom, characterLimit, maxLines) {
     let res = "";
-    format = format ? format : 'single';
+    format = format ? format : "single";
     const strLength = strArray[0].length;
-    const spacing = (format === 'tower') ? 3 : 1; // to account for spaces and linebreaks
+    const spacing = (format === "tower") ? 3 : 1; // to account for spaces and linebreaks
     let quotesNumber = Math.min(strArray.length, Math.floor(characterLimit / (strLength + spacing)));
     const offset = bottom * (strArray.length - quotesNumber);
     switch (format) {
-        case 'lines': {
+        case "lines": {
             const cols = Math.floor(quotesNumber / maxLines);
             if (cols < 1) {
                 for (let i = 0; i < quotesNumber; i++) {
@@ -28,7 +28,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
             }
             break;
         }
-        case 'tower': {
+        case "tower": {
             const cols = (quotesNumber / 3 < maxLines - 1) //at least three width
                 ? 3
                 : Math.ceil(quotesNumber / maxLines - 1);
@@ -59,7 +59,7 @@ function createQuotesString(strArray, format, bottom, characterLimit, maxLines) 
 function getUIDStats(posts) {
     const postids = [];
     for (let i = 0; i < posts.length; i++) {
-        const idelems = posts[i].getElementsByClassName('posteruid');
+        const idelems = posts[i].getElementsByClassName("posteruid");
         if (idelems.length) {
             const uid = idelems[0].classList[1].slice(3);
             if (postids[uid]) {
@@ -76,19 +76,25 @@ function getUIDStats(posts) {
 
 export default function createQuotes(action, format, bttm) {
     const board = getBoard();
-    if (!board) return 'This is not a recongized 4chan thread';
+    if (!board) return "";
 
     let str = "";
-    let fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
-    const limits = getBoardLimits(board);
+    let fourchanx = document.querySelector("html[class~='fourchan-x'") === null ? false : true;
+    const limits = getBoardInfo(board);
     const maxLines = limits.maxLines;
     const characterLimit = limits.characterLimit;
 
-    const posts = document.querySelectorAll('div[class~="postContainer"]:not([data-clone])');
-
+	let posts = [];
+	if (window.location.href.includes("/catalog")) {
+		posts = document.getElementsByClassName("thread");
+	}
+	else {
+		posts = document.querySelectorAll("div[class~='postContainer']:not([data-clone])");
+	}
+	
     if (action === "regular" || action === "sneed") {
         const ids = Array.from(posts).map(e => {
-            return ">>" + e.id.slice(2);
+            return ">>" + e.id.match(/(?<=\D+)\d+/);
         });
         str += createQuotesString(ids, format, bttm, characterLimit, maxLines);
 
@@ -100,20 +106,20 @@ export default function createQuotes(action, format, bttm) {
         let dubs = [];
         for (let i = 0; i < posts.length; i++) {
             if (/(\d)\1\b/.test(posts[i].id)) {
-                dubs.push(">>" + posts[i].id.slice(2));
+                dubs.push(">>" + posts[i].id.match(/(?<=\D+)\d+/));
             }
         }
-        if (!dubs.length) return 'No posts with digits found';
+        if (!dubs.length) return "No posts with digits found";
         str += createQuotesString(dubs, format, bttm, characterLimit, maxLines);
     }
     else if (action === "memeflags") {
         let memeflags = [];
         for (let i = 0; i < posts.length; i++) {
-            if (posts[i].getElementsByClassName('bfl').length) {
+            if (posts[i].getElementsByClassName("bfl").length) {
                 memeflags.push(">>" + posts[i].id.slice(2));
             }
         }
-        if (!memeflags.length) return 'No memeflags in this thread';
+        if (!memeflags.length) return "No memeflags in this thread";
         str += createQuotesString(memeflags, format, bttm, characterLimit, maxLines);
     }
     else if (action === "1pbtid") {
@@ -144,9 +150,9 @@ export default function createQuotes(action, format, bttm) {
             }
             const uidStat = ranking[v];
             console.log(`Rank ${v}: ${uidStat[0]} with ${uidStat[2]} Postings`);
-            let addStr = '\n';
+            let addStr = "\n";
             addStr += `Rank ${v+1}.:\n${uidStat[0]} with ${uidStat[2]} Postings:\n`;
-            addStr += createQuotesString(uidStat[1].map((e) => '>>' + e), 'single', bttm, characterLimit, maxLines);
+            addStr += createQuotesString(uidStat[1].map((e) => ">>" + e), "single", bttm, characterLimit, maxLines);
             if (str.length + addStr.length > characterLimit) {
                 break;
             }
@@ -161,10 +167,10 @@ export default function createQuotes(action, format, bttm) {
         let filenameDOM = null;
         for (let i = 0; i < posts.length; i++) {
             if (fourchanx) {
-                filenameDOM = posts[i].querySelector('div[class~="fileText"] > span[class~="file-info"] > a[target]');
+                filenameDOM = posts[i].querySelector("div[class~='fileText'] > span[class~='file-info'] > a[target]");
             }
             else {
-                filenameDOM = posts[i].querySelector('[class~="fileText"] > a');
+                filenameDOM = posts[i].querySelector("[class~='fileText'] > a");
             }
             if (filenameDOM !== null) {
                 filename = filenameDOM.textContent
@@ -174,7 +180,7 @@ export default function createQuotes(action, format, bttm) {
             }
 
         }
-        if (!kym.length) return 'No kym filenames found';
+        if (!kym.length) return "No kym filenames found";
         str += createQuotesString(kym, format, bttm, characterLimit, maxLines);
     }
 
