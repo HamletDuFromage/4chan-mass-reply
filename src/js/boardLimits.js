@@ -8,7 +8,7 @@ export function getBoard() {
     return null;
 }
 
-export function getBoardLimits(board) {
+export function getBoardInfo(board) {
     let maxLines = 100;
     let characterLimit = 2000;
     let maxImageFilesize = 4194304;

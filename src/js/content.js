@@ -3,7 +3,7 @@
 import createQuotes from "./createQuotes";
 import { initDB, saveFile, loadFile } from "./indexedStore";
 import { anonFilename, anonHash, checkFilesize } from "./anonFiles";
-import { getBoard, getBoardLimits } from "./boardLimits";
+import { getBoard, getBoardInfo } from "./boardLimits";
 
 const fourchanx = document.querySelector("html[class~='fourchan-x'") === null ? false : true;
 
@@ -91,7 +91,7 @@ function fileChanged(evt) {
     if (!store.anonymize) {
         return;
     }
-    const maxImageSize = getBoardLimits(board).maxImageFilesize;
+    const maxImageSize = getBoardInfo(board).maxImageFilesize;
     file = anonFilename(file);
     //change name and write element first immediately because fast responding sites
     //would not catch after hash change
@@ -121,7 +121,7 @@ function gotFileInput(e) {
                 anonHash(anonFilename(file)).then((anonFile) => {
                     const board = getBoard();
                     if (!board) return;
-                    const maxImageSize = getBoardLimits(board).maxImageFilesize;
+                    const maxImageSize = getBoardInfo(board).maxImageFilesize;
                     checkFilesize(anonFile, maxImageSize).then((newFile) => {
                         e.files = createFileList(newFile);
                     });
@@ -191,7 +191,7 @@ function gotTextArea(e) {
 				});
 			}
 			const board = getBoard();
-			if (board && getBoardLimits(board).hasUserIDs) {
+			if (board && getBoardInfo(board).hasUserIDs) {
 				createButton(ui, "❶", "Quote 1pbtIDs", () => {
 					addQuotesText(e, "1pbtid");
 				});

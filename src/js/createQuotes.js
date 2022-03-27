@@ -1,6 +1,6 @@
 "use strict";
 
-import { getBoard, getBoardLimits } from "./boardLimits";
+import { getBoard, getBoardInfo } from "./boardLimits";
 
 function createQuotesString(strArray, format, bottom, characterLimit, maxLines) {
     let res = "";
@@ -80,7 +80,7 @@ export default function createQuotes(action, format, bttm) {
 
     let str = "";
     let fourchanx = document.querySelector("html[class~='fourchan-x'") === null ? false : true;
-    const limits = getBoardLimits(board);
+    const limits = getBoardInfo(board);
     const maxLines = limits.maxLines;
     const characterLimit = limits.characterLimit;
 
