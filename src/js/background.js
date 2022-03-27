@@ -60,14 +60,21 @@ function spoofCookie(item) {
 
 function setCookieSpoofingState(nocookie) {
     if (nocookie) {
+		const filter = {
+			urls: [
+				"*://sys.4channel.org/*/post",
+				"*://sys.4chan.org/*/post"
+			]
+		};
+		
 		try {
 			// extraHeaders isn't supported on firefox and throws an error
 			const extraInfo = ["blocking", "requestHeaders", "extraHeaders"];
-			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
+			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, filter, extraInfo);
 		}
 		catch (e) {
 			const extraInfo = ["blocking", "requestHeaders"];
-			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, { urls: ["*://sys.4channel.org/*/post", "*://sys.4chan.org/*/post"] }, extraInfo);
+			browser.webRequest.onBeforeSendHeaders.addListener(spoofCookie, filter, extraInfo);
 		}
     }
     else {
