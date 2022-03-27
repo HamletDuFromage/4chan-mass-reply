@@ -175,7 +175,7 @@ function gotTextArea(e) {
         createButton(ui, "⚔","Mass Reply", () => {
             addQuotesText(e, "regular");
         });
-		createButton(ui, "☝", "Check \"em", () => {
+		createButton(ui, "☝", "Check \'em", () => {
 			addQuotesText(e, "dubs");
 		});	
 		if (window.location.href.includes("/thread/")) {
