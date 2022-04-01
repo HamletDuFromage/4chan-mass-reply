@@ -106,8 +106,9 @@ function fileChanged(evt) {
 function commentChanged(evt) {
     const element = evt.target;
     if (store.bypassfilter) {
-        let comment = element.value.replaceAll("soy", "ꜱoy");
-        comment = comment.replaceAll("SOY", "SÖY");
+        let comment = element.value.replaceAll('soy', 'ꜱoy');
+        comment = comment.replaceAll('Soy', 'Ṣoy');
+        comment = comment.replaceAll('SOY', 'ṢOY');
         element.value = comment;
     }
 }
