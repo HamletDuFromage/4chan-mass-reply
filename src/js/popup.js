@@ -1,185 +1,176 @@
 "use strict";
 
-const cpurl = "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json";
+import {
+	debugLog
+} from "./misc";
 
-function onCreated(tab) {
-    console.log("tg");
-}
+const pastasUrl = "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json";
 
-function onError(error) {
-    console.log(`Error: ${error}`);
-}
+let pastas = [];
 
-let shitposts = [];
-
-// fill the <p> with the quotes
-function fillField(textData) {
-    // The innerHTML is only done on the popup, not on actual webpages
-    if (textData === "prends tes médocs") {
-        var updating = browser.tabs.update({
-            url: "https://www.reddit.com/r/france/",
-            pinned: true
-        });
-        updating.then(onCreated, onError);
-    }
-    else {
-        document.getElementById("textField").value = textData;
-    }
-}
-
-// listn to copy button
+// listen to copy button
 document.getElementById("copy").addEventListener("click", (e) => {
-    function updateClipboard() {
-        var newClip = document.getElementById("textField").value;
-        if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
-            navigator.clipboard.writeText(newClip);
-        }
-    }
-
-    console.log("Copying to clipboard");
-    browser.tabs.query({ active: true, currentWindow: true })
-        .then(updateClipboard)
-        .catch(reportError);
+	browser.tabs.query({
+		active: true,
+		currentWindow: true
+	})
+	.then(() => {
+		let newClip = document.getElementById("pastaTextarea").value;
+		if (newClip !== "") {
+			debugLog("Copying to clipboard");
+			navigator.clipboard.writeText(newClip);
+		}
+	})
+	.catch(reportError);
 });
 
 // listen to checkbox events
-(function () {
-    function valueUpdated(key, value) {
-        if (key === "showbtns") {
-            document.getElementById("btnsFieldset").disabled = !value;
-        }
-    }
-
-    /*
-     * default values, make sure its the same as in content.js
-     */
-    browser.storage.local.get({
-        "anonymize": false,
-        "nocookie": true,
-        "bypassfilter": true,
-        "reuse": false,
-        "showbtns": true,
-        "bttm": false,
-    }).then((localstore) => {
-        const keys = Object.keys(localstore);
-        for (let i = 0; i < keys.length; i++) {
-            const button = keys[i];
-            document.getElementById(button).onclick = function (evt) {
-                valueUpdated(evt.target.name, evt.target.checked);
-                browser.storage.local.set({
-                    [evt.target.name]: evt.target.checked
-                }).then(console.log(`storage updated`), onError);
-            };
-            valueUpdated(button, localstore[button]);
-            document.getElementById(button).checked = localstore[button];
-        }
-    });
+(function() {
+	/*
+	 * default values, make sure its the same as in content.js
+	 */
+	browser.storage.local.get({
+		anonymizeFile:		false,
+		bypassBanEvasion: 	true,
+		bypassFilter: 		true,
+		reuseFile: 			false,
+		postFormButtons: 	true,
+		quoteBottom: 		false,
+		quoteFormat: 		"single",
+	}).then((localstore) => {
+		const keys = Object.keys(localstore);
+		for (let i = 0; i < keys.length; i++) {
+			const button = keys[i];
+			document.getElementById(button).onclick = (evt) => {
+				browser.storage.local.set({
+					[evt.target.name]: evt.target.checked
+				}).then(
+					debugLog("Storage updated"),
+					(error) => {
+						debugLog(`Error setting local storage: ${error}`);
+					}
+				);
+			};
+			document.getElementById(button).checked = localstore[button];
+		}
+	});
 })()
 
 // load and store mass-reply format
-document.getElementById("format").addEventListener("change", (evt) => {
-    const value = evt.target.value;
-    browser.storage.local.set({
-        format: value,
-    }).then(console.log(`storage updated`), onError);
-});
-browser.storage.local.get({ format: "single" }).then((item) => {
-    document.getElementById("format").value = item.format;
-});
-
-// load selected shitpost into textarea
-document.getElementById("shitpost-entry").addEventListener("change", (evt) => {
-    const value = evt.target.value;
-    for (let i = 0; i < shitposts.length; i++) {
-        const name = shitposts[i].name;
-        if (name === value) {
-            fillField(shitposts[i].content);
-            return;
-        }
-    }
+document.getElementById("quoteFormat").addEventListener("change", (evt) => {
+	const value = evt.target.value;
+	browser.storage.local.set({
+		quoteFormat: value,
+	}).then(
+		debugLog("Storage updated"),
+		(error) => {
+			debugLog(`Error setting local storage: ${error}`);
+		}
+	);
 });
 
-// populate shitposts into select
-function parseShitposts(shitpostsJson) {
-    shitposts = [];
-    shitposts = JSON.parse(shitpostsJson);
-    if (!shitposts.length) return;
-    const select = document.getElementById("shitpost-entry");
-    const selected = select.value;
-    while (select.firstChild) {
-        select.removeChild(select.firstChild);
-    }
-    for (let i = 0; i < shitposts.length; i++) {
-        const opt = document.createElement("option");
-        const name = shitposts[i].name;
-        opt.textContent = opt.value = name;
-        select.appendChild(opt);
-        if (name === selected) {
-            select.value = name;
-        }
-    }
+browser.storage.local.get({
+	quoteFormat: "single"
+}).then((item) => {
+	document.getElementById("quoteFormat").value = item.quoteFormat;
+});
+
+// load selected pasta into textarea
+document.getElementById("pastasDropdown").addEventListener("change", (evt) => {
+	const value = evt.target.value;
+	for (let i = 0; i < pastas.length; i++) {
+		const name = pastas[i].name;
+		if (name === value) {
+			document.getElementById("pastaTextarea").value = pastas[i].content;
+			return;
+		}
+	}
+});
+
+// populate pastas into select
+function parsePastas(pastasJson) {
+	pastas = [];
+	pastas = JSON.parse(pastasJson);
+	if (!pastas.length) return;
+	const select = document.getElementById("pastasDropdown");
+	const selected = select.value;
+	while (select.firstChild) {
+		select.removeChild(select.firstChild);
+	}
+	for (let i = 0; i < pastas.length; i++) {
+		const opt = document.createElement("option");
+		const name = pastas[i].name;
+		opt.textContent = opt.value = name;
+		select.appendChild(opt);
+		if (name === selected) {
+			select.value = name;
+		}
+	}
 };
 
 browser.storage.local.get({
-    "cpurl": cpurl,
-    "shitposts": null,
-    "selectedsp": "Contribute",
+	pastasUrl: pastasUrl,
+	pastas: null,
+	selectedPasta: "Contribute",
 }).then((item) => {
-    const selected = item.selectedsp;
-    if (item.shitposts) {
-        parseShitposts(item.shitposts);
-    }
-    document.getElementById("cpurl").value = item.cpurl;
-}, (error) => { console.log(`Error: ${error}`); });
+	const selected = item.selectedPasta;
+	if (item.pastas) {
+		parsePastas(item.pastas);
+	}
+	document.getElementById("pastasUrl").value = item.pastasUrl;
+}, (error) => {
+	debugLog(`Error getting local storage: ${error}`);
+});
 
 browser.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local") {
-        return;
-    }
-    if (changes.shitposts) {
-        parseShitposts(changes.shitposts.newValue);
-    }
+	if (area !== "local") {
+		return;
+	}
+	if (changes.pastas) {
+		parsePastas(changes.pastas.newValue);
+	}
 });
 
 function sendMessage(messageType) {
-    browser.tabs.query({
-        currentWindow: true,
-        active: true
-    }).then(tabs => {
-        browser.tabs.sendMessage(tabs[0].id, {
-            command: messageType
-        }).then(response => {
-            fillField(response.response);
-        });
-    });
+	browser.tabs.query({
+		currentWindow: true,
+		active: true
+	}).then((tabs) => {
+		browser.tabs.sendMessage(tabs[0].id, {
+			command: messageType
+		}).then(response => {
+			document.getElementById("pastaTextarea").value = response.response;
+		});
+	});
 }
 
 // buttons to get mass quotes
 for (let messageType of ["regular", "sneed", "dubs"]) {
-    document.getElementById(messageType).onclick = () => {
-        sendMessage(messageType);
-    }
+	document.getElementById(messageType).onclick = () => {
+		sendMessage(messageType);
+	};
 }
 
-// button to show cpurl input
-document.getElementById("showurl").onclick = (evt) => {
-    const divUrl = document.getElementById("divurl");
-    if (divUrl.classList.contains("hidden")) {
-        divUrl.classList.remove("hidden");
-        evt.target.classList.add("selected");
-    }
-    else {
-        divUrl.classList.add("hidden");
-        evt.target.classList.remove("selected");
-    }
+// button to show pastasUrl input
+document.getElementById("showPastasUrl").onclick = (evt) => {
+	const el = document.getElementById("formPastasUrlContainer");
+	if (el.classList.contains("hidden")) {
+		el.classList.remove("hidden");
+		evt.target.classList.add("selected");
+	} else {
+		el.classList.add("hidden");
+		evt.target.classList.remove("selected");
+	}
 }
 
-// ok button to save entered cpurl
-document.getElementById("urlok").onclick = () => {
-    let url = document.getElementById("cpurl").value;
-    if (!url.trim()) {
-        url = cpurl;
-        document.getElementById("cpurl").value = cpurl;
-    }
-    browser.storage.local.set({ cpurl: url });
+// ok button to save entered pastasUrl
+document.getElementById("setPastasUrl").onclick = () => {
+	let url = document.getElementById("pastasUrl").value;
+	if (!url.trim()) {
+		url = pastasUrl;
+		document.getElementById("pastasUrl").value = pastasUrl;
+	}
+	browser.storage.local.set({
+		pastasUrl: url
+	});
 }

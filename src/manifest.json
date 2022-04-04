@@ -50,8 +50,8 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "id@id.com",
-      "update_url": "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-quote/master/updates.json"
+      "id": "4chanMassReply@HamletDuFromage",
+      "update_url": "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/updates.json"
     }
   }
 }
