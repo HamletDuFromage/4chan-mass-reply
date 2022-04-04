@@ -88,11 +88,13 @@ export function fileConvert(file) {
 export function fileCompress(file, maxImageSize, compressionLevel) {
 	return new Promise((resolve) => {
 		if (file.size < maxImageSize) {
-			const qrError = document.getElementById("qrError");
-			if (qrError && qrError.getAttribute("data-type") === "filesize") {
-				qrError.style.display = "none";
+			if (compressionLevel) {
+				const qrError = document.getElementById("qrError");
+				if (qrError && qrError.getAttribute("data-type") === "filesize") {
+					qrError.style.display = "none";
+				}
+				debugLog(`Successfully compressed the image, new file size - ${file.size} bytes`);
 			}
-			debugLog(`Successfully compressed the image, new file size - ${file.size} bytes`)
 			return resolve(file);
 		}
 		if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/webp") {
