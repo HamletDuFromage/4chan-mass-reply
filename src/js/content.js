@@ -136,12 +136,6 @@ function commentChanged(evt) {
         comment = comment.replaceAll('SOY', 'ṢOY');
         element.value = comment;
     }
-	const element = evt.target;
-	if (store.bypassFilter) {
-		let comment = element.value.replaceAll("soy", "ꜱoy");
-		comment = comment.replaceAll("SOY", "SÖY");
-		element.value = comment;
-	}
 }
 
 function gotFileInput(e) {
