@@ -5,3 +5,4 @@ dist/
 *.xpi
 *.zip
 *.tar.gz
+/.vs
