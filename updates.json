@@ -1,114 +1,113 @@
 {
-  "addons": {
-    "id@id.com": {
-      "updates": [
-        {
-          "version": "1.3.1",
-          "update_link": "https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.1-an+fx.xpi",
-          "update_hash": "sha256:2cc62be6b79de937099202810c6974f191ad59c6e42a99d380e6ac1cb6ceba99"
-        },
-        {
-          "version": "1.3.2",
-          "update_link": "https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.2-an+fx.xpi",
-          "update_hash": "sha256:ddbef95ebe37cc77d5d913fee85610054c486a93f509a362af2c26fa268028ca"
-        },
-        {
-          "version": "1.3.3",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.3/4chan_mass_reply-1.3.3-an+fx.xpi",
-          "update_hash": "sha256:689be1f61d877c3871289bd78294ca26f236cd3f35b0475461669dec64e9a705"
-        },
-        {
-          "version": "1.3.4",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.4/4chan_mass_reply-1.3.4-an+fx.xpi",
-          "update_hash": "sha256:9a2a5dbbcb4c9340fdea811057ce6511898e59619e42721c5fbeab238809c390"
-        },
-        {
-          "version": "1.3.5",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.5/4chan_mass_reply-1.3.5-an+fx.xpi",
-          "update_hash": "sha256:d35578fcf269f9b6cf6b88ef43e5679fd5dc64395347ca423b2acd782c5f1740"
-        },
-        {
-          "version": "1.4.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:05f1631444732260b34d11445905b1ff96632cf0047f85fd4b2c888a852b783c"
-        },
-        {
-          "version": "1.4.1",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.1/4chan_mass_reply.xpi",
-          "update_hash": "sha256:77b802444ff0db86de1aeeafb994fad70be85eaf8d29a17e9086cce4049c8a35"
-        },
-        {
-          "version": "1.4.2",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.2/4chan_mass_reply.xpi",
-          "update_hash": "sha256:2b01c7ed952544c1907a3334c1b3ed2eb5dfcc095a5de8ebfade4429acf9ee42"
-        },
-        {
-          "version": "1.4.3",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.3/4chan_mass_reply.xpi",
-          "update_hash": "sha256:f37341881d17cc0965c9c6d0879e16768b63437015986df1124cafc2a0e03556"
-        },
-        {
-          "version": "1.5.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.5.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:3c081c7666859392be2cc4f6b112220a7728522a8d23e25a40dd8b6db86a60be"
-        },
-        {
-          "version": "1.5.1",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.5.1/4chan_mass_reply.xpi",
-          "update_hash": "sha256:8d2b32d2714518792e775595010d05325e25e1bf27274fd296628d7d27e29f1e"
-        },
-        {
-          "version": "1.6.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:142a7318e03a7eeb4d2db515d442b67fce03f199a775f45711bfc660aa8c1100"
-        },
-        {
-          "version": "1.6.1",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.1/4chan_mass_reply.xpi",
-          "update_hash": "sha256:20b2c5821bc2c4aa31c2b1c1a3aba09f7ac8d07d76115e7c70afbca57b741955"
-        },
-        {
-          "version": "1.6.2",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.2/4chan_mass_reply.xpi",
-          "update_hash": "sha256:e366163ee299a675ca5ffa35132cb475fa2676079155738d279d46c1622b986f"
-        },
-        {
-          "version": "2.0.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.0.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:77ab271acb1deb74b8a3409c53c1bb8dd2c496c24e1ffede77b87e7a2beda1e6"
-        },
-        {
-          "version": "2.0.1",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.0.1/4chan_mass_reply.xpi",
-          "update_hash": "sha256:8254e043cb8ac17fb73383895ad547c9da0fcdc258ab40916daf017f50a00cc8"
-        },
-        {
-          "version": "2.1.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.1.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:f4af416f9d5a5e328dedcb8e4a63ccffd7849591c20827b70f59ffa2a6bbe640"
-        },
-        {
-          "version": "2.2.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.2.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:9c09ea56bc808bd1ff1a6466ed34ddd05e0964494577dac94e5ceb7fb2ded4c4"
-        },
-        {
-          "version": "2.3.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.3.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:d71c3ad1e306a9f7a5b1a3d0b2bd1ded33a6e899faf7043091a22cd7b596eeb2"
-        },
-        {
-          "version": "3.0.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.0.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:c9cd318fc5d5885d9bc2ae583aed28160d677db21736f7faf83c3831fce04444"
-        }
-        ,
-        {
-          "version": "3.1.0",
-          "update_link": "https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.1.0/4chan_mass_reply.xpi",
-          "update_hash": "sha256:692ba2fdc72ab97c7c88c69c37ad8c8b833d867de731e43fbb0c7519222312ef"
-        }
-      ]
-    }
-  }
+	"addons":{
+		"id@id.com":{
+			"updates":[
+				{
+					"version":"1.3.1",
+					"update_link":"https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.1-an+fx.xpi",
+					"update_hash":"sha256:2cc62be6b79de937099202810c6974f191ad59c6e42a99d380e6ac1cb6ceba99"
+				},
+				{
+					"version":"1.3.2",
+					"update_link":"https://hamletdufromage.github.io/mass-reply/4chan_mass_reply-1.3.2-an+fx.xpi",
+					"update_hash":"sha256:ddbef95ebe37cc77d5d913fee85610054c486a93f509a362af2c26fa268028ca"
+				},
+				{
+					"version":"1.3.3",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.3/4chan_mass_reply-1.3.3-an+fx.xpi",
+					"update_hash":"sha256:689be1f61d877c3871289bd78294ca26f236cd3f35b0475461669dec64e9a705"
+				},
+				{
+					"version":"1.3.4",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.4/4chan_mass_reply-1.3.4-an+fx.xpi",
+					"update_hash":"sha256:9a2a5dbbcb4c9340fdea811057ce6511898e59619e42721c5fbeab238809c390"
+				},
+				{
+					"version":"1.3.5",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.3.5/4chan_mass_reply-1.3.5-an+fx.xpi",
+					"update_hash":"sha256:d35578fcf269f9b6cf6b88ef43e5679fd5dc64395347ca423b2acd782c5f1740"
+				},
+				{
+					"version":"1.4.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:05f1631444732260b34d11445905b1ff96632cf0047f85fd4b2c888a852b783c"
+				},
+				{
+					"version":"1.4.1",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.1/4chan_mass_reply.xpi",
+					"update_hash":"sha256:77b802444ff0db86de1aeeafb994fad70be85eaf8d29a17e9086cce4049c8a35"
+				},
+				{
+					"version":"1.4.2",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.2/4chan_mass_reply.xpi",
+					"update_hash":"sha256:2b01c7ed952544c1907a3334c1b3ed2eb5dfcc095a5de8ebfade4429acf9ee42"
+				},
+				{
+					"version":"1.4.3",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.4.3/4chan_mass_reply.xpi",
+					"update_hash":"sha256:f37341881d17cc0965c9c6d0879e16768b63437015986df1124cafc2a0e03556"
+				},
+				{
+					"version":"1.5.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.5.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:3c081c7666859392be2cc4f6b112220a7728522a8d23e25a40dd8b6db86a60be"
+				},
+				{
+					"version":"1.5.1",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.5.1/4chan_mass_reply.xpi",
+					"update_hash":"sha256:8d2b32d2714518792e775595010d05325e25e1bf27274fd296628d7d27e29f1e"
+				},
+				{
+					"version":"1.6.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:142a7318e03a7eeb4d2db515d442b67fce03f199a775f45711bfc660aa8c1100"
+				},
+				{
+					"version":"1.6.1",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.1/4chan_mass_reply.xpi",
+					"update_hash":"sha256:20b2c5821bc2c4aa31c2b1c1a3aba09f7ac8d07d76115e7c70afbca57b741955"
+				},
+				{
+					"version":"1.6.2",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/1.6.2/4chan_mass_reply.xpi",
+					"update_hash":"sha256:e366163ee299a675ca5ffa35132cb475fa2676079155738d279d46c1622b986f"
+				},
+				{
+					"version":"2.0.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.0.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:77ab271acb1deb74b8a3409c53c1bb8dd2c496c24e1ffede77b87e7a2beda1e6"
+				},
+				{
+					"version":"2.0.1",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.0.1/4chan_mass_reply.xpi",
+					"update_hash":"sha256:8254e043cb8ac17fb73383895ad547c9da0fcdc258ab40916daf017f50a00cc8"
+				},
+				{
+					"version":"2.1.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.1.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:f4af416f9d5a5e328dedcb8e4a63ccffd7849591c20827b70f59ffa2a6bbe640"
+				},
+				{
+					"version":"2.2.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.2.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:9c09ea56bc808bd1ff1a6466ed34ddd05e0964494577dac94e5ceb7fb2ded4c4"
+				},
+				{
+					"version":"2.3.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/2.3.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:d71c3ad1e306a9f7a5b1a3d0b2bd1ded33a6e899faf7043091a22cd7b596eeb2"
+				},
+				{
+					"version":"3.0.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.0.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:c9cd318fc5d5885d9bc2ae583aed28160d677db21736f7faf83c3831fce04444"
+				},
+				{
+					"version":"3.1.0",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.1.0/4chan_mass_reply.xpi",
+					"update_hash":"sha256:692ba2fdc72ab97c7c88c69c37ad8c8b833d867de731e43fbb0c7519222312ef"
+				}
+			]
+		}
+	}
 }
