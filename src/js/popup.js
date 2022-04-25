@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const cpurl = 'https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json';
+const cpurl = "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json";
 
 function onCreated(tab) {
     console.log("tg");
@@ -28,7 +28,7 @@ function fillField(textData) {
 }
 
 // listn to copy button
-document.getElementById('copy').addEventListener("click", (e) => {
+document.getElementById("copy").addEventListener("click", (e) => {
     function updateClipboard() {
         var newClip = document.getElementById("textField").value;
         if (newClip !== "" && newClip !== "sneed" && newClip !== "This is not a recongized 4chan thread") {
@@ -45,8 +45,8 @@ document.getElementById('copy').addEventListener("click", (e) => {
 // listen to checkbox events
 (function () {
     function valueUpdated(key, value) {
-        if (key === 'showbtns') {
-            document.getElementById('btnsFieldset').disabled = !value;
+        if (key === "showbtns") {
+            document.getElementById("btnsFieldset").disabled = !value;
         }
     }
 
@@ -78,18 +78,18 @@ document.getElementById('copy').addEventListener("click", (e) => {
 })()
 
 // load and store mass-reply format
-document.getElementById('format').addEventListener('change', (evt) => {
+document.getElementById("format").addEventListener("change", (evt) => {
     const value = evt.target.value;
     browser.storage.local.set({
         format: value,
     }).then(console.log(`storage updated`), onError);
 });
-browser.storage.local.get({ format: 'single' }).then((item) => {
-    document.getElementById('format').value = item.format;
+browser.storage.local.get({ format: "single" }).then((item) => {
+    document.getElementById("format").value = item.format;
 });
 
 // load selected shitpost into textarea
-document.getElementById('shitpost-entry').addEventListener('change', (evt) => {
+document.getElementById("shitpost-entry").addEventListener("change", (evt) => {
     const value = evt.target.value;
     for (let i = 0; i < shitposts.length; i++) {
         const name = shitposts[i].name;
@@ -105,13 +105,13 @@ function parseShitposts(shitpostsJson) {
     shitposts = [];
     shitposts = JSON.parse(shitpostsJson);
     if (!shitposts.length) return;
-    const select = document.getElementById('shitpost-entry');
+    const select = document.getElementById("shitpost-entry");
     const selected = select.value;
     while (select.firstChild) {
         select.removeChild(select.firstChild);
     }
     for (let i = 0; i < shitposts.length; i++) {
-        const opt = document.createElement('option');
+        const opt = document.createElement("option");
         const name = shitposts[i].name;
         opt.textContent = opt.value = name;
         select.appendChild(opt);
@@ -124,17 +124,17 @@ function parseShitposts(shitpostsJson) {
 browser.storage.local.get({
     "cpurl": cpurl,
     "shitposts": null,
-    "selectedsp": 'Contribute',
+    "selectedsp": "Contribute",
 }).then((item) => {
     const selected = item.selectedsp;
     if (item.shitposts) {
         parseShitposts(item.shitposts);
     }
-    document.getElementById('cpurl').value = item.cpurl;
+    document.getElementById("cpurl").value = item.cpurl;
 }, (error) => { console.log(`Error: ${error}`); });
 
 browser.storage.onChanged.addListener((changes, area) => {
-    if (area !== 'local') {
+    if (area !== "local") {
         return;
     }
     if (changes.shitposts) {
@@ -163,24 +163,24 @@ for (let messageType of ["regular", "sneed", "dubs"]) {
 }
 
 // button to show cpurl input
-document.getElementById('showurl').onclick = (evt) => {
-    const divUrl = document.getElementById('divurl');
-    if (divUrl.classList.contains('hidden')) {
-        divUrl.classList.remove('hidden');
-        evt.target.classList.add('selected');
+document.getElementById("showurl").onclick = (evt) => {
+    const divUrl = document.getElementById("divurl");
+    if (divUrl.classList.contains("hidden")) {
+        divUrl.classList.remove("hidden");
+        evt.target.classList.add("selected");
     }
     else {
-        divUrl.classList.add('hidden');
-        evt.target.classList.remove('selected');
+        divUrl.classList.add("hidden");
+        evt.target.classList.remove("selected");
     }
 }
 
 // ok button to save entered cpurl
-document.getElementById('urlok').onclick = () => {
-    let url = document.getElementById('cpurl').value;
+document.getElementById("urlok").onclick = () => {
+    let url = document.getElementById("cpurl").value;
     if (!url.trim()) {
         url = cpurl;
-        document.getElementById('cpurl').value = cpurl;
+        document.getElementById("cpurl").value = cpurl;
     }
     browser.storage.local.set({ cpurl: url });
 }
