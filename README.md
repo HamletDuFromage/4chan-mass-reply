@@ -35,6 +35,8 @@ Available features:
   - If thread is too large, which quotes to skip
 * Copypastas
   - Check out copypastas and copy them into the clipboard
+* QoL
+  - If the captcha has a slider, automatically detect where it should go and slide it into place
 
 ## Permissions:
 - Clipboard to copy copypastas into the clipboard and for the button to paste the clipboard into the comment

@@ -57,6 +57,7 @@ document.getElementById('copy').addEventListener("click", (e) => {
         "anonymize": false,
         "nocookie": true,
         "bypassfilter": true,
+        "slidecapt": false,
         "reuse": false,
         "showbtns": true,
         "bttm": false,

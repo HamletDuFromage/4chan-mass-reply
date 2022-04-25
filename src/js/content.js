@@ -4,6 +4,7 @@ import createQuotes from './createQuotes';
 import { initDB, saveFile, loadFile } from './indexedStore';
 import { anonFilename, anonHash, checkFilesize } from './anonFiles';
 import { getBoard, getBoardLimits } from './boardLimits';
+import slideCaptcha from './captchaslider';
 
 const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? false : true;
 
@@ -13,6 +14,7 @@ const fourchanx = document.querySelector('html[class~="fourchan-x"') === null ? 
 const store = {
     "anonymize": false,
     "bypassfilter": true,
+    "slidecapt": false,
     "reuse": false,
     "showbtns": true,
     "bttm": false,
@@ -47,7 +49,7 @@ function isFileInput(e) {
         && /file(?:s)?/i.test(e.type)
     );
     if (result) {
-      console.log('Found file input field', e);
+        console.log('Found file input field', e);
     }
     return result;
 }
@@ -59,7 +61,7 @@ function isCommentArea(e) {
         && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
     );
     if (result) {
-      console.log('Found comment textarea', e);
+        console.log('Found comment textarea', e);
     }
     return result;
 }
@@ -205,6 +207,7 @@ function gotTextArea(e) {
                 let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
                 str += '>' + document.getElementById('m' + repl).innerText
                     .replaceAll('\n', '\n>');
+                str = str.toUpperCase();
                 if (offset + match.length + 1 < value.length) str += '\n';
                 return str;
             });
@@ -218,6 +221,30 @@ function gotTextArea(e) {
 function mutationChange(mutations) {
     spotKym(document);
     mutations.forEach((mutation) => {
+        /*
+         * Detect Captcha loaded
+         * (its ok to check via ElementById comparsion , because only one Captcha
+         *  can be loaded on the site at once)
+         */
+        if (store.slidecapt) {
+            const captchaButton = document.getElementById('t-load');
+            if (captchaButton
+                && mutation.target === captchaButton
+                && mutation.removedNodes
+                && mutation.removedNodes[0].data === "Loading"
+            ) {
+                const tfg = document.getElementById('t-fg');
+                const tbg = document.getElementById('t-bg');
+                const tslider = document.getElementById('t-slider');
+                slideCaptcha(tfg, tbg, tslider);
+                return;
+            }
+        }
+        /*
+         * Detect and hook into other stuff we need, like reply box or floating
+         * QuickReplyBox. There can be multiple of those open together,
+         * so we get each when it appears and don't go for IDs
+         */
         const nodes = mutation.addedNodes;
         for (let n = 0; n < nodes.length; n++) {
             const node = nodes[n];
