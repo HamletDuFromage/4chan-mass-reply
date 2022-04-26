@@ -28,7 +28,7 @@ import {
 
 import {
 	slideCaptcha
-} from "./captchaslider";
+} from "./captcha";
 
 const fourchanx = (document.querySelector("html[class~='fourchan-x'") !== null);
 

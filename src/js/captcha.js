@@ -1,4 +1,8 @@
-'use strict';
+"use strict";
+
+import {
+	debugLog
+} from "./misc";
 
 /*
  * decide if a pixel is closer to black than to white.
@@ -68,7 +72,7 @@ function getBoundries(imgdata) {
         }
         i -= 4;
     }
-    console.log(`Border area of ${cl + cr} pixels in captcha`);
+    debugLog(`Border area of ${cl + cr} pixels in captcha`);
     return chkArray
 }
 
@@ -102,7 +106,7 @@ function getBestPos(bgdata, chkArray, slideWidth) {
             bestPos = s;
         }
     }
-    console.log(`Best slider position with similarity of ${bestSimilarity}: ${bestPos}`);
+    debugLog(`Best slider position with similarity of ${bestSimilarity}: ${bestPos}`);
     return bestPos / slideWidth * 100
 }
 
@@ -129,7 +133,7 @@ function getImageDataFromURI(uri) {
  * Automatically slide captcha into place
  * Arguments are the "t-fg', 't-bg', 't-slider' elements of the captcha
  */
-export default function slideCaptcha(tfgElement, tbgElement, sliderElement) {
+export function slideCaptcha(tfgElement, tbgElement, sliderElement) {
     // get data uris for captcha back- and foreground
     const tbgUri = tbgElement.style.backgroundImage.slice(5, -2);
     const tfgUri = tfgElement.style.backgroundImage.slice(5, -2);
