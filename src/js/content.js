@@ -26,6 +26,10 @@ import {
 	debugLog
 } from "./misc";
 
+import {
+	slideCaptcha
+} from "./captchaslider";
+
 const fourchanx = (document.querySelector("html[class~='fourchan-x'") !== null);
 
 /*
@@ -35,6 +39,7 @@ const store = {
 	anonymizeFile:		false,
 	bypassBanEvasion:	true,
 	bypassFilter:		true,
+	slideCaptcha:		false,
 	reuseFile:			false,
 	postFormButtons:	true,
 	quoteBottom:		false,
@@ -129,13 +134,13 @@ function fileChanged(evt) {
 }
 
 function commentChanged(evt) {
-    const element = evt.target;
-    if (store.bypassFilter) {
-        let comment = element.value.replaceAll('soy', 'ꜱoy');
-        comment = comment.replaceAll('Soy', 'Ṣoy');
-        comment = comment.replaceAll('SOY', 'ṢOY');
-        element.value = comment;
-    }
+	const element = evt.target;
+	if (store.bypassFilter) {
+		let comment = element.value.replaceAll('soy', 'ꜱoy');
+		comment = comment.replaceAll('Soy', 'Ṣoy');
+		comment = comment.replaceAll('SOY', 'ṢOY');
+		element.value = comment;
+	}
 }
 
 function gotFileInput(e) {
@@ -248,6 +253,30 @@ function gotTextArea(e) {
 function mutationChange(mutations) {
 	spotKym(document);
 	mutations.forEach((mutation) => {
+		/*
+		 * Detect Captcha loaded
+		 * (its ok to check via ElementById comparsion , because only one Captcha
+		 *  can be loaded on the site at once)
+		 */
+		if (store.slideCaptcha) {
+			const captchaButton = document.getElementById('t-load');
+			if (captchaButton
+				&& mutation.target === captchaButton
+				&& mutation.removedNodes
+				&& mutation.removedNodes[0].data === "Loading"
+			) {
+				const tfg = document.getElementById('t-fg');
+				const tbg = document.getElementById('t-bg');
+				const tslider = document.getElementById('t-slider');
+				slideCaptcha(tfg, tbg, tslider);
+				return;
+			}
+		}
+		/*
+		 * Detect and hook into other stuff we need, like reply box or floating
+		 * QuickReplyBox. There can be multiple of those open together,
+		 * so we get each when it appears and don't go for IDs
+		 */
 		const nodes = mutation.addedNodes;
 		for (let n = 0; n < nodes.length; n++) {
 			const node = nodes[n];

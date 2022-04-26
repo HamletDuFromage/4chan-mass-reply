@@ -1,94 +1,100 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="../css/popup.css" />
-	</head>
-	
-	<body>
-		<div id="popup-content">
-			<div>
-				<div style="margin:auto; width: fit-content;">
-					<img src="/icons/4chan.png" style="vertical-align:middle">
-					<h1 style="display:inline">4chan Mass Reply - Shitposting suite</h1>
-				</div>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/popup.css" />
+</head>
+
+<body>
+	<div id="popup-content">
+		<div>
+			<div style="margin:auto; width: fit-content;">
+				<img src="/icons/4chan.png" style="vertical-align:middle">
+				<h1 style="display:inline">4chan Mass Reply - Shitposting suite</h1>
 			</div>
-			<h2>Settings</h2>
-			<label><input type="checkbox" id="anonymizeFile" name="anonymizeFile" />Anonymize image uploads</label>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick reply</span>
-			</div>
-			<br>
-			<label><input type="checkbox" id="bypassBanEvasion" name="bypassBanEvasion" />Bypass ban-evasion detection</label>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">Strip '4chan_pass' cookie and randomize user-agent</span>
-			</div>
-			<br>
-			<label><input type="checkbox" id="bypassFilter" name="bypassFilter" />Bypass 'soy' wordfilter</label>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">Change every 'soy' to a string that isn't filtered but looks the same</span>
-			</div>
-			<br>
-			<label><input type="checkbox" id="reuseFile" name="reuseFile" />Remember last used file</label>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">The last selected file will stay selected even on refresh or after posting</span>
-			</div>
-			<br>
-			<label><input type="checkbox" id="postFormButtons" name="postFormButtons" />Show buttons in reply box</label>
-			<br>
-			<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
-			<br>
-			<div>
-				<span>Mass-reply format:</span>
-				<select id="quoteFormat">
-					<option value="single">Single Line</option>
-					<option value="lines">Seperate Lines</option>
-					<option value="tower">Tower</option>
-				</select>
-			</div>
-			<br>
-			<div style="display:flex; justify-content:space-between;">
-				<div class="button" title="Mass reply" id="regular">Mass Reply</div>
-				<div class="button" title="Sneed" id="sneed">Sneed</div>
-				<div class="button" title="Dubs" id="dubs">Check 'em</div>
-			</div>
-			<hr class="solid">
-			<h2>
-				Copypastas 
-				<div class="smallbtn" title="Change pastas URL" id="showPastasUrl">⚙</div>
-			</h2>
-			<div id="formPastasUrlContainer" class="hidden">
-				<div id="formPastasUrl">
-					<input type="text" id="pastasUrl" name="pastasUrl">
-					<div class="tooltip">
-						<span class="tooltipSymbol">&#9432</span>
-						<span class="tooltipText">URL to copypastas.json (leave empty for default)</span>
-					</div>
-					<div class="button" id="setPastasUrl">Set</div>
-				</div>
-				<br>
-			</div>
-			<div id="formPastas">
-				<select id="pastasDropdown">
-					<option value="...">Loading...</option>
-				</select>
-				<div class="button" title="Copy to Clipboard" id="copy">Copy</div>
-			</div>
-			<br>
-			<textarea id="pastaTextarea" rows="9" readonly>Select something above</textarea>
 		</div>
-		<div id="error-content" class="hidden">
-			<p>Can't mass reply on this web page.</p>
+		<h2>Settings</h2>
+		<label><input type="checkbox" id="anonymizeFile" name="anonymizeFile" />Anonymize image uploads</label>
+		<div class="tooltip">
+			<span class="tooltipSymbol">&#9432</span>
+			<span class="tooltipText">Randomize hash and filename.<br>You WILL NOT use this with 4chanX's quick reply</span>
 		</div>
-		
-		<script src="../js/browser-polyfill.min.js"></script>
-		<script src="../js/popup.js"></script>
-	</body>
-	
+		<br>
+		<label><input type="checkbox" id="bypassBanEvasion" name="bypassBanEvasion" />Bypass ban-evasion detection</label>
+		<div class="tooltip">
+			<span class="tooltipSymbol">&#9432</span>
+			<span class="tooltipText">Strip '4chan_pass' cookie and randomize user-agent</span>
+		</div>
+		<br>
+		<label><input type="checkbox" id="bypassFilter" name="bypassFilter" />Bypass 'soy' wordfilter</label>
+		<div class="tooltip">
+			<span class="tooltipSymbol">&#9432</span>
+			<span class="tooltipText">Change every 'soy' to a string that isn't filtered but looks the same</span>
+		</div>
+		<label><input type="checkbox" id="slideCaptcha" name="slideCaptcha" />Automatically slide captcha</label>
+		<div class="tooltip">
+			&#9432
+			<span class="tooltiptext">If the captcha needs a slider, attempt to automatically put it into place</span>
+		</div>
+		<br>
+		<br>
+		<label><input type="checkbox" id="reuseFile" name="reuseFile" />Remember last used file</label>
+		<div class="tooltip">
+			<span class="tooltipSymbol">&#9432</span>
+			<span class="tooltipText">The last selected file will stay selected even on refresh or after posting</span>
+		</div>
+		<br>
+		<label><input type="checkbox" id="postFormButtons" name="postFormButtons" />Show buttons in reply box</label>
+		<br>
+		<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
+		<br>
+		<div>
+			<span>Mass-reply format:</span>
+			<select id="quoteFormat">
+				<option value="single">Single Line</option>
+				<option value="lines">Seperate Lines</option>
+				<option value="tower">Tower</option>
+			</select>
+		</div>
+		<br>
+		<div style="display:flex; justify-content:space-between;">
+			<div class="button" title="Mass reply" id="regular">Mass Reply</div>
+			<div class="button" title="Sneed" id="sneed">Sneed</div>
+			<div class="button" title="Dubs" id="dubs">Check 'em</div>
+		</div>
+		<hr class="solid">
+		<h2>
+			Copypastas
+			<div class="smallbtn" title="Change pastas URL" id="showPastasUrl">⚙</div>
+		</h2>
+		<div id="formPastasUrlContainer" class="hidden">
+			<div id="formPastasUrl">
+				<input type="text" id="pastasUrl" name="pastasUrl">
+				<div class="tooltip">
+					<span class="tooltipSymbol">&#9432</span>
+					<span class="tooltipText">URL to copypastas.json (leave empty for default)</span>
+				</div>
+				<div class="button" id="setPastasUrl">Set</div>
+			</div>
+			<br>
+		</div>
+		<div id="formPastas">
+			<select id="pastasDropdown">
+				<option value="...">Loading...</option>
+			</select>
+			<div class="button" title="Copy to Clipboard" id="copy">Copy</div>
+		</div>
+		<br>
+		<textarea id="pastaTextarea" rows="9" readonly>Select something above</textarea>
+	</div>
+	<div id="error-content" class="hidden">
+		<p>Can't mass reply on this web page.</p>
+	</div>
+
+	<script src="../js/browser-polyfill.min.js"></script>
+	<script src="../js/popup.js"></script>
+</body>
+
 </html>

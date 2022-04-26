@@ -33,6 +33,7 @@ document.getElementById("copy").addEventListener("click", (e) => {
 		anonymizeFile:		false,
 		bypassBanEvasion: 	true,
 		bypassFilter: 		true,
+		slideCaptcha:		false,
 		reuseFile: 			false,
 		postFormButtons: 	true,
 		quoteBottom: 		false,
