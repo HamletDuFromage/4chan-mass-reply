@@ -38,8 +38,17 @@ export function anonHash(file) {
                     const canvas = cvs.getContext("2d");
                     console.log("Change Imagehash");
                     canvas.drawImage(imgs, 0, 0);
-                    canvas.fillStyle = "rgba(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ",255)";
-                    canvas.fillRect(Math.floor(Math.random() * cvs.width), Math.floor(Math.random() * cvs.height), 1, 1);
+                    const randX = Math.floor(Math.random() * cvs.width);
+                    const randY = Math.floor(Math.random() * cvs.height);
+                    const curPxl = canvas.getImageData(randX, randY, 1, 1).data;
+                    let r = curPxl[0] + Math.floor(Math.random() * 7);
+                    let g = curPxl[1] + Math.floor(Math.random() * 7);
+                    let b = curPxl[2] + Math.floor(Math.random() * 7);
+                    if (r > 255) r = curPxl[0] - Math.floor(Math.random() * 7);
+                    if (g > 255) g = curPxl[1] - Math.floor(Math.random() * 7);
+                    if (b > 255) b = curPxl[2] - Math.floor(Math.random() * 7);
+                    canvas.fillStyle = "rgba(" + r + "," + g + "," + b + ",255)";
+                    canvas.fillRect(randX, randY, 1, 1);
                     const newImageData = cvs.toBlob(function (blob) {
                         file = new File([blob], filename, { type: mimetype });
                         return resolve(file);

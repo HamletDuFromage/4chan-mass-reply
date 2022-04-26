@@ -1,9 +1,10 @@
 "use strict";
 
-import createQuotes from "./createQuotes";
-import { initDB, saveFile, loadFile } from "./indexedStore";
-import { anonFilename, anonHash, checkFilesize } from "./anonFiles";
-import { getBoard, getBoardInfo } from "./boardLimits";
+import createQuotes from './createQuotes';
+import { initDB, saveFile, loadFile } from './indexedStore';
+import { anonFilename, anonHash, checkFilesize } from './anonFiles';
+import { getBoard, getBoardInfo } from './boardLimits';
+import slideCaptcha from './captchaslider';
 
 const fourchanx = document.querySelector("html[class~='fourchan-x'") === null ? false : true;
 
@@ -13,6 +14,7 @@ const fourchanx = document.querySelector("html[class~='fourchan-x'") === null ? 
 const store = {
     "anonymize": false,
     "bypassfilter": true,
+    "slidecapt": false,
     "reuse": false,
     "showbtns": true,
     "bttm": false,
@@ -47,7 +49,7 @@ function isFileInput(e) {
         && /file(?:s)?/i.test(e.type)
     );
     if (result) {
-      console.log("Found file input field", e);
+        console.log('Found file input field', e);
     }
     return result;
 }
@@ -59,7 +61,7 @@ function isCommentArea(e) {
         && (e.getAttribute("name") === "com" || e.getAttribute("data-name") === "com")
     );
     if (result) {
-      console.log("Found comment textarea", e);
+        console.log('Found comment textarea', e);
     }
     return result;
 }
@@ -176,45 +178,45 @@ function gotTextArea(e) {
         createButton(ui, "⚔","Mass Reply", () => {
             addQuotesText(e, "regular");
         });
-		createButton(ui, "☝", "Check \'em", () => {
-			addQuotesText(e, "dubs");
-		});	
-		if (window.location.href.includes("/thread/")) {
-			createButton(ui, "🚜", "SNEED", () => {
-				if (e.value && e.value.slice(-1) !== "\n") e.value += "\n";
-				e.value += "SNEED";
-				e.scrollTop = e.scrollHeight;
-				e.focus();
-			});
-			if (window.location.href.includes("/pol/")) {
-				createButton(ui, "🏴", "Quote Memeflags", () => {
-					addQuotesText(e, "memeflags");
-				});
-			}
-			const board = getBoard();
-			if (board && getBoardInfo(board).hasUserIDs) {
-				createButton(ui, "❶", "Quote 1pbtIDs", () => {
-					addQuotesText(e, "1pbtid");
-				});
-				createButton(ui, "🏆", "Rankings", () => {
-					addQuotesText(e, "rankings");
-				});
-			}
-			createButton(ui, "💩", "KYM", () => {
-				addQuotesText(e, "kym");
-			});
-			createButton(ui, "😮", "Soyquote", () => {
-				e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
-					let str = (offset && value.charAt(offset - 1) !== "\n") ? "\n" : "";
-					str += ">" + document.getElementById("m" + repl).innerText
-						.replaceAll("\n", "\n>");
-					if (offset + match.length + 1 < value.length) str += "\n";
-					return str;
-				});
-				e.scrollTop = e.scrollHeight;
-				e.focus();
-			});
-		}
+        createButton(ui, "☝", "Check \'em", () => {
+            addQuotesText(e, "dubs");
+        });	
+        if (window.location.href.includes("/thread/")) {
+            createButton(ui, "🚜", "SNEED", () => {
+                if (e.value && e.value.slice(-1) !== "\n") e.value += "\n";
+                e.value += "SNEED";
+                e.scrollTop = e.scrollHeight;
+                e.focus();
+            });
+            if (window.location.href.includes("/pol/")) {
+                createButton(ui, "🏴", "Quote Memeflags", () => {
+                    addQuotesText(e, "memeflags");
+                });
+            }
+            const board = getBoard();
+            if (board && getBoardInfo(board).hasUserIDs) {
+                createButton(ui, "❶", "Quote 1pbtIDs", () => {
+                    addQuotesText(e, "1pbtid");
+                });
+                createButton(ui, "🏆", "Rankings", () => {
+                    addQuotesText(e, "rankings");
+                });
+            }
+            createButton(ui, "💩", "KYM", () => {
+                addQuotesText(e, "kym");
+            });
+            createButton(ui, "😮", "Soyquote", () => {
+                e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+                    let str = (offset && value.charAt(offset - 1) !== "\n") ? "\n" : "";
+                    str += ">" + document.getElementById("m" + repl).innerText
+                      .replaceAll("\n", "\n>");
+                    if (offset + match.length + 1 < value.length) str += "\n";
+                    return str;
+                });
+                e.scrollTop = e.scrollHeight;
+                e.focus();
+            });
+        }
         e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
     }
 }
@@ -222,6 +224,30 @@ function gotTextArea(e) {
 function mutationChange(mutations) {
     spotKym(document);
     mutations.forEach((mutation) => {
+        /*
+         * Detect Captcha loaded
+         * (its ok to check via ElementById comparsion , because only one Captcha
+         *  can be loaded on the site at once)
+         */
+        if (store.slidecapt) {
+            const captchaButton = document.getElementById('t-load');
+            if (captchaButton
+                && mutation.target === captchaButton
+                && mutation.removedNodes
+                && mutation.removedNodes[0].data === "Loading"
+            ) {
+                const tfg = document.getElementById('t-fg');
+                const tbg = document.getElementById('t-bg');
+                const tslider = document.getElementById('t-slider');
+                slideCaptcha(tfg, tbg, tslider);
+                return;
+            }
+        }
+        /*
+         * Detect and hook into other stuff we need, like reply box or floating
+         * QuickReplyBox. There can be multiple of those open together,
+         * so we get each when it appears and don't go for IDs
+         */
         const nodes = mutation.addedNodes;
         for (let n = 0; n < nodes.length; n++) {
             const node = nodes[n];
