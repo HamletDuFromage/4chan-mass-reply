@@ -253,16 +253,17 @@ function mutationChange(mutations) {
    *  can be loaded on the site at once)
    */
     if (store.slideCaptcha) {
-      const captchaButton = document.getElementById('t-load');
-      if (captchaButton
-    && mutation.target === captchaButton
-    && mutation.removedNodes
-    && mutation.removedNodes[0].data === 'Loading'
+      if (mutation.target
+        && mutation.target.id === 't-load'
+        && mutation.removedNodes
+        && mutation.removedNodes[0].data === 'Loading'
       ) {
         const tfg = document.getElementById('t-fg');
         const tbg = document.getElementById('t-bg');
         const tslider = document.getElementById('t-slider');
+        const tresp = document.getElementById('t-resp');
         slideCaptcha(tfg, tbg, tslider);
+        tresp.focus();
         return;
       }
     }
