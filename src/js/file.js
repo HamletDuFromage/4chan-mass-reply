@@ -23,16 +23,19 @@ export function anonHash(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-      const random = crypto.getRandomValues(new BigUint64Array(1));
-      debugLog(`Changing the hash of the file (random: ${random})`);
+      debugLog('Changing the hash of the file');
 
       let newFile = [];
-      if (file.type === 'image/jpeg') {
-        newFile = [reader.result.slice(0, -10), random, reader.result.slice(-2)];
-      } else if (file.type === 'image/png') {
+      if (file.type === 'image/png') {
         newFile = changeModificationTime(reader.result);
       } else {
-        newFile = [reader.result, random];
+        const random = crypto.getRandomValues(new BigUint64Array(1));
+
+        if (file.type === 'image/jpeg') {
+          newFile = [reader.result.slice(0, -10), random, reader.result.slice(-2)];
+        } else {
+          newFile = [reader.result, random];
+        }
       }
 
       const nFile = new File(newFile, file.name, { type: file.type });

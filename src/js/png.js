@@ -74,9 +74,13 @@ function createTIMEChunk(dateTime) {
 /*
  * various PNG chunk types
  */
+// eslint-disable-next-line no-unused-vars
 const TYPE_TIME = 0x74494d45;
+// eslint-disable-next-line no-unused-vars
 const TYPE_IHDR = 0x49484452;
+// eslint-disable-next-line no-unused-vars
 const TYPE_IDAT = 0x49444154;
+// eslint-disable-next-line no-unused-vars
 const TYPE_IEND = 0x49454e44;
 
 /*
@@ -90,7 +94,7 @@ function searchForChunk(buffer, type) {
   while (i < length) {
     const chunkLength = view.getUint32(i);
     i += 4;
-    let chunkType = Number(view.getUint32(i));
+    const chunkType = Number(view.getUint32(i));
     if (chunkType === type) {
       return i;
     }
