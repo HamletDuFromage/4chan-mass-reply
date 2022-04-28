@@ -245,7 +245,6 @@ function gotTextArea(e) {
 }
 
 function mutationChange(mutations) {
-  spotKym(document);
   mutations.forEach((mutation) => {
     /*
    * Detect Captcha loaded
@@ -268,6 +267,12 @@ function mutationChange(mutations) {
       }
     }
     /*
+     * mark kym filenames
+     * TODO: would be better to not run it on the whole document on
+     * each mutation
+     */
+    spotKym(document);
+    /*
    * Detect and hook into other stuff we need, like reply box or floating
    * QuickReplyBox. There can be multiple of those open together,
    * so we get each when it appears and don't go for IDs
@@ -275,6 +280,7 @@ function mutationChange(mutations) {
     const nodes = mutation.addedNodes;
     for (let n = 0; n < nodes.length; n++) {
       const node = nodes[n];
+
       if (isFileInput(node)) {
         // if element itself is input=file
         gotFileInput(node);
