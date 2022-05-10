@@ -1,57 +1,57 @@
 {
-  "manifest_version": 2,
-  "name": "4chan Mass Reply",
-  "author": "HamletDuFromage",
-  "version": "3.1.0",
-  "description": "Post more efficiently",
-  "homepage_url": "https://github.com/HamletDuFromage/4chan_Mass_Quotes",
-  "icons": {
-    "48": "icons/janny-48.png",
-    "96": "icons/janny-96.png"
-  },
-  "permissions": [
-    "*://*.4channel.org/*",
-    "*://*.4chan.org/*",
-    "activeTab",
-    "clipboardRead",
-    "clipboardWrite",
-    "storage",
-    "contextMenus",
-    "cookies",
-    "webRequest",
-    "webRequestBlocking"
-  ],
-  "background": {
-    "scripts": [
-      "js/browser-polyfill.min.js",
-      "js/background.js"
-    ]
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.4chan.org/*",
-        "*://*.4channel.org/*"
-      ],
-      "js": [
-        "js/browser-polyfill.min.js",
-        "js/content.js"
-      ],
-      "css": [
-        "css/content.css"
-      ]
-    }
-  ],
-  "browser_action": {
-    "browser_style": true,
-    "default_icon": "icons/janny-32.png",
-    "default_title": "4chan Mass Quote",
-    "default_popup": "html/popup.html"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "id@id.com",
-      "update_url": "https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-quote/master/updates.json"
-    }
-  }
+	"manifest_version":2,
+	"name":"4chan Mass Reply",
+	"author":"HamletDuFromage",
+	"version":"3.1.0",
+	"description":"Post more efficiently",
+	"homepage_url":"https://github.com/HamletDuFromage/4chan_Mass_Quotes",
+	"icons":{
+		"48":"icons/janny-48.png",
+		"96":"icons/janny-96.png"
+	},
+	"permissions":[
+		"*://*.4channel.org/*",
+		"*://*.4chan.org/*",
+		"activeTab",
+		"clipboardRead",
+		"clipboardWrite",
+		"storage",
+		"contextMenus",
+		"cookies",
+		"webRequest",
+		"webRequestBlocking"
+	],
+	"background":{
+		"scripts":[
+			"js/browser-polyfill.min.js",
+			"js/background.js"
+		]
+	},
+	"content_scripts":[
+		{
+			"matches":[
+				"*://*.4chan.org/*",
+				"*://*.4channel.org/*"
+			],
+			"js":[
+				"js/browser-polyfill.min.js",
+				"js/content.js"
+			],
+			"css":[
+				"css/content.css"
+			]
+		}
+	],
+	"browser_action":{
+		"browser_style":true,
+		"default_icon":"icons/janny-32.png",
+		"default_title":"4chan Mass Quote",
+		"default_popup":"html/popup.html"
+	},
+	"browser_specific_settings":{
+		"gecko":{
+			"id":"id@id.com",
+			"update_url":"https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/updates.json"
+		}
+	}
 }

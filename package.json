@@ -8,7 +8,8 @@
     },
     "scripts": {
         "dev": "webpack --mode=development --watch",
-        "build": "webpack --mode=production"
+        "build": "webpack --mode=production",
+        "lint": "eslint --ext .js src"
     },
     "license": "GPLv3",
     "bugs": {

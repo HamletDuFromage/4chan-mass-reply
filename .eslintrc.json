@@ -1,0 +1,22 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "browser": "readonly",
+    "BigUint64Array": "readonly"
+  },
+  "rules": {
+    "no-plusplus": "off",
+    "no-console": "off",
+    "default-case": "off",
+    "no-continue": "off",
+    "no-mixed-operators": "off",
+    "prefer-destructuring": "off",
+    "no-bitwise": "off",
+    "no-use-before-define": [ "error", {
+      "functions": false
+    }]
+  }
+}
