@@ -51,7 +51,7 @@ function spotKym(element) {
     return;
   }
   filenameDOMs.forEach((filenameDOM) => {
-    if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+/.test(filenameDOM.textContent)) {
+    if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/.test(filenameDOM.textContent)) {
       // eslint-disable-next-line no-param-reassign
       filenameDOM.style.backgroundColor = '#FDFF47';
     }

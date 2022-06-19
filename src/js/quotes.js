@@ -175,7 +175,7 @@ function createQuotes(action, quoteFormat, quoteBottom) {
       }
       if (filenameDOM !== null) {
         filename = filenameDOM.textContent;
-        if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+/.test(filename)) {
+        if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/.test(filename)) {
           kym.push(`>${filename}`);
         }
       }
