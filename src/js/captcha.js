@@ -130,8 +130,7 @@ function getImageDataFromURI(uri) {
  * Automatically slide captcha into place
  * Arguments are the "t-fg', 't-bg', 't-slider' elements of the captcha
  */
-function slideCaptcha(tfgElement, tbgElement, sliderElement) {
-  const slider = sliderElement;
+export function slideCaptcha(tfgElement, tbgElement, sliderElement, answerElement) {
   // get data uris for captcha back- and foreground
   const tbgUri = tbgElement.style.backgroundImage.slice(5, -2);
   const tfgUri = tfgElement.style.backgroundImage.slice(5, -2);
@@ -142,22 +141,19 @@ function slideCaptcha(tfgElement, tbgElement, sliderElement) {
   }
 
   // load foreground (image with holes)
-  getImageDataFromURI(tfgUri)
-    .then((igd) => {
-      // get array with pixels of foreground
-      // that we compare to background
-      const chkArray = getBoundries(igd);
-      // load background (image that gets slid)
-      getImageDataFromURI(tbgUri)
-        .then((sigd) => {
-          const slideWidth = sigd.width - igd.width;
-          // slide, compare and get best matching position
-          const sliderPos = getBestPos(sigd, chkArray, slideWidth);
-          // slide in the UI
-          slider.value = sliderPos;
-          slider.dispatchEvent(new Event('input'), { bubbles: true });
-        });
+  getImageDataFromURI(tfgUri).then((igd) => {
+    // get array with pixels of foreground
+    // that we compare to background
+    const chkArray = getBoundries(igd);
+    // load background (image that gets slid)
+    getImageDataFromURI(tbgUri).then((sigd) => {
+      const slideWidth = sigd.width - igd.width;
+      // slide, compare and get best matching position
+      const sliderPos = getBestPos(sigd, chkArray, slideWidth);
+      // slide in the UI
+      sliderElement.value = sliderPos;
+      sliderElement.dispatchEvent(new Event('input'), { bubbles: true });
+      answerElement.focus();
     });
+  });
 }
-
-export default slideCaptcha;

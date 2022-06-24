@@ -30,7 +30,7 @@ const init = () => {
     anonymizeFile: false,
     bypassBanEvasion: true,
     bypassFilter: true,
-    slideCaptcha: false,
+    slideCaptcha: true,
     reuseFile: false,
     postFormButtons: true,
     quoteBottom: false,

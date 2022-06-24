@@ -17,6 +17,8 @@
     "no-bitwise": "off",
     "no-use-before-define": [ "error", {
       "functions": false
-    }]
+    }],
+    "import/prefer-default-export": "off",
+    "no-param-reassign": "off"
   }
 }

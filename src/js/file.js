@@ -1,10 +1,10 @@
 import {
   debugLog,
 } from './misc';
+
 import {
   changeModificationTime,
 } from './png';
-
 /*
  * change filename to random timestamp of the past year
  */
@@ -91,9 +91,7 @@ export function fileConvert(file) {
  * check if file is within filesize limit, recompress into jpg if not.
  * if jpeg is still too large, reduce it's compression level till it fits
  */
-export function fileCompress(file, maxImageSize, compressionLvl) {
-  let compressionLevel = compressionLvl;
-
+export function fileCompress(file, maxImageSize, compressionLevel) {
   return new Promise((resolve) => {
     if (file.size < maxImageSize) {
       if (compressionLevel) {
