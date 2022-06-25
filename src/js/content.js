@@ -209,6 +209,25 @@ function gotTextArea(e) {
       });
     });
 
+    createButton(ui, '🚜', 'Sneed', () => {
+      if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+      e.value += 'sneed';
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
+    createButton(ui, '😮', 'Soyquote', () => {
+      e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+        let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
+        str += `>${document.getElementById(`m${repl}`).innerText
+          .replaceAll('\n', '\n>')}`;
+        if (offset + match.length + 1 < value.length) str += '\n';
+        return str;
+      });
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
     createButton(ui, '⚔️', 'Mass Reply', () => {
       addQuotesText(e, 'regular');
     });
@@ -218,43 +237,23 @@ function gotTextArea(e) {
     });
 
     if (window.location.href.includes('/thread/')) {
-      createButton(ui, '🚜', 'Sneed', () => {
-        if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-        e.value += 'sneed';
-        e.scrollTop = e.scrollHeight;
-        e.focus();
-      });
-
-      if (window.location.href.includes('/pol/')) {
-        createButton(ui, '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Quote Memeflags', () => {
-          addQuotesText(e, 'memeflags');
-        });
-      }
-
       const board = getBoard();
-      if (board && getBoardInfo(board).hasUserIDs) {
+      if (getBoardInfo(board).hasUserIDs) {
         createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
           addQuotesText(e, '1pbtid');
         });
         createButton(ui, '🏆', 'Rankings', () => {
           addQuotesText(e, 'rankings');
         });
+        if (board === 'pol') {
+          createButton(ui, '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Quote Memeflags', () => {
+            addQuotesText(e, 'memeflags');
+          });
+        }
       }
 
       createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
-      });
-
-      createButton(ui, '😮', 'Soyquote', () => {
-        e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
-          let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
-          str += `>${document.getElementById(`m${repl}`).innerText
-            .replaceAll('\n', '\n>')}`;
-          if (offset + match.length + 1 < value.length) str += '\n';
-          return str;
-        });
-        e.scrollTop = e.scrollHeight;
-        e.focus();
       });
     }
     e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
