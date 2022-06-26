@@ -1,46 +1,39 @@
 # 4chan Mass Reply browser extension
-<img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/HamletDuFromage/4chan-mass-quote/total">
+<img alt="total downloads" src="https://img.shields.io/github/downloads/HamletDuFromage/4chan-mass-quote/total">
 
-Inspired by /tv/'s posting culture, this browser extension aims to facilitate the creation of mass replies on 4chan.org and 4channel.org, and also reply to dubs.
+Inspired by /tv/'s posting culture, this browser extension aims to facilitate the creation of mass replies on 4chan.org and 4channel.org.
 
-## Usage
-Use the buttons in the reply box for (left to right):
+## Features:
 
-![replybox](screenshots/replybox.png)
-
-- Clear comment box
-- Paste clipboard into comment box
-- Mass Quote all the replies in the thread.
-- Add "SNEED" at the end.
-- Quote posts with repeating digits.
-- Quote posts with memeflags (on /pol/)
-- Quote posts from 1-post-by-this-ID users (all boards with IDs)
-- Print rank of users by post amount (all boars with IDs)
-- Quote knowyourmeme.com filenames.
-- Convert quotelinks into soyquotes (in example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
-
-Click on the toolbar icon to change settings or to copy a copypasta into the clipboard.
+- Anonymize image uploads by randomizing hash and filename
+- Bypass ban evasion detection by stripping the cookies
+- Evade soy wordfilters by replacing it with a different but equally readable text
+- Automatically slide captcha it into the right position
+- Reattach the last selected file
+- Configurable mass reply with multiple targets
+- Built-in copypastas
 
 ![popup](screenshots/popup.png)
 
-Available features:
+## Usage
+Use the buttons in the reply box for (left to right):
+- Clear comment field
+- Paste clipboard into the comment field
+- Append "sneed"
+- Convert quotelinks into soyquotes (for example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
+- Reply to every post on the page
+- Reply to posts with repeating digits in the post number
+- Reply to 1-post-by-this-ID
+- Reply to /pol/ memeflag posts
+- Rank IDs by their post count
+- Quote knowyourmeme.com filenames
 
-* Evasion 
-  - Anonymize image uploads by changing hash and randomizing filename (toggleable).
-  - Strip cookies from post uploads (toggleable).
-  - Evade soy wordfilters by replacing it with a different but equally readable text.
-  - Auto-select the last used file
-* Mass Quote settings
-  - Format of the mass-quote (one quote per line, multiple, etc.)
-  - If thread is too large, which quotes to skip
-* Copypastas
-  - Check out copypastas and copy them into the clipboard
-* QoL
-  - If the captcha has a slider, automatically detect where it should go and slide it into place
+![replybox](screenshots/replybox.png)
+
 
 ## Permissions:
-- Clipboard to copy copypastas into the clipboard and for the button to paste the clipboard into the comment
-- Storage to save the parameter between each use 
+- Clipboard to copy copypastas and the paste clipboard button
+- Storage to save the settings between each use
 - Access to 4chan and 4channel to be able to delete cookies
 
 ## Install
@@ -51,7 +44,7 @@ Available features:
 - https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
 
 ### Chrome/Chromium/Brave
-The extension has been ported to Chromium based browsers. Download the zip file in the release and sideload it. 
+Download the ZIP archive from the release section and sideload it.
 
 ### Android
 Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files. Go to `about:config` and set `xpinstall.signatures.required` to `false` and then sideload the app in the settings (Advanced settings > Sideload XPI).

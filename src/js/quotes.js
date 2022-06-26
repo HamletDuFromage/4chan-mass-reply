@@ -7,9 +7,11 @@ import {
   getNumberWithOrdinal,
 } from './misc';
 
-function createQuotesString(strArray, qFormat, bottom, characterLimit, maxLines) {
+const kymRegex = /^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/;
+
+function createQuotesString(strArray, quoteFormat, bottom, characterLimit, maxLines) {
   let res = '';
-  const quoteFormat = qFormat || 'single';
+  quoteFormat = quoteFormat || 'single';
   const strLength = strArray[0].length;
   const spacing = (quoteFormat === 'tower') ? 3 : 1; // to account for spaces and linebreaks
   const quotesNumber = Math.min(
@@ -84,25 +86,27 @@ function getUIDStats(posts) {
   return postids;
 }
 
-function createQuotes(action, quoteFormat, quoteBottom) {
+export function createQuotes(action, quoteFormat, quoteBottom) {
   const board = getBoard();
   if (!board) return '';
 
   let str = '';
-  const fourchanx = document.querySelector("html[class~='fourchan-x'") !== null;
+
+  const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
+
   const limits = getBoardInfo(board);
   const maxLines = limits.maxLines;
   const characterLimit = limits.characterLimit;
 
-  let postElements = [];
+  let posts = [];
   if (/\/catalog$/.test(window.location.href)) {
-    postElements = document.getElementsByClassName('thread');
+    posts = document.getElementsByClassName('thread');
   } else {
-    postElements = document.querySelectorAll("div[class~='postContainer']:not([data-clone])");
+    posts = document.querySelectorAll("div[class~='postContainer']:not([data-clone])");
   }
 
   if (action === 'regular' || action === 'sneed') {
-    const ids = Array.from(postElements).map((e) => `>>${e.id.match(/(?<=\D+)\d+/)}`);
+    const ids = Array.from(posts).map((e) => `>>${e.id.match(/(?<=\D+)\d+/)}`);
     str += createQuotesString(ids, quoteFormat, quoteBottom, characterLimit, maxLines);
 
     if (action === 'sneed') {
@@ -110,41 +114,41 @@ function createQuotes(action, quoteFormat, quoteBottom) {
     }
   } else if (action === 'dubs') {
     const dubs = [];
-    for (let i = 0; i < postElements.length; i++) {
-      if (/(\d)\1\b/.test(postElements[i].id)) {
-        dubs.push(`>>${postElements[i].id.match(/(?<=\D+)\d+/)}`);
+    for (let i = 0; i < posts.length; i++) {
+      if (/(\d)\1\b/.test(posts[i].id)) {
+        dubs.push(`>>${posts[i].id.match(/(?<=\D+)\d+/)}`);
       }
     }
     if (!dubs.length) return 'No posts with digits found';
     str += createQuotesString(dubs, quoteFormat, quoteBottom, characterLimit, maxLines);
   } else if (action === 'memeflags') {
     const memeflags = [];
-    for (let i = 0; i < postElements.length; i++) {
-      if (postElements[i].getElementsByClassName('bfl').length) {
-        memeflags.push(`>>${postElements[i].id.slice(2)}`);
+    for (let i = 0; i < posts.length; i++) {
+      if (posts[i].getElementsByClassName('bfl').length) {
+        memeflags.push(`>>${posts[i].id.slice(2)}`);
       }
     }
     if (!memeflags.length) return 'No memeflags in this thread';
     str += createQuotesString(memeflags, quoteFormat, quoteBottom, characterLimit, maxLines);
   } else if (action === '1pbtid') {
     const onepbtid = [];
-    const postids = getUIDStats(postElements);
+    const postids = getUIDStats(posts);
     const uids = Object.keys(postids);
     for (let c = 0; c < uids.length; c++) {
-      const posts = postids[uids[c]];
-      if (posts[1] === 1) {
-        onepbtid.push(`>>${posts[0][0]}`);
+      const uidstat = postids[uids[c]];
+      if (uidstat[1] === 1) {
+        onepbtid.push(`>>${uidstat[0][0]}`);
       }
     }
     if (!onepbtid.length) return 'No 1pbtids';
     str += createQuotesString(onepbtid, quoteFormat, quoteBottom, characterLimit, maxLines);
   } else if (action === 'rankings') {
     const ranking = [];
-    const postids = getUIDStats(postElements);
+    const postids = getUIDStats(posts);
     const uids = Object.keys(postids);
     for (let c = 0; c < uids.length; c++) {
-      const posts = postids[uids[c]];
-      ranking.push([uids[c], posts[0], posts[1]]);
+      const uidstat = postids[uids[c]];
+      ranking.push([uids[c], uidstat[0], uidstat[1]]);
     }
     ranking.sort((e1, e2) => e2[2] - e1[2]);
     for (let v = 0; v < ranking.length; v++) {
@@ -167,15 +171,15 @@ function createQuotes(action, quoteFormat, quoteBottom) {
     const kym = [];
     let filename = null;
     let filenameDOM = null;
-    for (let i = 0; i < postElements.length; i++) {
-      if (fourchanx) {
-        filenameDOM = postElements[i].querySelector("div[class~='fileText'] > span[class~='file-info'] > a[target]");
+    for (let i = 0; i < posts.length; i++) {
+      if (is4chanX) {
+        filenameDOM = posts[i].querySelector("div[class~='fileText'] > span[class~='file-info'] > a[target]");
       } else {
-        filenameDOM = postElements[i].querySelector("[class~='fileText'] > a");
+        filenameDOM = posts[i].querySelector("[class~='fileText'] > a");
       }
       if (filenameDOM !== null) {
         filename = filenameDOM.textContent;
-        if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/.test(filename)) {
+        if (kymRegex.test(filename)) {
           kym.push(`>${filename}`);
         }
       }
@@ -186,5 +190,3 @@ function createQuotes(action, quoteFormat, quoteBottom) {
 
   return str;
 }
-
-export default createQuotes;

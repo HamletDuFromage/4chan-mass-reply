@@ -1,4 +1,6 @@
-import createQuotes from './quotes';
+import {
+  createQuotes,
+} from './quotes';
 
 import {
   initDB,
@@ -22,9 +24,12 @@ import {
   debugLog,
 } from './misc';
 
-import slideCaptcha from './captcha';
+import {
+  slideCaptcha,
+} from './captcha';
 
-const fourchanx = (document.querySelector("html[class~='fourchan-x'") !== null);
+const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
+const isMobile = (window.getComputedStyle(document.getElementById('boardNavMobile'), null).display !== 'none');
 
 /*
  * default values, make sure its the same as in popup.js
@@ -33,36 +38,45 @@ const store = {
   anonymizeFile: false,
   bypassBanEvasion: true,
   bypassFilter: true,
-  slideCaptcha: false,
+  slideCaptcha: true,
   reuseFile: false,
   postFormButtons: true,
   quoteBottom: false,
   quoteFormat: 'single',
 };
 
+const kymRegex = /^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/;
+
 function spotKym(element) {
   let filenameDOMs = null;
-  if (fourchanx) {
+  if (is4chanX) {
     filenameDOMs = element.querySelectorAll("div[class~='fileText'] > span[class~='file-info'] > a[target]");
   } else {
     filenameDOMs = element.querySelectorAll("div[class~='fileText'] > a[target]");
   }
-  if (!filenameDOMs.length) {
-    return;
-  }
-  filenameDOMs.forEach((filenameDOM) => {
-    if (/^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/.test(filenameDOM.textContent)) {
-      // eslint-disable-next-line no-param-reassign
-      filenameDOM.style.backgroundColor = '#FDFF47';
+  for (let i = 0; i < filenameDOMs.length; ++i) {
+    if (kymRegex.test(filenameDOMs[i].textContent)) {
+      if (isMobile) {
+        const fileDiv = filenameDOMs[i].parentElement.parentElement;
+        if (fileDiv) {
+          const fileInfo = fileDiv.getElementsByClassName('mFileInfo');
+          if (fileInfo && fileInfo[0]) {
+            fileInfo[0].style.backgroundColor = '#FDFF47';
+          }
+        }
+      } else {
+        filenameDOMs[i].style.backgroundColor = '#FDFF47';
+      }
     }
-  });
+  }
 }
 
 function isFileInput(e) {
-  const result = (typeof e.type !== 'undefined'
-  && e.nodeType === 1
-  && e.tagName === 'INPUT'
-  && /file(?:s)?/i.test(e.type)
+  const result = (
+    typeof e.type !== 'undefined'
+        && e.nodeType === 1
+        && e.tagName === 'INPUT'
+        && /file(?:s)?/i.test(e.type)
   );
   if (result) {
     debugLog('Found file input: ', e);
@@ -72,9 +86,9 @@ function isFileInput(e) {
 
 function isCommentArea(e) {
   const result = (typeof e.type !== 'undefined'
-  && e.nodeType === 1
-  && e.tagName === 'TEXTAREA'
-  && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
+        && e.nodeType === 1
+        && e.tagName === 'TEXTAREA'
+        && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
   );
   if (result) {
     debugLog('Found comment textarea: ', e);
@@ -82,9 +96,9 @@ function isCommentArea(e) {
   return result;
 }
 
-function createFileList(x) {
+function createFileList(a) {
   // eslint-disable-next-line prefer-rest-params
-  const a = [].slice.call(Array.isArray(x) ? x : arguments);
+  a = [].slice.call(Array.isArray(a) ? a : arguments);
   let b = a.length;
   let c = b;
   let d = true;
@@ -107,8 +121,7 @@ function fileChanged(evt) {
   fileConvert(file).then((convertedFile) => {
     element.files = createFileList(convertedFile);
     const maxImageSize = getBoardInfo(board).maxImageFilesize;
-    fileCompress(convertedFile, maxImageSize).then((cFile) => {
-      let compressedFile = cFile;
+    fileCompress(convertedFile, maxImageSize).then((compressedFile) => {
       element.files = createFileList(compressedFile);
       if (store.reuseFile) {
         saveFile(compressedFile).catch(debugLog);
@@ -130,10 +143,14 @@ function fileChanged(evt) {
 function commentChanged(evt) {
   const element = evt.target;
   if (store.bypassFilter) {
-    let comment = element.value.replaceAll('soy', 'ꜱoy');
-    comment = comment.replaceAll('Soy', 'Ṣoy');
-    comment = comment.replaceAll('SOY', 'ṢOY');
-    element.value = comment;
+    const board = getBoard();
+    if (board === 'r9k') { // non-ascii is forbidden on r9k
+      element.value = element.value.replace(/soy/gi, '_$&');
+    } else {
+      let comment = element.value.replace(/s([oO][yY])/g, 'ꜱ$1');
+      comment = comment.replace(/S([oO][yY])/g, 'Ṣ$1');
+      element.value = comment;
+    }
   }
 }
 
@@ -192,6 +209,25 @@ function gotTextArea(e) {
       });
     });
 
+    createButton(ui, '🚜', 'Sneed', () => {
+      if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+      e.value += 'sneed';
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
+    createButton(ui, '😮', 'Soyquote', () => {
+      e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+        let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
+        str += `>${document.getElementById(`m${repl}`).innerText
+          .replaceAll('\n', '\n>')}`;
+        if (offset + match.length + 1 < value.length) str += '\n';
+        return str;
+      });
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
     createButton(ui, '⚔️', 'Mass Reply', () => {
       addQuotesText(e, 'regular');
     });
@@ -201,43 +237,23 @@ function gotTextArea(e) {
     });
 
     if (window.location.href.includes('/thread/')) {
-      createButton(ui, '🚜', 'Sneed', () => {
-        if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-        e.value += 'sneed';
-        e.scrollTop = e.scrollHeight;
-        e.focus();
-      });
-
-      if (window.location.href.includes('/pol/')) {
-        createButton(ui, '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Quote Memeflags', () => {
-          addQuotesText(e, 'memeflags');
-        });
-      }
-
       const board = getBoard();
-      if (board && getBoardInfo(board).hasUserIDs) {
+      if (getBoardInfo(board).hasUserIDs) {
         createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
           addQuotesText(e, '1pbtid');
         });
         createButton(ui, '🏆', 'Rankings', () => {
           addQuotesText(e, 'rankings');
         });
+        if (board === 'pol') {
+          createButton(ui, '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Quote Memeflags', () => {
+            addQuotesText(e, 'memeflags');
+          });
+        }
       }
 
       createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
-      });
-
-      createButton(ui, '😮', 'Soyquote', () => {
-        e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
-          let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
-          str += `>${document.getElementById(`m${repl}`).innerText
-            .replaceAll('\n', '\n>')}`;
-          if (offset + match.length + 1 < value.length) str += '\n';
-          return str;
-        });
-        e.scrollTop = e.scrollHeight;
-        e.focus();
       });
     }
     e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
@@ -246,41 +262,39 @@ function gotTextArea(e) {
 
 function mutationChange(mutations) {
   mutations.forEach((mutation) => {
+    if (mutation.target
+            && mutation.target.className.indexOf('postInfo') !== -1
+            && mutation.target.parentElement) {
+      spotKym(mutation.target.parentElement);
+    }
+
     /*
-   * Detect Captcha loaded
-   * (its ok to check via ElementById comparsion , because only one Captcha
-   *  can be loaded on the site at once)
-   */
+         * Detect Captcha loaded
+         * (its ok to check via ElementById comparsion , because only one Captcha
+         *  can be loaded on the site at once)
+         */
     if (store.slideCaptcha) {
       if (mutation.target
-        && mutation.target.id === 't-load'
-        && mutation.removedNodes
-        && mutation.removedNodes[0].data === 'Loading'
+                && mutation.target.id === 't-load'
+                && mutation.removedNodes
+                && mutation.removedNodes[0].data === 'Loading'
       ) {
         const tfg = document.getElementById('t-fg');
         const tbg = document.getElementById('t-bg');
         const tslider = document.getElementById('t-slider');
         const tresp = document.getElementById('t-resp');
-        slideCaptcha(tfg, tbg, tslider);
-        tresp.focus();
+        slideCaptcha(tfg, tbg, tslider, tresp);
         return;
       }
     }
     /*
-     * mark kym filenames
-     * TODO: would be better to not run it on the whole document on
-     * each mutation
-     */
-    spotKym(document);
-    /*
-   * Detect and hook into other stuff we need, like reply box or floating
-   * QuickReplyBox. There can be multiple of those open together,
-   * so we get each when it appears and don't go for IDs
-   */
+         * Detect and hook into other stuff we need, like reply box or floating
+         * QuickReplyBox. There can be multiple of those open together,
+         * so we get each when it appears and don't go for IDs
+         */
     const nodes = mutation.addedNodes;
     for (let n = 0; n < nodes.length; n++) {
       const node = nodes[n];
-
       if (isFileInput(node)) {
         // if element itself is input=file
         gotFileInput(node);
