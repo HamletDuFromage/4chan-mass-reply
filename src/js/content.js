@@ -246,7 +246,7 @@ function gotTextArea(e) {
           addQuotesText(e, 'rankings');
         });
         if (board === 'pol') {
-          createButton(ui, '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Quote Memeflags', () => {
+          createButton(ui, '🏁', 'Quote Memeflags', () => {
             addQuotesText(e, 'memeflags');
           });
         }
