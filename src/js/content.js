@@ -373,4 +373,3 @@ browser.storage.local.get(store).then((item) => {
 }, (error) => {
   debugLog(`Error getting local storage: ${error}`);
 });
-
