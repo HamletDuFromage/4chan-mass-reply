@@ -4,12 +4,6 @@ import {
 
 const pastasUrl = 'https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json';
 
-browser.contextMenus.create({
-  id: 'rm-cookies',
-  title: 'Delete 4chan cookies',
-  documentUrlPatterns: ['*://*.4chan.org/*', '*://*.4channel.org/*'],
-});
-
 function modifyHeaders(item) {
   debugLog('Stripping 4chan_pass cookie and spoofing user-agent');
   item.requestHeaders.forEach((header) => {
@@ -19,6 +13,7 @@ function modifyHeaders(item) {
         header.value = header.value.replace(/;*\s*4chan_pass=[\w-_]+(;*\s*)/, '$1');
         break;
       }
+      // TODO: this doesn't bypass the "Post successful!" spam limit
       case 'user-agent': {
         let newValue = '';
         // randomly increase every integer in user-agent
@@ -99,20 +94,6 @@ const init = () => {
       toggleBanEvasionBypass(changes.bypassBanEvasion.newValue);
     } else if (Object.prototype.hasOwnProperty.call(changes, 'pastasUrl')) {
       fetchPastas(changes.pastasUrl.newValue);
-    }
-  });
-
-  browser.contextMenus.onClicked.addListener((info) => {
-    if (info.menuItemId === 'rm-cookies') {
-      debugLog('Deleting 4chan cookies');
-      ['https://4channel.org', 'https://4chan.org'].forEach((url) => {
-        browser.cookies.getAll({
-          url,
-        }).then((cookies) => Promise.all(cookies.map((cookie) => browser.cookies.remove({
-          url,
-          name: cookie.name,
-        }))));
-      });
     }
   });
 };

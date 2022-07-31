@@ -16,7 +16,6 @@
 		"clipboardRead",
 		"clipboardWrite",
 		"storage",
-		"contextMenus",
 		"cookies",
 		"webRequest",
 		"webRequestBlocking"

@@ -34,7 +34,7 @@ Use the buttons in the reply box for (left to right):
 ## Permissions:
 - Clipboard to copy copypastas and the paste clipboard button
 - Storage to save the settings between each use
-- Access to 4chan and 4channel to be able to delete cookies
+- Access to 4chan and 4channel
 
 ## Install
 ### Firefox

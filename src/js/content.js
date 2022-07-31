@@ -29,7 +29,7 @@ import {
 } from './captcha';
 
 const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
-const isMobile = (window.getComputedStyle(document.getElementById('boardNavMobile'), null).display !== 'none');
+const isMobile = (document.getElementById('boardNavMobile') !== null && window.getComputedStyle(document.getElementById('boardNavMobile'), null).display !== 'none');
 
 /*
  * default values, make sure its the same as in popup.js
@@ -269,10 +269,10 @@ function mutationChange(mutations) {
     }
 
     /*
-         * Detect Captcha loaded
-         * (its ok to check via ElementById comparsion , because only one Captcha
-         *  can be loaded on the site at once)
-         */
+     * Detect Captcha loaded
+     * (its ok to check via ElementById comparsion , because only one Captcha
+     *  can be loaded on the site at once)
+     */
     if (store.slideCaptcha) {
       if (mutation.target
                 && mutation.target.id === 't-load'
@@ -288,10 +288,10 @@ function mutationChange(mutations) {
       }
     }
     /*
-         * Detect and hook into other stuff we need, like reply box or floating
-         * QuickReplyBox. There can be multiple of those open together,
-         * so we get each when it appears and don't go for IDs
-         */
+     * Detect and hook into other stuff we need, like reply box or floating
+     * QuickReplyBox. There can be multiple of those open together,
+     * so we get each when it appears and don't go for IDs
+     */
     const nodes = mutation.addedNodes;
     for (let n = 0; n < nodes.length; n++) {
       const node = nodes[n];
@@ -373,3 +373,4 @@ browser.storage.local.get(store).then((item) => {
 }, (error) => {
   debugLog(`Error getting local storage: ${error}`);
 });
+

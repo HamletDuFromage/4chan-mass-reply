@@ -20,7 +20,8 @@
         "4channel",
         "shitpost",
         "sneed",
-        "mass reply"
+        "mass reply",
+		"soyjak"
     ],
     "homepage": "https://github.com/HamletDuFromage/4chan-mass-reply",
     "devDependencies": {

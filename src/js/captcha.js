@@ -128,7 +128,7 @@ function getImageDataFromURI(uri) {
 
 /*
  * Automatically slide captcha into place
- * Arguments are the "t-fg', 't-bg', 't-slider' elements of the captcha
+ * Arguments are the "t-fg', 't-bg', 't-slider', 't-resp' elements of the captcha
  */
 export function slideCaptcha(tfgElement, tbgElement, sliderElement, answerElement) {
   // get data uris for captcha back- and foreground
