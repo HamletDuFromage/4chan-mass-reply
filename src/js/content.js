@@ -146,7 +146,7 @@ function commentChanged(evt) {
     const board = getBoard();
     if (board === 'r9k') { // non-ascii is forbidden on r9k
       element.value = element.value.replace(/soy/gi, '_$&');
-    } else {
+    } else if (board !== 'int' && board !== 'ck') {
       let comment = element.value.replace(/s([oO][yY])/g, 'ꜱ$1');
       comment = comment.replace(/S([oO][yY])/g, 'Ṣ$1');
       element.value = comment;
