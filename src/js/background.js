@@ -13,22 +13,13 @@ function modifyHeaders(item) {
         header.value = header.value.replace(/;*\s*4chan_pass=[\w-_]+(;*\s*)/, '$1');
         break;
       }
-      // TODO: this doesn't bypass the "Post successful!" spam limit
       case 'user-agent': {
-        let newValue = '';
-        // randomly increase every integer in user-agent
-        // don't decrease cause that could get you blocked
-        for (let c = 0; c < header.value.length; c++) {
-          const curChar = header.value.charAt(c);
-          const curNum = parseInt(curChar, 10);
-          if (Number.isNaN(curNum)) {
-            newValue += curChar;
-          } else {
-            newValue += String(curNum + Math.floor(Math.random() * (10 - curNum)));
-          }
-        }
-        // eslint-disable-next-line no-param-reassign
-        header.value = newValue;
+        // TODO: this might not bypass the "Post successful!" rate limit
+        // increase floats bigger than 50, by 0.0 - 10.0
+        header.value = header.value.replace(/\d+\.\d+/g, (match /* , offset, string */) => {
+          const fl = parseFloat(match);
+          return String((fl > 50) ? (fl + Math.random() * 10).toFixed(1) : match);
+        });
         break;
       }
     }
