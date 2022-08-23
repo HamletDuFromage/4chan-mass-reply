@@ -1,22 +1,34 @@
 export function getBoard() {
-  const board = window.location.href.match(/(?<=boards.4chan(?:nel)?.org\/)[a-z0-9]+(?=\/)/);
-  if (board.length) {
-    return board[0];
-  }
-  return null;
+  const match = window.location.href.match(/(?<=boards.4chan(?:nel)?.org\/)[a-z0-9]+(?=\/)/);
+  return match ? match[0] : null;
 }
 
+// TODO:
+// * ideally this should parse https://a.4cdn.org/boards.json
+// * on extension initialization
 export function getBoardInfo(board) {
   let maxLines = 100;
   let characterLimit = 2000;
   let maxImageFilesize = 4194304;
   let hasUserIDs = false;
+  const wordFilters = [
+    /CUCK/g,
+    /\btbh\b/gi,
+    /\bsmh\b/gi,
+    /\bfam\b/gi,
+    /\bsoy/gi,
+  ];
   switch (board) {
+    case 'ck':
+    case 'int':
+      wordFilters.pop(); // pop soy
+      break;
     case 'b':
       maxImageFilesize = 2097152;
       break;
     case 'biz':
       hasUserIDs = true;
+      wordFilters.push(/monkeypox/gi);
       break;
     case 'gd':
       maxImageFilesize = 8388608;
@@ -76,6 +88,12 @@ export function getBoardInfo(board) {
       break;
     case 'v':
       maxLines = 25;
+      wordFilters.push(
+        /pcuck/gi,
+        /pcfats/gi,
+        /sony\w+/gi, // sonygger, sonypony, sonyponies
+        /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
+      );
       break;
     case 'bant':
       maxLines = 49;
@@ -105,5 +123,6 @@ export function getBoardInfo(board) {
     characterLimit,
     maxImageFilesize,
     hasUserIDs,
+    wordFilters,
   };
 }

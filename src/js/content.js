@@ -140,17 +140,51 @@ function fileChanged(evt) {
   });
 }
 
+function bypassWordFilters(text) {
+  const board = getBoard();
+  const wordFilters = getBoardInfo(board).wordFilters;
+
+  const replacements = (
+    (board === 'r9k') ? {
+      U: 'u', // CuCK
+    } : {
+      C: 'Ϲ',
+      H: 'Η',
+      O: 'ⵔ',
+      S: 'Տ',
+      Y: 'Ү',
+      h: 'հ',
+      o: '𐐬',
+      p: 'ρ',
+      s: '𐑈',
+    }
+  );
+
+  let newText = text;
+
+  for (let i = 0; i < wordFilters.length; ++i) {
+    const pattern = wordFilters[i];
+    newText = newText.replace(pattern, (match /* , offset, string */) => {
+      for (let j = match.length - 1; j >= 0; --j) {
+        const letter = match[j];
+        if (replacements[letter] !== undefined) {
+          return match.replace(letter, replacements[letter]);
+        }
+      }
+      // check if the filter can be bypassed by an underscore
+      if (!pattern.test(`_${match}`)) {
+        return `_${match}`;
+      }
+      return match;
+    });
+  }
+  return newText;
+}
+
 function commentChanged(evt) {
   const element = evt.target;
   if (store.bypassFilter) {
-    const board = getBoard();
-    if (board === 'r9k') { // non-ascii is forbidden on r9k
-      element.value = element.value.replace(/soy/gi, '_$&');
-    } else if (board !== 'int' && board !== 'ck') {
-      let comment = element.value.replace(/s([oO][yY])/g, 'ꜱ$1');
-      comment = comment.replace(/S([oO][yY])/g, 'Ṣ$1');
-      element.value = comment;
-    }
+    element.value = bypassWordFilters(element.value);
   }
 }
 

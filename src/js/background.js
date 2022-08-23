@@ -18,7 +18,7 @@ function modifyHeaders(item) {
         // increase floats bigger than 50, by 0.0 - 10.0
         header.value = header.value.replace(/\d+\.\d+/g, (match /* , offset, string */) => {
           const fl = parseFloat(match);
-          return String((fl > 50) ? (fl + Math.random() * 10).toFixed(1) : match);
+          return (fl > 50) ? (fl + Math.random() * 10).toFixed(1) : match;
         });
         break;
       }
