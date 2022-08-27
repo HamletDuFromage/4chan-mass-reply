@@ -19,6 +19,9 @@ export function getBoardInfo(board) {
     /\bsoy/gi,
   ];
   switch (board) {
+	case 'g':
+	  wordFilters.push(/Irwin/gi, /Norfolk/gi);
+	  break;
     case 'ck':
     case 'int':
       wordFilters.pop(); // pop soy
