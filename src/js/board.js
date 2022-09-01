@@ -16,6 +16,7 @@ export function getBoardInfo(board) {
     /\btbh\b/gi,
     /\bsmh\b/gi,
     /\bfam\b/gi,
+    /\bfams\b/gi,
     /\bsoy/gi,
   ];
   switch (board) {
@@ -96,6 +97,7 @@ export function getBoardInfo(board) {
         /pcfats/gi,
         /sony\w+/gi, // sonygger, sonypony, sonyponies
         /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
+        /cumbrain/gi,
       );
       break;
     case 'bant':
