@@ -259,12 +259,29 @@ function gotTextArea(e) {
     });
 
     createButton(ui, '😮', 'Soyquote', () => {
-      e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl, offset, value) => {
         let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
         str += `>${document.getElementById(`m${repl}`).innerText
           .replaceAll('\n', '\n>')}`;
         if (offset + match.length + 1 < value.length) str += '\n';
         return str;
+      });
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
+    createButton(ui, '🖼️', 'Soyquote Filename', () => {
+      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
+        const fileText = document.getElementById(`fT${repl}`);
+        if (!fileText) return '';
+
+        if (is4chanX) {
+          const fileTextA = fileText.children[0].children[0];
+          const fnfull = fileTextA.getElementsByClassName('fnfull')[0];
+          return `>${(fnfull || fileTextA).textContent}\n`;
+        }
+        const fileName = fileText.children[0];
+        return `>${fileName.title ? fileName.title : fileName.textContent}\n`;
       });
       e.scrollTop = e.scrollHeight;
       e.focus();
@@ -280,20 +297,22 @@ function gotTextArea(e) {
 
     if (window.location.href.includes('/thread/')) {
       const board = getBoard();
-      if (getBoardInfo(board).hasUserIDs) {
+      const boardInfo = getBoardInfo(board);
+
+      if (boardInfo.hasUserIDs) {
         createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
           addQuotesText(e, '1pbtid');
         });
         createButton(ui, '🏆', 'Rankings', () => {
           addQuotesText(e, 'rankings');
         });
-        if (board === 'pol') {
-          createButton(ui, '🏁', 'Quote Memeflags', () => {
-            addQuotesText(e, 'memeflags');
-          });
-        }
       }
 
+      if (boardInfo.hasBoardFlags) {
+        createButton(ui, '🏁', 'Quote Memeflags', () => {
+          addQuotesText(e, 'memeflags');
+        });
+      }
       createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
       });

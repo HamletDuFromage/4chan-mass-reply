@@ -11,6 +11,7 @@ export function getBoardInfo(board) {
   let characterLimit = 2000;
   let maxImageFilesize = 4194304;
   let hasUserIDs = false;
+  let hasBoardFlags = false;
   const wordFilters = [
     /CUCK/g,
     /\btbh\b/gi,
@@ -89,6 +90,7 @@ export function getBoardInfo(board) {
     case 'pol':
       maxLines = 70;
       hasUserIDs = true;
+      hasBoardFlags = true;
       break;
     case 'v':
       maxLines = 25;
@@ -121,6 +123,7 @@ export function getBoardInfo(board) {
       break;
     case 'mlp':
       characterLimit = 3000;
+      hasBoardFlags = true;
       break;
   }
   return {
@@ -128,6 +131,7 @@ export function getBoardInfo(board) {
     characterLimit,
     maxImageFilesize,
     hasUserIDs,
+    hasBoardFlags,
     wordFilters,
   };
 }

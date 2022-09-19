@@ -184,7 +184,7 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
         }
       }
     }
-    if (!kym.length) return 'No kym filenames found';
+    if (!kym.length) return 'No KYM filenames found';
     str += createQuotesString(kym, quoteFormat, quoteBottom, characterLimit, maxLines);
   }
 
