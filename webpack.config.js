@@ -1,6 +1,6 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ChromeExtensionReloader = require("webpack-chrome-extension-reloader");
+// const ChromeExtensionReloader = require("webpack-chrome-extension-reloader");
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -24,10 +24,10 @@ module.exports = {
     rules: [{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }],
   },
   plugins: [
-    new ChromeExtensionReloader({
-      port: 9097,
-      reloadPage: false,
-    }),
+    // new ChromeExtensionReloader({
+      // port: 9097,
+      // reloadPage: false,
+    // }),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
