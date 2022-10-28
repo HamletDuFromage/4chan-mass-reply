@@ -146,7 +146,7 @@ function bypassWordFilters(text) {
 
   const replacements = (
     (board === 'r9k') ? {
-      U: 'u', // CuCK
+      U: 'u', // r9k doesn't allow non ascii
     } : {
       C: 'Ϲ',
       F: 'Ϝ',
@@ -179,6 +179,7 @@ function bypassWordFilters(text) {
           return match.replace(letter, replacements[letter]);
         }
       }
+      // if we couldn't find similar looking character
       // check if the filter can be bypassed by an underscore
       if (!pattern.test(`_${match}`)) {
         return `_${match}`;
@@ -300,6 +301,7 @@ function gotTextArea(e) {
       const boardInfo = getBoardInfo(board);
 
       if (boardInfo.hasUserIDs) {
+        // this emoji doesn't work on win 7
         createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
           addQuotesText(e, '1pbtid');
         });
@@ -324,9 +326,10 @@ function gotTextArea(e) {
 function mutationChange(mutations) {
   mutations.forEach((mutation) => {
     if (mutation.target
-            && mutation.target.className.indexOf('postInfo') !== -1
-            && mutation.target.parentElement) {
+        && mutation.target.className.indexOf('postInfo') !== -1
+        && mutation.target.parentElement) {
       spotKym(mutation.target.parentElement);
+      return;
     }
 
     /*
@@ -336,9 +339,9 @@ function mutationChange(mutations) {
      */
     if (store.slideCaptcha) {
       if (mutation.target
-                && mutation.target.id === 't-load'
-                && mutation.removedNodes
-                && mutation.removedNodes[0].data === 'Loading'
+        && mutation.target.id === 't-load'
+        && mutation.removedNodes
+        && mutation.removedNodes[0].data === 'Loading'
       ) {
         const tfg = document.getElementById('t-fg');
         const tbg = document.getElementById('t-bg');

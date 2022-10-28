@@ -1,23 +1,24 @@
 import {
   debugLog,
+  getRandomDate,
 } from './misc';
 
 import {
   changeModificationTime,
 } from './png';
+
 /*
- * change filename to random timestamp of the past year
+ * change filename to random timestamp
  */
 export function anonFilename(file) {
-  const curtime = new Date().getTime();
-  const randomTimePastYear = curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
-  const filename = `${randomTimePastYear}.${file.name.split('.').slice(-1)}`;
+  const randomTimestamp = getRandomDate().getTime();
+  const filename = `${randomTimestamp}.${file.name.split('.').slice(-1)}`;
   debugLog(`Changing the filename to "${filename}"`);
   return new File([file], filename, { type: file.type });
 }
 
 /*
- * change image hash by adding random bytes at the end
+ * change image hash by adding random bytes at the end or changing png time chunk
  */
 export function anonHash(file) {
   return new Promise((resolve) => {
@@ -29,7 +30,8 @@ export function anonHash(file) {
       if (file.type === 'image/png') {
         newFile = changeModificationTime(reader.result);
       } else {
-        const random = crypto.getRandomValues(new BigUint64Array(1));
+        const random = new Uint8Array(8);
+        crypto.getRandomValues(random);
 
         if (file.type === 'image/jpeg') {
           newFile = [reader.result.slice(0, -10), random, reader.result.slice(-2)];
@@ -104,6 +106,7 @@ export function fileCompress(file, maxImageSize, compressionLevel) {
       resolve(file);
       return;
     }
+
     if (file.type !== 'image/png' && file.type !== 'image/jpeg' && file.type !== 'image/webp') {
       resolve(file);
       return;

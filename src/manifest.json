@@ -4,7 +4,7 @@
 	"author":"HamletDuFromage",
 	"version":"3.3.0",
 	"description":"Post more efficiently",
-	"homepage_url":"https://github.com/HamletDuFromage/4chan_Mass_Quotes",
+	"homepage_url":"https://github.com/HamletDuFromage/4chan-mass-reply",
 	"icons":{
 		"48":"icons/janny-48.png",
 		"96":"icons/janny-96.png"
@@ -44,7 +44,7 @@
 	"browser_action":{
 		"browser_style":true,
 		"default_icon":"icons/janny-32.png",
-		"default_title":"4chan Mass Quote",
+		"default_title":"4chan Mass Reply",
 		"default_popup":"html/popup.html"
 	},
 	"browser_specific_settings":{

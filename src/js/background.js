@@ -14,11 +14,10 @@ function modifyHeaders(item) {
         break;
       }
       case 'user-agent': {
-        // TODO: this might not bypass the "Post successful!" rate limit
-        // increase floats bigger than 50, by 0.0 - 10.0
+        // TODO: this might not bypass the "Post successful!" rate limit (be useless)
         header.value = header.value.replace(/\d+\.\d+/g, (match /* , offset, string */) => {
           const fl = parseFloat(match);
-          return (fl > 50) ? (fl + Math.random() * 10).toFixed(1) : match;
+          return (fl > 50 && fl < 200) ? (fl + Math.random() * 20 - 10).toFixed(1) : match;
         });
         break;
       }
