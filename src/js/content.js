@@ -140,17 +140,60 @@ function fileChanged(evt) {
   });
 }
 
+function bypassWordFilters(text) {
+  const board = getBoard();
+  const wordFilters = getBoardInfo(board).wordFilters;
+
+  const replacements = (
+    (board === 'r9k') ? {
+      U: 'u', // r9k doesn't allow non ascii
+    } : {
+      C: 'Ϲ',
+      F: 'Ϝ',
+      H: 'Η',
+      K: 'Κ',
+      M: 'M',
+      N: 'Ν',
+      O: 'ⵔ',
+      S: 'Տ',
+      Y: 'Ү',
+      a: 'ä',
+      c: 'ϲ',
+      h: 'հ',
+      k: 'ƙ',
+      n: 'ᥒ',
+      o: '𐐬',
+      p: 'ρ',
+      s: '𐑈',
+    }
+  );
+
+  let newText = text;
+
+  for (let i = 0; i < wordFilters.length; ++i) {
+    const pattern = wordFilters[i];
+    newText = newText.replace(pattern, (match /* , offset, string */) => {
+      for (let j = match.length - 1; j >= 0; --j) {
+        const letter = match[j];
+        if (replacements[letter] !== undefined) {
+          return match.replace(letter, replacements[letter]);
+        }
+      }
+      // if we couldn't find similar looking character
+      // check if the filter can be bypassed by an underscore
+      if (!pattern.test(`_${match}`)) {
+        return `_${match}`;
+      }
+      return match;
+    });
+  }
+  return newText;
+}
+
 function commentChanged(evt) {
   const element = evt.target;
   if (store.bypassFilter) {
-    const board = getBoard();
-    if (board === 'r9k') { // non-ascii is forbidden on r9k
-      element.value = element.value.replace(/soy/gi, '_$&');
-    } else if (board !== 'int' && board !== 'ck') {
-      let comment = element.value.replace(/s([oO][yY])/g, 'ꜱ$1');
-      comment = comment.replace(/S([oO][yY])/g, 'Ṣ$1');
-      element.value = comment;
-    }
+    element.value = bypassWordFilters(element.value);
   }
 }
 
@@ -217,12 +260,29 @@ function gotTextArea(e) {
     });
 
     createButton(ui, '😮', 'Soyquote', () => {
-      e.value = e.value.replace(/>>(\w+)/g, (match, repl, offset, value) => {
+      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl, offset, value) => {
         let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
         str += `>${document.getElementById(`m${repl}`).innerText
           .replaceAll('\n', '\n>')}`;
         if (offset + match.length + 1 < value.length) str += '\n';
         return str;
+      });
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+
+    createButton(ui, '🖼️', 'Soyquote Filename', () => {
+      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
+        const fileText = document.getElementById(`fT${repl}`);
+        if (!fileText) return '';
+
+        if (is4chanX) {
+          const fileTextA = fileText.children[0].children[0];
+          const fnfull = fileTextA.getElementsByClassName('fnfull')[0];
+          return `>${(fnfull || fileTextA).textContent}\n`;
+        }
+        const fileName = fileText.children[0];
+        return `>${fileName.title ? fileName.title : fileName.textContent}\n`;
       });
       e.scrollTop = e.scrollHeight;
       e.focus();
@@ -238,20 +298,23 @@ function gotTextArea(e) {
 
     if (window.location.href.includes('/thread/')) {
       const board = getBoard();
-      if (getBoardInfo(board).hasUserIDs) {
+      const boardInfo = getBoardInfo(board);
+
+      if (boardInfo.hasUserIDs) {
+        // this emoji doesn't work on win 7
         createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
           addQuotesText(e, '1pbtid');
         });
         createButton(ui, '🏆', 'Rankings', () => {
           addQuotesText(e, 'rankings');
         });
-        if (board === 'pol') {
-          createButton(ui, '🏁', 'Quote Memeflags', () => {
-            addQuotesText(e, 'memeflags');
-          });
-        }
       }
 
+      if (boardInfo.hasBoardFlags) {
+        createButton(ui, '🏁', 'Quote Memeflags', () => {
+          addQuotesText(e, 'memeflags');
+        });
+      }
       createButton(ui, '💩', 'KYM', () => {
         addQuotesText(e, 'kym');
       });
@@ -263,9 +326,10 @@ function gotTextArea(e) {
 function mutationChange(mutations) {
   mutations.forEach((mutation) => {
     if (mutation.target
-            && mutation.target.className.indexOf('postInfo') !== -1
-            && mutation.target.parentElement) {
+        && mutation.target.className.indexOf('postInfo') !== -1
+        && mutation.target.parentElement) {
       spotKym(mutation.target.parentElement);
+      return;
     }
 
     /*
@@ -275,9 +339,9 @@ function mutationChange(mutations) {
      */
     if (store.slideCaptcha) {
       if (mutation.target
-                && mutation.target.id === 't-load'
-                && mutation.removedNodes
-                && mutation.removedNodes[0].data === 'Loading'
+        && mutation.target.id === 't-load'
+        && mutation.removedNodes
+        && mutation.removedNodes[0].data === 'Loading'
       ) {
         const tfg = document.getElementById('t-fg');
         const tbg = document.getElementById('t-bg');

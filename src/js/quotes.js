@@ -128,7 +128,7 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
         memeflags.push(`>>${posts[i].id.slice(2)}`);
       }
     }
-    if (!memeflags.length) return 'No memeflags in this thread';
+    if (!memeflags.length) return 'No memeflags found';
     str += createQuotesString(memeflags, quoteFormat, quoteBottom, characterLimit, maxLines);
   } else if (action === '1pbtid') {
     const onepbtid = [];
@@ -140,7 +140,7 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
         onepbtid.push(`>>${uidstat[0][0]}`);
       }
     }
-    if (!onepbtid.length) return 'No 1pbtids';
+    if (!onepbtid.length) return 'No 1pbtids found';
     str += createQuotesString(onepbtid, quoteFormat, quoteBottom, characterLimit, maxLines);
   } else if (action === 'rankings') {
     const ranking = [];
@@ -184,7 +184,7 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
         }
       }
     }
-    if (!kym.length) return 'No kym filenames found';
+    if (!kym.length) return 'No KYM filenames found';
     str += createQuotesString(kym, quoteFormat, quoteBottom, characterLimit, maxLines);
   }
 

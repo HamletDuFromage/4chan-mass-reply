@@ -35,12 +35,12 @@ function getBoundries(imgdata) {
       if (a) {
         /* transparent pixel to its right */
         /*
-                // set to color blue (for debugging)
-                data[i + 4] = 255;
-                data[i + 3] = 255;
-                data[i + 2] = 0;
-                data[i + 1] = 0;
-                */
+        // set to color blue (for debugging)
+        data[i + 4] = 255;
+        data[i + 3] = 255;
+        data[i + 2] = 0;
+        data[i + 1] = 0;
+        */
         const pos = (i + 1) / 4;
         const x = pos % width;
         const y = (pos - x) / width;
@@ -51,12 +51,12 @@ function getBoundries(imgdata) {
       } else {
         /* opaque pixel to its right */
         /*
-                // set to color red (for debugging)
-                data[i] = 255;
-                data[i - 1] = 0;
-                data[i - 2] = 0;
-                data[i - 3] = 255;
-                */
+        // set to color red (for debugging)
+        data[i] = 255;
+        data[i - 1] = 0;
+        data[i - 2] = 0;
+        data[i - 3] = 255;
+        */
         const pos = (i - 3) / 4;
         const x = pos % width;
         const y = (pos - x) / width;

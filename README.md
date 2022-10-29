@@ -7,7 +7,7 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 
 - Anonymize image uploads by randomizing hash and filename
 - Bypass ban evasion detection by stripping the cookies
-- Evade soy wordfilters by replacing it with a different but equally readable text
+- Bypass common wordfilters by replacing it with a different but equally readable text
 - Automatically slide captcha it into the right position
 - Reattach the last selected file
 - Configurable mass reply with multiple targets
