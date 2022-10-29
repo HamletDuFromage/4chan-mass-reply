@@ -97,7 +97,7 @@ export function getBoardInfo(board) {
       wordFilters.push(
         /pcuck/gi,
         /pcfats/gi,
-        /sony\w+/gi, // sonygger, sonypony, sonyponies
+        /sony\w+/gi, // sonypony, sonyponies, etc
         /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
         /cumbrain/gi,
       );
