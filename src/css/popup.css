@@ -3,7 +3,7 @@ body {
 	font-size: 12px;
 	margin: 0;
 	padding: 0.7em;
-	weight: 300px;
+	width: 350px;
 }
 
 .hidden {
@@ -68,7 +68,7 @@ h2 {
 }
 
 #pastaTextarea {
-	width: 300px;
+	width: 100%;
 	box-sizing: border-box;
 	resize: none;
 }

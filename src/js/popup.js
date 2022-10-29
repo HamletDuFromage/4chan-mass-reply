@@ -145,11 +145,23 @@ function sendMessage(messageType) {
 }
 
 // buttons to get mass quotes
-['regular', 'sneed', 'dubs'].forEach((messageType) => {
+['regular', 'dubs'].forEach((messageType) => {
   document.getElementById(messageType).onclick = () => {
     sendMessage(messageType);
   };
 });
+
+document.getElementById('cookies').onclick = () => {
+  debugLog('Deleting 4chan cookies');
+  ['https://4channel.org', 'https://4chan.org'].forEach((url) => {
+    browser.cookies.getAll({
+      url,
+    }).then((cookies) => Promise.all(cookies.map((cookie) => browser.cookies.remove({
+      url,
+      name: cookie.name,
+    }))));
+  });
+};
 
 // button to show pastasUrl input
 document.getElementById('showPastasUrl').onclick = (evt) => {
