@@ -105,13 +105,9 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
     posts = document.querySelectorAll("div[class~='postContainer']:not([data-clone])");
   }
 
-  if (action === 'regular' || action === 'sneed') {
+  if (action === 'regular') {
     const ids = Array.from(posts).map((e) => `>>${e.id.match(/(?<=\D+)\d+/)}`);
     str += createQuotesString(ids, quoteFormat, quoteBottom, characterLimit, maxLines);
-
-    if (action === 'sneed') {
-      str += 'sneed';
-    }
   } else if (action === 'dubs') {
     const dubs = [];
     for (let i = 0; i < posts.length; i++) {
