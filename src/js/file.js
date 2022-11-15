@@ -30,14 +30,22 @@ export function anonHash(file) {
       if (file.type === 'image/png') {
         newFile = changeModificationTime(reader.result);
       } else {
-        const random = new Uint8Array(8);
+        const randomSz = 8;
+        const random = new Uint8Array(randomSz);
         crypto.getRandomValues(random);
 
-        if (file.type === 'image/jpeg') {
-          newFile = [reader.result.slice(0, -10), random, reader.result.slice(-2)];
-        } else {
-          newFile = [reader.result, random];
+        let offset = 2;
+
+        if (file.type === 'video/webm') {
+          offset = reader.result.byteLength * 0.01;
+          if (offset < 40) offset = 40;
         }
+
+        newFile = [
+          reader.result.slice(0, -offset - randomSz),
+          random,
+          reader.result.slice(-offset),
+        ];
       }
 
       const nFile = new File(newFile, file.name, { type: file.type });
