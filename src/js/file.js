@@ -34,18 +34,23 @@ export function anonHash(file) {
         const random = new Uint8Array(randomSz);
         crypto.getRandomValues(random);
 
-        let offset = 2;
+        if ((file.type === 'image/jpeg') || (file.type === 'image/gif')) {
+          newFile = [
+            reader.result.slice(0, -2 - randomSz),
+            random,
+            reader.result.slice(-2),
+          ];
+        } else if (file.type === 'video/webm') {
+          const offset = reader.result.byteLength * 0.001;
 
-        if (file.type === 'video/webm') {
-          offset = reader.result.byteLength * 0.01;
-          if (offset < 40) offset = 40;
+          newFile = [
+            reader.result.slice(0, -offset - randomSz),
+            random,
+            reader.result.slice(-offset),
+          ];
+        } else {
+          newFile = [reader.result, random];
         }
-
-        newFile = [
-          reader.result.slice(0, -offset - randomSz),
-          random,
-          reader.result.slice(-offset),
-        ];
       }
 
       const nFile = new File(newFile, file.name, { type: file.type });
