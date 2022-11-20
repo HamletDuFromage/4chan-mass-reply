@@ -15,8 +15,8 @@ document.getElementById('copy').addEventListener('click', () => {
     .then(() => {
       const newClip = document.getElementById('pastaTextarea').value;
       if (newClip !== '') {
+        debugLog('Copying to clipboard');
         navigator.clipboard.writeText(newClip);
-        debugLog('Copied to clipboard');
       }
     });
 });

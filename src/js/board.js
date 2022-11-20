@@ -13,6 +13,7 @@ export function getBoardInfo(board) {
   let hasUserIDs = false;
   let hasBoardFlags = false;
   const wordFilters = [
+    /back to reddit/gi,
     /CUCK/g,
     /\btbh\b/gi,
     /\bsmh\b/gi,

@@ -6,8 +6,8 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 ## Features:
 
 - Anonymize image uploads by randomizing hash and filename
-- Bypass ban evasion detection by stripping the cookies
-- Bypass common wordfilters by replacing it with a different but equally readable text
+- Bypass ban evasion detection by stripping the cookies and modifying useragent
+- Bypass common wordfilters by replacing one of the characters with a similar looking one (homoglyph)
 - Automatically slide captcha it into the right position
 - Reattach the last selected file
 - Configurable mass reply with multiple targets
@@ -21,6 +21,7 @@ Use the buttons in the reply box for (left to right):
 - Paste clipboard into the comment field
 - Append "sneed"
 - Convert quotelinks into soyquotes (for example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
+- Convert quotelinks into filename soyquotes
 - Reply to every post on the page
 - Reply to posts with repeating digits in the post number
 - Reply to 1-post-by-this-ID
@@ -47,7 +48,7 @@ Use the buttons in the reply box for (left to right):
 Download the ZIP archive from the release section and sideload it.
 
 ### Android
-Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files. Go to `about:config` and set `xpinstall.signatures.required` to `false` and then sideload the app in the settings (Advanced settings > Sideload XPI).
+Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files, go to `about:config`, set `xpinstall.signatures.required` to `false` and sideload the addon in the settings (Advanced settings > Sideload XPI).
 
 ## How to build
 ```
