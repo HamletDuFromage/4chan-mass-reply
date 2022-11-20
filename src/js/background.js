@@ -67,7 +67,7 @@ function fetchPastas(url) {
 
 const init = () => {
   browser.storage.local.get({
-    bypassBanEvasion: true,
+    bypassBanEvasion: false,
     pastasUrl,
   }).then((item) => {
     toggleBanEvasionBypass(item.bypassBanEvasion);

@@ -28,7 +28,7 @@ const init = () => {
   */
   browser.storage.local.get({
     anonymizeFile: false,
-    bypassBanEvasion: true,
+    bypassBanEvasion: false,
     bypassFilter: true,
     slideCaptcha: true,
     reuseFile: false,

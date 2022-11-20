@@ -36,7 +36,7 @@ const isMobile = (document.getElementById('boardNavMobile') !== null && window.g
  */
 const store = {
   anonymizeFile: false,
-  bypassBanEvasion: true,
+  bypassBanEvasion: false,
   bypassFilter: true,
   slideCaptcha: true,
   reuseFile: false,
