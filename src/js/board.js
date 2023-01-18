@@ -97,7 +97,7 @@ export function getBoardInfo(board) {
       maxLines = 25;
       wordFilters.push(
         /pcuck/gi,
-        /pcfats/gi,
+        /pcfat/gi,
         /sony\w+/gi, // sonypony, sonyponies, etc
         /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
         /cumbrain/gi,
