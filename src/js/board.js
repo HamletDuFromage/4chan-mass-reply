@@ -3,9 +3,6 @@ export function getBoard() {
   return match ? match[0] : null;
 }
 
-// TODO:
-// * ideally this should parse https://a.4cdn.org/boards.json
-// * on extension initialization
 export function getBoardInfo(board) {
   let maxLines = 100;
   let characterLimit = 2000;
@@ -22,9 +19,6 @@ export function getBoardInfo(board) {
     /\bsoy/gi,
   ];
   switch (board) {
-    case 'g':
-      wordFilters.push(/Irwin/gi, /Norfolk/gi);
-      break;
     case 'ck':
     case 'int':
       wordFilters.pop(); // pop soy
@@ -32,9 +26,17 @@ export function getBoardInfo(board) {
     case 'b':
       maxImageFilesize = 2097152;
       break;
+    case 'bant':
+      maxLines = 49;
+      maxImageFilesize = 2097152;
+      hasUserIDs = true;
+      break;
     case 'biz':
       hasUserIDs = true;
       wordFilters.push(/monkeypox/gi);
+      break;
+    case 'g':
+      wordFilters.push(/Irwin/gi, /Norfolk/gi);
       break;
     case 'gd':
       maxImageFilesize = 8388608;
@@ -42,29 +44,21 @@ export function getBoardInfo(board) {
     case 'hc':
       maxImageFilesize = 8388608;
       break;
+    case 'hm':
+      maxImageFilesize = 8388608;
+      break;
     case 'hr':
       maxImageFilesize = 8388608;
       break;
-    case 'r':
-      maxImageFilesize = 8388608;
+    case 'jp':
+      characterLimit = 5000;
       break;
-    case 'tg':
-      maxImageFilesize = 8388608;
+    case 'lit':
+      characterLimit = 3000;
       break;
-    case 'trv':
-      maxImageFilesize = 8388608;
-      break;
-    case 'wsr':
-      maxImageFilesize = 8388608;
-      break;
-    case 'w':
-      maxImageFilesize = 6291456;
-      break;
-    case 'wg':
-      maxImageFilesize = 6291456;
-      break;
-    case 'wsg':
-      maxImageFilesize = 6291456;
+    case 'mlp':
+      characterLimit = 3000;
+      hasBoardFlags = true;
       break;
     case 'out':
       maxImageFilesize = 5242880;
@@ -72,26 +66,40 @@ export function getBoardInfo(board) {
     case 'p':
       maxImageFilesize = 5242880;
       break;
-    case 'soc':
-      maxImageFilesize = 5242880;
-      hasUserIDs = true;
-      break;
     case 'po':
       maxImageFilesize = 8388608;
-      break;
-    case 's':
-      maxImageFilesize = 8388608;
-      break;
-    case 'r9k':
-      maxImageFilesize = 2097152;
-      break;
-    case 's4s':
-      maxImageFilesize = 2097152;
       break;
     case 'pol':
       maxLines = 70;
       hasUserIDs = true;
       hasBoardFlags = true;
+      break;
+    case 'qst':
+      characterLimit = 3000;
+      maxImageFilesize = 8388608;
+      hasUserIDs = true;
+      break;
+    case 'r':
+      maxImageFilesize = 8388608;
+      break;
+    case 'r9k':
+      maxImageFilesize = 2097152;
+      break;
+    case 's':
+      maxImageFilesize = 8388608;
+      break;
+    case 's4s':
+      maxImageFilesize = 2097152;
+      break;
+    case 'soc':
+      maxImageFilesize = 5242880;
+      hasUserIDs = true;
+      break;
+    case 'tg':
+      maxImageFilesize = 8388608;
+      break;
+    case 'trv':
+      maxImageFilesize = 8388608;
       break;
     case 'v':
       maxLines = 25;
@@ -103,28 +111,20 @@ export function getBoardInfo(board) {
         /cumbrain/gi,
       );
       break;
-    case 'bant':
-      maxLines = 49;
-      maxImageFilesize = 2097152;
-      hasUserIDs = true;
-      break;
-    case 'jp':
-      characterLimit = 5000;
-      break;
-    case 'lit':
-      characterLimit = 3000;
-      break;
     case 'vt':
       characterLimit = 5000;
       break;
-    case 'qst':
-      characterLimit = 3000;
-      maxImageFilesize = 8388608;
-      hasUserIDs = true;
+    case 'w':
+      maxImageFilesize = 6291456;
       break;
-    case 'mlp':
-      characterLimit = 3000;
-      hasBoardFlags = true;
+    case 'wg':
+      maxImageFilesize = 6291456;
+      break;
+    case 'wsg':
+      maxImageFilesize = 6291456;
+      break;
+    case 'wsr':
+      maxImageFilesize = 8388608;
       break;
   }
   return {
