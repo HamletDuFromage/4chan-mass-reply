@@ -181,13 +181,13 @@ function bypassWordFilters(text) {
       }
 
       // check if the filter is a phrase and can be bypassed by
-      // inserting addition space before last word
+      // inserting apostrophe before last word
       if (match.split(' ').length > 1) {
         const lastSpaceIndex = match.lastIndexOf(' ');
-        const addedWhitespace = `${match.slice(0, lastSpaceIndex)} ${match.slice(lastSpaceIndex)}`;
+        const addedSymbol = `${match.slice(0, lastSpaceIndex)} '${match.slice(lastSpaceIndex + 1)}`;
         pattern.lastIndex = 0;
-        if (!pattern.test(addedWhitespace)) {
-          return addedWhitespace;
+        if (!pattern.test(addedSymbol)) {
+          return addedSymbol;
         }
       }
 
