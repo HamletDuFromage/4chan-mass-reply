@@ -12,16 +12,22 @@ export function getBoardInfo(board) {
   const wordFilters = [
     /back to reddit/gi,
     /CUCK/g,
-    /\btbh\b/gi,
-    /\bsmh\b/gi,
-    /\bfam\b/gi,
-    /\bfams\b/gi,
-    /\bsoy/gi,
+    /\btbh\b/g, // "tbH" and "Tbh" isn't wordfiltered
+    /\bTBH\b/g,
+    /\bsmh\b/g, // "smH" and "Smh" isn't wordfiltered
+    /\bSMH\b/g,
+    /\bfam\b/g, // "faM" isn't wordfiltered
+    /\bFam\b/g,
+    /\bFAM\b/g,
+    /\bfams\b/g, // "famS" isn't wordfiltered
+    /\bFams\b/g,
+    /\bFAMS\b/g,
+    /\bsoy/gi, // "soy" must be last
   ];
   switch (board) {
     case 'ck':
     case 'int':
-      wordFilters.pop(); // pop soy
+      wordFilters.pop(); // pop "soy"
       break;
     case 'b':
       maxImageFilesize = 2097152;
@@ -36,7 +42,7 @@ export function getBoardInfo(board) {
       wordFilters.push(/monkeypox/gi);
       break;
     case 'g':
-      wordFilters.push(/Irwin/gi, /Norfolk/gi);
+      wordFilters.push(/irwin/gi, /norfolk/gi);
       break;
     case 'gd':
       maxImageFilesize = 8388608;

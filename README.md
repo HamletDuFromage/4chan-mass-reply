@@ -21,7 +21,7 @@ Use the buttons in the reply box for (left to right):
 - Paste clipboard into the comment field
 - Append "sneed"
 - Convert quotelinks into soyquotes (for example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
-- Convert quotelinks into filename soyquotes
+- Convert quotelinks into filename quotes
 - Reply to every post on the page
 - Reply to posts with repeating digits in the post number
 - Reply to 1-post-by-this-ID
