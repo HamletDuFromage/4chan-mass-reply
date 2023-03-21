@@ -114,7 +114,6 @@ export function getBoardInfo(board) {
         /pcfat/gi,
         /sony\w+/gi, // sonypony, sonyponies, etc
         /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
-        /cumbrain/gi,
       );
       break;
     case 'vt':
