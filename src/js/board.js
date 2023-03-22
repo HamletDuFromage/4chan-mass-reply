@@ -112,8 +112,11 @@ export function getBoardInfo(board) {
       wordFilters.push(
         /pcuck/gi,
         /pcfat/gi,
-        /sony\w+/gi, // sonypony, sonyponies, etc
-        /nint\w+/gi, // nintendrone, nintenyearold, nintoddler
+        /sony\w+[^s]/gi, // sonypony, sonyponies, etc
+        /nint\w+[^s]/gi, // nintendrone, nintenyearold, nintoddler
+        /valvedrone/g, // "valvedronE" isn't wordfiltered
+        /Valvedrone/g,
+        /VALVEDRONE/g,
       );
       break;
     case 'vt':
