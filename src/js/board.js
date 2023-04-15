@@ -63,6 +63,7 @@ export function getBoardInfo(board) {
       characterLimit = 3000;
       break;
     case 'mlp':
+      wordFilters.push(/barbien\x69gger/gi);
       characterLimit = 3000;
       hasBoardFlags = true;
       break;
@@ -112,7 +113,7 @@ export function getBoardInfo(board) {
       wordFilters.push(
         /pcuck/gi,
         /pcfat/gi,
-        /sony\w+[^s]/gi, // sonypony, sonyponies, etc
+        /sony\w+[^s]/gi, // sonypony, sonyponies, son\x79gger
         /nint\w+[^s]/gi, // nintendrone, nintenyearold, nintoddler
         /valvedrone/g, // "valvedronE" isn't wordfiltered
         /Valvedrone/g,
