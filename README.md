@@ -48,7 +48,7 @@ Use the buttons in the reply box for (left to right):
 Download the ZIP archive from the release section and sideload it.
 
 ### Android
-Use the [Kiwi Browser](https://kiwibrowser.com/), download the zip archive and install the extension via ( ⋮ ) -> Extensions. 
+Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files, go to `about:config`, set `xpinstall.signatures.required` to `false` and sideload the addon in the settings (Advanced settings > Sideload XPI).
 
 ## How to build
 ```
