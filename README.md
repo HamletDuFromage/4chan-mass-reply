@@ -45,11 +45,12 @@ Use the buttons in the reply box for (left to right):
 - https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
 
 ### Chrome/Chromium/Brave
-- Download the ZIP archive from the release section and sideload it.
+- Download `4chan-mass-reply-unpacked.zip` from the Releases section and sideload it.
 
 ### Android
-- With [Kiwi Browser](https://kiwibrowser.com/), download the zip archive and install the extension via ( ⋮ ) -> Extensions.
-- With [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork, go to `about:config`, set `xpinstall.signatures.required` to `false` and sideload the addon in the settings (Advanced settings > Sideload XPI).
+- With [Kiwi Browser](https://kiwibrowser.com/) (WebView), download `4chan-mass-reply-unpacked.zip` from Releases section and install the extension via ( ⋮ ) -> Extensions.
+- With [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest) (GeckoView), go to `about:config`, set `xpinstall.signatures.required` to `false`, download `
+4chan_mass_reply.xpi ` from Releases section and sideload the extension via Advanced settings -> Sideload XPI.
 
 ## How to build
 ```
