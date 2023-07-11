@@ -144,46 +144,75 @@ function bypassWordFilters(text) {
   const board = getBoard();
   const wordFilters = getBoardInfo(board).wordFilters;
 
-  const replacements = (
-    (board === 'r9k') ? {
-      U: 'u', // r9k doesn't allow non ascii
-    } : {
-      C: 'Ϲ',
-      F: 'Ϝ',
-      H: 'Η',
-      K: 'Κ',
-      M: 'M',
-      N: 'Ν',
-      O: 'ⵔ',
-      S: 'Տ',
-      Y: 'Ү',
-      a: 'ä',
-      c: 'ϲ',
-      h: 'հ',
-      k: 'ƙ',
-      n: 'ᥒ',
-      o: '𐐬',
-      p: 'ρ',
-      s: '𐑈',
-    }
-  );
-
   let newText = text;
 
   for (let i = 0; i < wordFilters.length; ++i) {
     const pattern = wordFilters[i];
     newText = newText.replace(pattern, (match /* , offset, string */) => {
-      for (let j = match.length - 1; j >= 0; --j) {
-        const letter = match[j];
-        if (replacements[letter] !== undefined) {
-          return match.replace(letter, replacements[letter]);
+      // check if we have a homoglyph
+      // r9k doesn't allow non ascii
+      if (board !== 'r9k') {
+        const replacements = {
+          C: 'Ϲ',
+          F: 'Ϝ',
+          H: 'Η',
+          K: 'Κ',
+          M: 'M',
+          N: 'Ν',
+          O: 'ⵔ',
+          S: 'Տ',
+          Y: 'Ү',
+          a: 'ä',
+          c: 'ϲ',
+          h: 'հ',
+          k: 'ƙ',
+          n: 'ᥒ',
+          o: '𐐬',
+          p: 'ρ',
+          s: '𐑈',
+        };
+
+        for (let j = match.length - 1; j >= 0; --j) {
+          const letter = match[j];
+          if (replacements[letter] !== undefined) {
+            return match.slice(0, j) + replacements[letter] + match.slice(j + 1);
+          }
         }
       }
-      // if we couldn't find similar looking character
-      // check if the filter can be bypassed by an underscore
-      if (!pattern.test(`_${match}`)) {
-        return `_${match}`;
+
+      // check if the filter is a phrase and can be bypassed by
+      // inserting apostrophe before last word
+      if (match.split(' ').length > 1) {
+        const lastSpaceIndex = match.lastIndexOf(' ');
+        const addedSymbol = `${match.slice(0, lastSpaceIndex)} '${match.slice(lastSpaceIndex + 1)}`;
+        pattern.lastIndex = 0;
+        if (!pattern.test(addedSymbol)) {
+          return addedSymbol;
+        }
       }
+
+      // check if the filter can be bypassed by changing the case of the last letter
+      if (!pattern.ignoreCase) {
+        let lastLetter = match.slice(-1);
+
+        if (lastLetter >= 'a' && lastLetter <= 'z') lastLetter = lastLetter.toUpperCase();
+        else if (lastLetter >= 'A' && lastLetter <= 'Z') lastLetter = lastLetter.toLowerCase();
+
+        const caseChanged = match.slice(0, -1) + lastLetter;
+
+        pattern.lastIndex = 0;
+        if (!pattern.test(caseChanged)) {
+          return caseChanged;
+        }
+      }
+
+      // check if the filter can be bypassed by an underscore prefix
+      const prefixed = `_${match}`;
+      pattern.lastIndex = 0;
+      if (!pattern.test(prefixed)) {
+        return prefixed;
+      }
+
       return match;
     });
   }
