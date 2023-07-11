@@ -45,10 +45,11 @@ Use the buttons in the reply box for (left to right):
 - https://microsoftedge.microsoft.com/addons/detail/4chan-mass-reply/objbncahkeohdginhdcifhfchmhpoggg
 
 ### Chrome/Chromium/Brave
-Download the ZIP archive from the release section and sideload it.
+- Download the ZIP archive from the release section and sideload it.
 
 ### Android
-Download [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork that enables sideloading .xpi addon-on files, go to `about:config`, set `xpinstall.signatures.required` to `false` and sideload the addon in the settings (Advanced settings > Sideload XPI).
+- With [Kiwi Browser](https://kiwibrowser.com/), download the zip archive and install the extension via ( ⋮ ) -> Extensions.
+- With [SmartCookieWeb Preview](https://github.com/CookieJarApps/SmartCookieWeb-Preview/releases/latest), a Firefox fork, go to `about:config`, set `xpinstall.signatures.required` to `false` and sideload the addon in the settings (Advanced settings > Sideload XPI).
 
 ## How to build
 ```
