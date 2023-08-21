@@ -62,7 +62,7 @@ export function anonHash(file) {
 }
 
 /*
- * convert webp into jpeg
+ * convert unsupported imagetypes into png
  */
 export function fileConvert(file) {
   return new Promise((resolve) => {
@@ -71,11 +71,11 @@ export function fileConvert(file) {
       let mimetype = file.type;
       let filename = file.name;
 
-      if (mimetype === 'image/webp') {
+      if (mimetype === 'image/webp' || mimetype === "image/jxl" || mimetype === "image/avif") {
         debugLog('Converting WebP to JPEG');
 
-        mimetype = 'image/jpeg';
-        filename = `${filename.split('.')[0]}.jpg`;
+        mimetype = 'image/png';
+        filename = `${filename.split('.')[0]}.png`;
 
         const img = new Image();
         img.onload = () => {
