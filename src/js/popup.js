@@ -151,15 +151,13 @@ function sendMessage(messageType) {
   };
 });
 
-document.getElementById('cookies').onclick = () => {
-  debugLog('Deleting 4chan cookies');
+document.getElementById('cookie').onclick = () => {
+  debugLog('Deleting 4chan_pass cookie');
   ['https://4channel.org', 'https://4chan.org'].forEach((url) => {
-    browser.cookies.getAll({
+    browser.cookies.remove({
       url,
-    }).then((cookies) => Promise.all(cookies.map((cookie) => browser.cookies.remove({
-      url,
-      name: cookie.name,
-    }))));
+      name: '4chan_pass',
+    });
   });
 };
 
