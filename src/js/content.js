@@ -29,7 +29,7 @@ import {
 } from './captcha';
 
 const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
-const isMobile = (document.getElementById('boardNavMobile') !== null && window.getComputedStyle(document.getElementById('boardNavMobile'), null).display !== 'none');
+const isMobile = (document.getElementById('boardNavMobile') !== null && window.getComputedStyle(document.getElementById('boardNavMobile')).display !== 'none');
 
 /*
  * default values, make sure its the same as in popup.js
