@@ -10,6 +10,8 @@ export function getBoardInfo(board) {
   let hasUserIDs = false;
   let hasBoardFlags = false;
   const wordFilters = [
+    /hi reddit/gi,
+    /hello reddit/gi,
     /back to reddit/gi,
     /CUCK/g,
     /\btbh\b/g, // "tbH" and "Tbh" isn't wordfiltered
@@ -109,7 +111,6 @@ export function getBoardInfo(board) {
       maxImageFilesize = 8388608;
       break;
     case 'v':
-      maxLines = 25;
       wordFilters.push(
         /pcuck/gi,
         /pcfat/gi,
