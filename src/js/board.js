@@ -4,11 +4,23 @@ export function getBoard() {
 }
 
 export function getBoardInfo(board) {
-  let maxLines = 100;
+  // blue boards
+  let maxLines = 101;
+
+  // red boards
+  if (window.location.hostname === 'boards.4chan.org') {
+    if (board === 'b' || board === 'bant') {
+      maxLines = 51;
+    } else {
+      maxLines = 71;
+    }
+  }
+
   let characterLimit = 2000;
   let maxImageFilesize = 4194304;
   let hasUserIDs = false;
   let hasBoardFlags = false;
+
   const wordFilters = [
     /hi reddit/gi,
     /hello reddit/gi,
@@ -26,6 +38,7 @@ export function getBoardInfo(board) {
     /\bFAMS\b/g,
     /\bsoy/gi, // "soy" must be last
   ];
+
   switch (board) {
     case 'ck':
     case 'int':
@@ -35,7 +48,6 @@ export function getBoardInfo(board) {
       maxImageFilesize = 2097152;
       break;
     case 'bant':
-      maxLines = 49;
       maxImageFilesize = 2097152;
       hasUserIDs = true;
       break;
@@ -79,7 +91,6 @@ export function getBoardInfo(board) {
       maxImageFilesize = 8388608;
       break;
     case 'pol':
-      maxLines = 70;
       hasUserIDs = true;
       hasBoardFlags = true;
       break;
