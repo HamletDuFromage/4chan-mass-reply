@@ -96,16 +96,22 @@ function isCommentArea(e) {
   return result;
 }
 
-function createFileList(a) {
+function createFileList(files) {
+  // make a copy of an array?
+  // i think this also allows files to be an array of files or multiple file arguments
   // eslint-disable-next-line prefer-rest-params
-  a = [].slice.call(Array.isArray(a) ? a : arguments);
-  let b = a.length;
-  let c = b;
-  let d = true;
-  while (b-- && d) d = a[b] instanceof File;
-  if (!d) throw new TypeError('expected argument to FileList is File or array of File objects');
-  for (b = (new ClipboardEvent('')).clipboardData || new DataTransfer(); c--;) b.items.add(a[c]);
-  return b.files;
+  files = [].slice.call(Array.isArray(files) ? files : arguments);
+
+  const dt = new DataTransfer();
+
+  for (let i = 0; i < files.length; ++i) {
+    if (!(files[i] instanceof File)) {
+      throw new TypeError('expected argument to FileList is File or array of File objects');
+    }
+    dt.items.add(files[i]);
+  }
+
+  return dt.files;
 }
 
 function fileChanged(evt) {
