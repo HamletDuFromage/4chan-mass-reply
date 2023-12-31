@@ -18,6 +18,8 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 
 ## Usage
 Use the buttons in the reply box for (left to right):
+- Clear comment field
+- Paste clipboard into the comment field
 - Delete 4chan_pass cookie
 - Reply to every post on the page
 - Convert quotelinks into soyquotes (for example: `>>123456` in the comment field will be replaced with the quoted content of that post without a link to it)
