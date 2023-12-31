@@ -9,5 +9,6 @@
 }
 
 .comtxt {
+	min-width: 24em !important;
 	height: 15em;
 }

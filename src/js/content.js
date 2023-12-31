@@ -137,22 +137,35 @@ function fileChanged(evt) {
         saveFile(element.files[0]).catch(debugLog);
       }
 
+      // don't anonymize if redditification succeded
+      let redditPromise = Promise.resolve();
+
       if (store.redditifyImage) {
-        redditifyImage(element.files[0]).then((watermarkFile) => {
-          element.files = createFileList(watermarkFile);
-        });
-        return;
-      }
-
-      if (store.anonymizeFileName) {
-        element.files = createFileList(anonFilename(element.files[0]));
-      }
-
-      if (store.anonymizeFileHash) {
-        anonHash(element.files[0]).then((anonFile) => {
-          element.files = createFileList(anonFile);
+        redditPromise = new Promise((resolve) => {
+          redditifyImage(element.files[0]).then((watermarkFile) => {
+            if (watermarkFile !== undefined) {
+              element.files = createFileList(watermarkFile);
+            }
+            resolve(watermarkFile);
+          });
         });
       }
+
+      redditPromise.then((watermarkFile) => {
+        if (watermarkFile !== undefined) {
+          return;
+        }
+
+        if (store.anonymizeFileName) {
+          element.files = createFileList(anonFilename(element.files[0]));
+        }
+
+        if (store.anonymizeFileHash) {
+          anonHash(element.files[0]).then((anonFile) => {
+            element.files = createFileList(anonFile);
+          });
+        }
+      });
     });
   });
 }
@@ -251,22 +264,35 @@ function gotFileInput(e) {
 
       e.files = createFileList(file);
 
+      // don't anonymize if redditification succeded
+      let redditPromise = Promise.resolve();
+
       if (store.redditifyImage) {
-        redditifyImage(e.files[0]).then((watermarkFile) => {
-          e.files = createFileList(watermarkFile);
-        });
-        return;
-      }
-
-      if (store.anonymizeFileName) {
-        e.files = createFileList(anonFilename(e.files[0]));
-      }
-
-      if (store.anonymizeFileHash) {
-        anonHash(e.files[0]).then((anonFile) => {
-          e.files = createFileList(anonFile);
+        redditPromise = new Promise((resolve) => {
+          redditifyImage(e.files[0]).then((watermarkFile) => {
+            if (watermarkFile !== undefined) {
+              e.files = createFileList(watermarkFile);
+            }
+            resolve(watermarkFile);
+          });
         });
       }
+
+      redditPromise.then((watermarkFile) => {
+        if (watermarkFile !== undefined) {
+          return;
+        }
+
+        if (store.anonymizeFileName) {
+          e.files = createFileList(anonFilename(e.files[0]));
+        }
+
+        if (store.anonymizeFileHash) {
+          anonHash(e.files[0]).then((anonFile) => {
+            e.files = createFileList(anonFile);
+          });
+        }
+      });
     }).catch(debugLog);
   }
 }
@@ -295,6 +321,20 @@ function gotTextArea(e) {
 
   // build UI after comment textarea
   const ui = document.createElement('span');
+
+  createButton(ui, '🗑️', 'Clear Text', () => {
+    e.value = '';
+    e.focus();
+  });
+
+  createButton(ui, '📋', 'Paste from Clipboard', () => {
+    navigator.clipboard.readText().then((txt) => {
+      if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
+      e.value += txt;
+      e.scrollTop = e.scrollHeight;
+      e.focus();
+    });
+  });
 
   createButton(ui, '🍪', 'Delete Cookie', () => {
     debugLog('Deleting 4chan_pass cookie');
