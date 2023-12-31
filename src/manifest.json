@@ -9,16 +9,15 @@
 		"48":"icons/janny-48.png",
 		"96":"icons/janny-96.png"
 	},
+	"web_accessible_resources": [
+		"icons/reddit.png"
+	],
 	"permissions":[
 		"*://*.4channel.org/*",
 		"*://*.4chan.org/*",
 		"activeTab",
-		"clipboardRead",
-		"clipboardWrite",
 		"storage",
-		"cookies",
-		"webRequest",
-		"webRequestBlocking"
+		"cookies"
 	],
 	"background":{
 		"scripts":[

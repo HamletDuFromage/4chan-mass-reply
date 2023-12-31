@@ -2,8 +2,6 @@ import {
   debugLog,
 } from './misc';
 
-const pastasUrl = 'https://raw.githubusercontent.com/HamletDuFromage/4chan-mass-reply/master/copypastas.json';
-
 function modifyHeaders(item) {
   debugLog('Stripping 4chan_pass cookie and spoofing user-agent');
   item.requestHeaders.forEach((header) => {
@@ -14,7 +12,7 @@ function modifyHeaders(item) {
         break;
       }
       case 'user-agent': {
-        // TODO: this might not bypass the "Post successful!" rate limit (be useless)
+        // TODO: this might not bypass the "Post successful!" rate limit (useless)
         header.value = header.value.replace(/\d+\.\d+/g, (match /* , offset, string */) => {
           const fl = parseFloat(match);
           return (fl > 50 && fl < 200) ? (fl + Math.random() * 20 - 10).toFixed(1) : match;
@@ -50,28 +48,11 @@ function toggleBanEvasionBypass(enabled) {
   }
 }
 
-function fetchPastas(url) {
-  fetch(url).then((resp) => {
-    if (!resp.ok) {
-      throw new Error(`HTTP code${resp.status}`);
-    }
-    resp.text().then((txt) => {
-      browser.storage.local.set({
-        pastas: txt,
-      });
-    });
-  }).catch((error) => {
-    debugLog(`Error fetching pastas: ${error}`);
-  });
-}
-
 const init = () => {
   browser.storage.local.get({
     bypassBanEvasion: false,
-    pastasUrl,
   }).then((item) => {
     toggleBanEvasionBypass(item.bypassBanEvasion);
-    fetchPastas(item.pastasUrl.trim());
   }, (error) => {
     debugLog(`Error getting local storage: ${error}`);
   });
@@ -82,8 +63,6 @@ const init = () => {
     }
     if (Object.prototype.hasOwnProperty.call(changes, 'bypassBanEvasion')) {
       toggleBanEvasionBypass(changes.bypassBanEvasion.newValue);
-    } else if (Object.prototype.hasOwnProperty.call(changes, 'pastasUrl')) {
-      fetchPastas(changes.pastasUrl.newValue);
     }
   });
 };
