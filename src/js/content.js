@@ -13,6 +13,7 @@ import {
   anonHash,
   fileConvert,
   fileCompress,
+  redditifyImage,
 } from './file';
 
 import {
@@ -35,12 +36,13 @@ const isMobile = (document.getElementById('boardNavMobile') !== null && window.g
  * default values, make sure its the same as in popup.js
  */
 const store = {
-  anonymizeFile: false,
+  anonymizeFileName: false,
+  anonymizeFileHash: false,
+  redditifyImage: false,
   bypassBanEvasion: false,
   bypassFilter: true,
   slideCaptcha: true,
   reuseFile: false,
-  postFormButtons: true,
   quoteBottom: false,
   quoteFormat: 'single',
 };
@@ -123,25 +125,34 @@ function fileChanged(evt) {
   if (!board) {
     return;
   }
-  const file = element.files[0];
-  fileConvert(file).then((convertedFile) => {
+  fileConvert(element.files[0]).then((convertedFile) => {
     element.files = createFileList(convertedFile);
+
     const maxImageSize = getBoardInfo(board).maxImageFilesize;
-    fileCompress(convertedFile, maxImageSize).then((compressedFile) => {
+
+    fileCompress(element.files[0], maxImageSize).then((compressedFile) => {
       element.files = createFileList(compressedFile);
+
       if (store.reuseFile) {
-        saveFile(compressedFile).catch(debugLog);
+        saveFile(element.files[0]).catch(debugLog);
       }
-      if (!store.anonymizeFile) {
+
+      if (store.redditifyImage) {
+        redditifyImage(element.files[0]).then((watermarkFile) => {
+          element.files = createFileList(watermarkFile);
+        });
         return;
       }
-      // change name and write element first immediately because fast responding sites
-      // would not catch after hash change
-      compressedFile = anonFilename(compressedFile);
-      element.files = createFileList(compressedFile);
-      anonHash(compressedFile).then((anonFile) => {
-        element.files = createFileList(anonFile);
-      });
+
+      if (store.anonymizeFileName) {
+        element.files = createFileList(anonFilename(element.files[0]));
+      }
+
+      if (store.anonymizeFileHash) {
+        anonHash(element.files[0]).then((anonFile) => {
+          element.files = createFileList(anonFile);
+        });
+      }
     });
   });
 }
@@ -237,12 +248,24 @@ function gotFileInput(e) {
   if (store.reuseFile) {
     loadFile().then((file) => {
       debugLog(`Attaching the previous file "${file.name}"`);
-      if (store.anonymizeFile) {
-        anonHash(anonFilename(file)).then((anonFile) => {
+
+      e.files = createFileList(file);
+
+      if (store.redditifyImage) {
+        redditifyImage(e.files[0]).then((watermarkFile) => {
+          e.files = createFileList(watermarkFile);
+        });
+        return;
+      }
+
+      if (store.anonymizeFileName) {
+        e.files = createFileList(anonFilename(e.files[0]));
+      }
+
+      if (store.anonymizeFileHash) {
+        anonHash(e.files[0]).then((anonFile) => {
           e.files = createFileList(anonFile);
         });
-      } else {
-        e.files = createFileList(file);
       }
     }).catch(debugLog);
   }
@@ -269,93 +292,96 @@ function addQuotesText(e, action) {
 function gotTextArea(e) {
   e.classList.add('comtxt');
   e.addEventListener('change', commentChanged);
-  if (store.postFormButtons) {
-    // build UI after comment textarea
-    const ui = document.createElement('span');
 
-    createButton(ui, '🗑️', 'Clear Text', () => {
-      e.value = '';
-      e.focus();
+  // build UI after comment textarea
+  const ui = document.createElement('span');
+
+  createButton(ui, '🍪', 'Delete Cookie', () => {
+    debugLog('Deleting 4chan_pass cookie');
+    document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4channel.org';
+    document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4chan.org';
+  });
+
+  createButton(ui, '⚔️', 'Mass Reply', () => {
+    addQuotesText(e, 'regular');
+  });
+
+  createButton(ui, '😮', 'Soyquote', () => {
+    e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl, offset, value) => {
+      let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
+      str += `>${document.getElementById(`m${repl}`).innerText
+        .replaceAll('\n', '\n>')}`;
+      if (offset + match.length + 1 < value.length) str += '\n';
+      return str;
     });
+    e.scrollTop = e.scrollHeight;
+    e.focus();
+  });
 
-    createButton(ui, '📋', 'Paste from Clipboard', () => {
-      navigator.clipboard.readText().then((txt) => {
-        if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-        e.value += txt;
-        e.scrollTop = e.scrollHeight;
-        e.focus();
-      });
-    });
+  createButton(ui, '🖼️', 'Soyquote File Name', () => {
+    e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
+      const fileText = document.getElementById(`fT${repl}`);
+      if (!fileText) return '';
 
-    createButton(ui, '🚜', 'Sneed', () => {
-      if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-      e.value += 'sneed';
-      e.scrollTop = e.scrollHeight;
-      e.focus();
-    });
-
-    createButton(ui, '😮', 'Soyquote', () => {
-      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl, offset, value) => {
-        let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
-        str += `>${document.getElementById(`m${repl}`).innerText
-          .replaceAll('\n', '\n>')}`;
-        if (offset + match.length + 1 < value.length) str += '\n';
-        return str;
-      });
-      e.scrollTop = e.scrollHeight;
-      e.focus();
-    });
-
-    createButton(ui, '🖼️', 'Soyquote Filename', () => {
-      e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
-        const fileText = document.getElementById(`fT${repl}`);
-        if (!fileText) return '';
-
-        if (is4chanX) {
-          const fileTextA = fileText.children[0].children[0];
-          const fnfull = fileTextA.getElementsByClassName('fnfull')[0];
-          return `>${(fnfull || fileTextA).textContent}\n`;
-        }
-        const fileName = fileText.children[0];
-        return `>${fileName.title ? fileName.title : fileName.textContent}\n`;
-      });
-      e.scrollTop = e.scrollHeight;
-      e.focus();
-    });
-
-    createButton(ui, '⚔️', 'Mass Reply', () => {
-      addQuotesText(e, 'regular');
-    });
-
-    createButton(ui, '☝️', "Check 'em", () => {
-      addQuotesText(e, 'dubs');
-    });
-
-    if (window.location.href.includes('/thread/')) {
-      const board = getBoard();
-      const boardInfo = getBoardInfo(board);
-
-      if (boardInfo.hasUserIDs) {
-        // this emoji doesn't work on win 7
-        createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
-          addQuotesText(e, '1pbtid');
-        });
-        createButton(ui, '🏆', 'Rankings', () => {
-          addQuotesText(e, 'rankings');
-        });
+      if (is4chanX) {
+        const fileTextA = fileText.children[0].children[0];
+        const fnfull = fileTextA.getElementsByClassName('fnfull')[0];
+        return `>${(fnfull || fileTextA).textContent}\n`;
       }
+      const fileName = fileText.children[0];
+      return `>${fileName.title ? fileName.title : fileName.textContent}\n`;
+    });
+    e.scrollTop = e.scrollHeight;
+    e.focus();
+  });
 
-      if (boardInfo.hasBoardFlags) {
-        createButton(ui, '🏁', 'Quote Memeflags', () => {
-          addQuotesText(e, 'memeflags');
-        });
-      }
-      createButton(ui, '💩', 'KYM', () => {
-        addQuotesText(e, 'kym');
+  createButton(ui, '☝️', "Check 'em", () => {
+    addQuotesText(e, 'dubs');
+  });
+
+  createButton(ui, '🏷️', 'Anonymize File Name', () => {
+    const fileInput = e.parentElement.parentElement.querySelector('[type=file]');
+    let file = fileInput.files[0];
+    if (file !== undefined) {
+      file = anonFilename(file);
+      fileInput.files = createFileList(file);
+    }
+  });
+
+  createButton(ui, '#️', 'Anonymize File Hash', () => {
+    const fileInput = e.parentElement.parentElement.querySelector('[type=file]');
+    const file = fileInput.files[0];
+    if (file !== undefined) {
+      anonHash(file).then((anonFile) => {
+        fileInput.files = createFileList(anonFile);
       });
     }
-    e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
+  });
+
+  if (window.location.href.includes('/thread/')) {
+    const board = getBoard();
+    const boardInfo = getBoardInfo(board);
+
+    if (boardInfo.hasUserIDs) {
+      createButton(ui, '🏆', 'Rankings', () => {
+        addQuotesText(e, 'rankings');
+      });
+      // this emoji doesn't work on win 7
+      createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
+        addQuotesText(e, '1pbtid');
+      });
+    }
+
+    if (boardInfo.hasBoardFlags) {
+      createButton(ui, '🏁', 'Quote Memeflags', () => {
+        addQuotesText(e, 'memeflags');
+      });
+    }
+    createButton(ui, '💩', 'KYM', () => {
+      addQuotesText(e, 'kym');
+    });
   }
+  e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
 }
 
 function mutationChange(mutations) {

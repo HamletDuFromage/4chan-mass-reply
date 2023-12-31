@@ -6,34 +6,34 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 ## Features:
 
 - Anonymize image uploads by randomizing hash and filename
-- Bypass ban evasion detection by stripping the cookies and modifying useragent
-- Bypass common wordfilters by replacing one of the characters with a similar looking one (homoglyph)
+- Redditify image uploads
+- Bypass ban evasion detection by stripping the 4chan_pass cookie and randomizing numbers of the user-agent
+- Bypass common wordfilters by replacing a letter in the filtered words with a similar letter
 - Automatically slide captcha it into the right position
 - Reattach the last selected file
 - Configurable mass reply with multiple targets
-- Built-in copypastas
+- Soyquote text and filename
 
 ![popup](screenshots/popup.png)
 
 ## Usage
 Use the buttons in the reply box for (left to right):
-- Clear comment field
-- Paste clipboard into the comment field
-- Append "sneed"
-- Convert quotelinks into soyquotes (for example: `>>1234456` in the comment field will be replaced with the quoted content of that post without a link to it)
-- Convert quotelinks into filename quotes
+- Delete 4chan_pass cookie
 - Reply to every post on the page
+- Convert quotelinks into soyquotes (for example: `>>123456` in the comment field will be replaced with the quoted content of that post without a link to it)
+- Convert quotelinks into filename quotes
 - Reply to posts with repeating digits in the post number
+- Anonymize file name
+- Anonymize file hash
+- Rank IDs by their post count
 - Reply to 1-post-by-this-ID
 - Reply to /pol/ memeflag posts
-- Rank IDs by their post count
 - Quote knowyourmeme.com filenames
 
 ![replybox](screenshots/replybox.png)
 
 
 ## Permissions:
-- Clipboard to copy copypastas and the paste clipboard button
 - Storage to save the settings between each use
 - Access to 4chan and 4channel
 
