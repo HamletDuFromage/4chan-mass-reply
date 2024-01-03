@@ -5,14 +5,17 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 
 ## Features:
 
-- Anonymize image uploads by randomizing hash and filename
-- Redditify image uploads
+- Ability to mimic many filename types
+- Add a meme website watermark to uploads
+- Anonymize file hash
 - Bypass ban evasion detection by stripping the 4chan_pass cookie and randomizing numbers of the user-agent
 - Bypass common wordfilters by replacing a letter in the filtered words with a similar letter
-- Automatically slide captcha it into the right position
+- Automatically slide captcha into the right position
 - Reattach the last selected file
 - Configurable mass reply with multiple targets
 - Soyquote text and filename
+- Automatically convert WebP to JPEG
+- Automatically compress big images
 
 ![popup](screenshots/popup.png)
 
@@ -25,7 +28,7 @@ Use the buttons in the reply box for (left to right):
 - Convert quotelinks into soyquotes (for example: `>>123456` in the comment field will be replaced with the quoted content of that post without a link to it)
 - Convert quotelinks into filename quotes
 - Reply to posts with repeating digits in the post number
-- Anonymize file name
+- Spoof filename
 - Anonymize file hash
 - Rank IDs by their post count
 - Reply to 1-post-by-this-ID

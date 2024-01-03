@@ -7,7 +7,7 @@ import {
   getNumberWithOrdinal,
 } from './misc';
 
-const kymRegex = /^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/;
+const kymRegex = /^(?=(?:.*\d.*){1})[a-f0-9]{3}\.[a-zA-Z]+$/;
 
 function createQuotesString(strArray, quoteFormat, bottom, characterLimit, maxLines) {
   let res = '';

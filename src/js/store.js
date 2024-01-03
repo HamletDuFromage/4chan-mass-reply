@@ -1,3 +1,7 @@
+import {
+  debugLog,
+} from './misc';
+
 let db = null;
 
 export function initDB() {
@@ -27,8 +31,11 @@ export function saveFile(file) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(['file'], 'readwrite');
     const request = transaction.objectStore('file').put(file, 'data');
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(new Error("Couldn't save file."));
+    request.onsuccess = () => {
+      debugLog(`Remembering file "${file.name}"`);
+      resolve();
+    };
+    request.onerror = () => reject(new Error("Couldn't remember file."));
   });
 }
 
@@ -38,11 +45,13 @@ export function loadFile() {
     const request = transaction.objectStore('file').get('data');
     request.onsuccess = (evt) => {
       if (evt.target.result) {
-        resolve(evt.target.result);
+        const file = evt.target.result;
+        debugLog(`Loading remembered file "${file.name}"`);
+        resolve(file);
         return;
       }
-      reject(new Error('No previous file stored.'));
+      reject(new Error('No file remembered.'));
     };
-    request.onerror = () => reject(new Error("Couldn't load previous file."));
+    request.onerror = () => reject(new Error("Couldn't load remembered file."));
   });
 }

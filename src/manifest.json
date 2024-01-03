@@ -10,7 +10,8 @@
 		"96":"icons/janny-96.png"
 	},
 	"web_accessible_resources": [
-		"icons/reddit.png"
+		"icons/reddit.png",
+		"icons/ifunny.png"
 	],
 	"permissions":[
 		"*://*.4channel.org/*",
@@ -18,7 +19,9 @@
 		"activeTab",
 		"clipboardRead",
 		"storage",
-		"cookies"
+		"cookies",
+		"webRequest",
+		"webRequestBlocking"
 	],
 	"background":{
 		"scripts":[

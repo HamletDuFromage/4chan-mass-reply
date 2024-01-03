@@ -8,51 +8,41 @@ const init = () => {
    * default values, make sure its the same as in content.js
   */
   browser.storage.local.get({
-    anonymizeFileName: false,
+    fakeFilename: 'off',
+    watermark: 'off',
     anonymizeFileHash: false,
-    redditifyImage: false,
     bypassBanEvasion: false,
-    bypassFilter: true,
+    bypassWordfilter: true,
     slideCaptcha: true,
-    reuseFile: false,
+    optionsCheckboxes: false,
+    rememberFile: false,
     quoteBottom: false,
     quoteFormat: 'single',
   }).then((localstore) => {
     const keys = Object.keys(localstore);
-    for (let i = 0; i < keys.length; i++) {
-      const button = keys[i];
-      document.getElementById(button).onclick = (evt) => {
+    for (let i = 0; i < keys.length; ++i) {
+      const id = keys[i];
+      const elem = document.getElementById(id);
+
+      if (elem.type === 'checkbox') {
+        elem.checked = localstore[id];
+      } else {
+        elem.value = localstore[id];
+      }
+
+      elem.onchange = (evt) => {
+        const value = (evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value);
         browser.storage.local.set({
-          [evt.target.name]: evt.target.checked,
+          [evt.target.id]: value,
         }).then(
-          debugLog('Storage updated'),
+          debugLog(`Local storage: "${evt.target.id}" set to "${value}"`),
           (error) => {
             debugLog(`Error setting local storage: ${error}`);
           },
         );
       };
-      document.getElementById(button).checked = localstore[button];
     }
   });
 };
 
 init();
-
-// load and store mass-reply format
-document.getElementById('quoteFormat').addEventListener('change', (evt) => {
-  const value = evt.target.value;
-  browser.storage.local.set({
-    quoteFormat: value,
-  }).then(
-    debugLog('Storage updated'),
-    (error) => {
-      debugLog(`Error setting local storage: ${error}`);
-    },
-  );
-});
-
-browser.storage.local.get({
-  quoteFormat: 'single',
-}).then((item) => {
-  document.getElementById('quoteFormat').value = item.quoteFormat;
-});

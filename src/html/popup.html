@@ -15,22 +15,50 @@
 				<h1 style="display:inline">4chan Mass Reply - Shitposting suite</h1>
 			</div>
 		</div>
-		<label><input type="checkbox" id="anonymizeFileName" name="anonymizeFileName" />Anonymize file name</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
+		<div>
+			<span>Fake filename:</span>
+			<select id="fakeFilename">
+				<option value="off">Disabled</option>
+				<option value="unix">Unix Timestamp</option>
+				<option value="kym">KYM</option>
+				<option value="reddit">Reddit</option>
+				<option value="ifunny">iFunny</option>
+				<option value="funnyjunk">Funnyjunk</option>
+				<option value="9gag">9GAG</option>
+				<option value="twitter">Twitter</option>
+				<option value="facebook">Facebook / Instagram</option>
+				<option value="tumblr">Tumblr</option>
+				<option value="iphoneIMG">iPhone (IMG)</option>
+				<option value="iphoneGUID">iPhone (GUID)</option>
+				<option value="whatsapp">WhatsApp</option>
+			</select>
+			<div class="tooltip">
+				<span class="tooltipSymbol">&#9432</span>
+				<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
+			</div>
 		</div>
-		<br>
+		<div>
+			<span>Watermark:</span>
+			<select id="watermark">
+				<option value="off">Disabled</option>
+				<option value="reddit">Reddit</option>
+				<option value="ifunny">iFunny</option>
+			</select>
+			<div class="tooltip">
+				<span class="tooltipSymbol">&#9432</span>
+				<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
+			</div>
+		</div>
 		<label><input type="checkbox" id="anonymizeFileHash" name="anonymizeFileHash" />Anonymize file hash</label>
 		<div class="tooltip">
 			<span class="tooltipSymbol">&#9432</span>
 			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
 		</div>
 		<br>
-		<label><input type="checkbox" id="redditifyImage" name="redditifyImage" />Redditify image</label>
+		<label><input type="checkbox" id="rememberFile" name="rememberFile" />Remember last used file</label>
 		<div class="tooltip">
 			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
+			<span class="tooltipText">The last selected file will stay selected even on refresh or after posting</span>
 		</div>
 		<br>
 		<label><input type="checkbox" id="bypassBanEvasion" name="bypassBanEvasion" />Bypass ban-evasion detection</label>
@@ -39,7 +67,7 @@
 			<span class="tooltipText">Strip '4chan_pass' cookie and randomize numbers of the user-agent. May cause posts to not go through.</span>
 		</div>
 		<br>
-		<label><input type="checkbox" id="bypassFilter" name="bypassFilter" />Bypass wordfilters</label>
+		<label><input type="checkbox" id="bypassWordfilter" name="bypassWordfilter" />Bypass wordfilters</label>
 		<div class="tooltip">
 			<span class="tooltipSymbol">&#9432</span>
 			<span class="tooltipText">Replace the letter in the filtered words with a similar letter</span>
@@ -47,13 +75,11 @@
 		<br>
 		<label><input type="checkbox" id="slideCaptcha" name="slideCaptcha" />Automatically slide captcha</label>
 		<br>
-		<label><input type="checkbox" id="reuseFile" name="reuseFile" />Remember last used file</label>
+		<label><input type="checkbox" id="optionsCheckboxes" name="optionsCheckboxes" />Replace options field with checkboxes</label>
 		<div class="tooltip">
 			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">The last selected file will stay selected even on refresh or after posting</span>
+			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
 		</div>
-		<br>
-		<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
 		<br>
 		<div>
 			<span>Mass-reply format:</span>
@@ -63,6 +89,7 @@
 				<option value="tower">Tower</option>
 			</select>
 		</div>
+		<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
 	</div>
 	<div id="error-content" class="hidden">
 		<p>Can not mass reply on this web page.</p>
