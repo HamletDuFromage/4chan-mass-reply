@@ -109,7 +109,7 @@ function getBestPos(bgdata, chkArray, slideWidth) {
 
 function getImageDataFromURI(uri) {
   return new Promise((resolve, reject) => {
-    const image = document.createElement('img');
+    const image = new Image();
     image.onload = () => {
       const canvas = document.createElement('canvas');
       canvas.width = image.width;

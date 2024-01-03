@@ -9,11 +9,11 @@ import {
 } from './store';
 
 import {
-  anonFilename,
+  fakeFilename,
   anonHash,
   fileConvert,
   fileCompress,
-  redditifyImage,
+  drawWatermark,
 } from './file';
 
 import {
@@ -36,18 +36,19 @@ const isMobile = (document.getElementById('boardNavMobile') !== null && window.g
  * default values, make sure its the same as in popup.js
  */
 const store = {
-  anonymizeFileName: false,
+  fakeFilename: 'off',
+  watermark: 'off',
   anonymizeFileHash: false,
-  redditifyImage: false,
   bypassBanEvasion: false,
-  bypassFilter: true,
+  bypassWordfilter: true,
   slideCaptcha: true,
-  reuseFile: false,
+  optionsCheckboxes: false,
+  rememberFile: false,
   quoteBottom: false,
   quoteFormat: 'single',
 };
 
-const kymRegex = /^(?=(?:.*\d.*){1})[a-z0-9]{3}\.[a-zA-Z]+$/;
+const kymRegex = /^(?=(?:.*\d.*){1})[a-f0-9]{3}\.[a-zA-Z]+$/;
 
 function spotKym(element) {
   let filenameDOMs = null;
@@ -76,7 +77,7 @@ function spotKym(element) {
 function isFileInput(e) {
   const result = (
     typeof e.type !== 'undefined'
-        && e.nodeType === 1
+        && e.nodeType === Node.ELEMENT_NODE
         && e.tagName === 'INPUT'
         && /file(?:s)?/i.test(e.type)
   );
@@ -86,9 +87,24 @@ function isFileInput(e) {
   return result;
 }
 
+function isOptionsField(e) {
+  const result = (
+    typeof e.type !== 'undefined'
+        && e.nodeType === Node.ELEMENT_NODE
+        && e.tagName === 'INPUT'
+        && e.type === 'text'
+        && e.name === 'email'
+  );
+  if (result) {
+    debugLog('Found options field: ', e);
+  }
+  return result;
+}
+
 function isCommentArea(e) {
-  const result = (typeof e.type !== 'undefined'
-        && e.nodeType === 1
+  const result = (
+    typeof e.type !== 'undefined'
+        && e.nodeType === Node.ELEMENT_NODE
         && e.tagName === 'TEXTAREA'
         && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
   );
@@ -133,38 +149,40 @@ function fileChanged(evt) {
     fileCompress(element.files[0], maxImageSize).then((compressedFile) => {
       element.files = createFileList(compressedFile);
 
-      if (store.reuseFile) {
+      if (store.rememberFile) {
         saveFile(element.files[0]).catch(debugLog);
       }
 
-      // don't anonymize if redditification succeded
-      let redditPromise = Promise.resolve();
+      let hashPromise = Promise.resolve();
 
-      if (store.redditifyImage) {
-        redditPromise = new Promise((resolve) => {
-          redditifyImage(element.files[0]).then((watermarkFile) => {
-            if (watermarkFile !== undefined) {
-              element.files = createFileList(watermarkFile);
-            }
-            resolve(watermarkFile);
+      if (store.anonymizeFileHash) {
+        hashPromise = new Promise((resolve) => {
+          anonHash(element.files[0]).then((hashFile) => {
+            element.files = createFileList(hashFile);
+            resolve();
           });
         });
       }
 
-      redditPromise.then((watermarkFile) => {
-        if (watermarkFile !== undefined) {
-          return;
-        }
+      hashPromise.then(() => {
+        let watermarkPromise = Promise.resolve();
 
-        if (store.anonymizeFileName) {
-          element.files = createFileList(anonFilename(element.files[0]));
-        }
-
-        if (store.anonymizeFileHash) {
-          anonHash(element.files[0]).then((anonFile) => {
-            element.files = createFileList(anonFile);
+        if (store.watermark !== 'off') {
+          watermarkPromise = new Promise((resolve) => {
+            drawWatermark(element.files[0], store.watermark).then((watermarkFile) => {
+              if (watermarkFile !== undefined) {
+                element.files = createFileList(watermarkFile);
+              }
+              resolve();
+            });
           });
         }
+
+        watermarkPromise.then(() => {
+          if (store.fakeFilename !== 'off') {
+            element.files = createFileList(fakeFilename(element.files[0], store.fakeFilename));
+          }
+        });
       });
     });
   });
@@ -251,47 +269,47 @@ function bypassWordFilters(text) {
 
 function commentChanged(evt) {
   const element = evt.target;
-  if (store.bypassFilter) {
+  if (store.bypassWordfilter) {
     element.value = bypassWordFilters(element.value);
   }
 }
 
 function gotFileInput(e) {
   e.addEventListener('change', fileChanged);
-  if (store.reuseFile) {
-    loadFile().then((file) => {
-      debugLog(`Attaching the previous file "${file.name}"`);
+  if (store.rememberFile) {
+    loadFile().then((rememberedFile) => {
+      e.files = createFileList(rememberedFile);
 
-      e.files = createFileList(file);
+      let hashPromise = Promise.resolve();
 
-      // don't anonymize if redditification succeded
-      let redditPromise = Promise.resolve();
-
-      if (store.redditifyImage) {
-        redditPromise = new Promise((resolve) => {
-          redditifyImage(e.files[0]).then((watermarkFile) => {
-            if (watermarkFile !== undefined) {
-              e.files = createFileList(watermarkFile);
-            }
-            resolve(watermarkFile);
+      if (store.anonymizeFileHash) {
+        hashPromise = new Promise((resolve) => {
+          anonHash(e.files[0]).then((hashFile) => {
+            e.files = createFileList(hashFile);
+            resolve();
           });
         });
       }
 
-      redditPromise.then((watermarkFile) => {
-        if (watermarkFile !== undefined) {
-          return;
-        }
+      hashPromise.then(() => {
+        let watermarkPromise = Promise.resolve();
 
-        if (store.anonymizeFileName) {
-          e.files = createFileList(anonFilename(e.files[0]));
-        }
-
-        if (store.anonymizeFileHash) {
-          anonHash(e.files[0]).then((anonFile) => {
-            e.files = createFileList(anonFile);
+        if (store.watermark !== 'off') {
+          watermarkPromise = new Promise((resolve) => {
+            drawWatermark(e.files[0], store.watermark).then((watermarkFile) => {
+              if (watermarkFile !== undefined) {
+                e.files = createFileList(watermarkFile);
+              }
+              resolve();
+            });
           });
         }
+
+        watermarkPromise.then(() => {
+          if (store.fakeFilename !== 'off') {
+            e.files = createFileList(fakeFilename(e.files[0], store.fakeFilename));
+          }
+        });
       });
     }).catch(debugLog);
   }
@@ -358,7 +376,7 @@ function gotTextArea(e) {
     e.focus();
   });
 
-  createButton(ui, '🖼️', 'Soyquote File Name', () => {
+  createButton(ui, '🖼️', 'Soyquote Filename', () => {
     e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
       const fileText = document.getElementById(`fT${repl}`);
       if (!fileText) return '';
@@ -379,21 +397,21 @@ function gotTextArea(e) {
     addQuotesText(e, 'dubs');
   });
 
-  createButton(ui, '🏷️', 'Anonymize File Name', () => {
-    const fileInput = e.parentElement.parentElement.querySelector('[type=file]');
-    let file = fileInput.files[0];
+  createButton(ui, '🏷️', 'Spoof Filename', () => {
+    const input = e.parentElement.parentElement.querySelector('[type=file]');
+    let file = input.files[0];
     if (file !== undefined) {
-      file = anonFilename(file);
-      fileInput.files = createFileList(file);
+      file = fakeFilename(file, (store.fakeFilename !== 'off' ? store.fakeFilename : 'unix'));
+      input.files = createFileList(file);
     }
   });
 
   createButton(ui, '#️', 'Anonymize File Hash', () => {
-    const fileInput = e.parentElement.parentElement.querySelector('[type=file]');
-    const file = fileInput.files[0];
+    const input = e.parentElement.parentElement.querySelector('[type=file]');
+    const file = input.files[0];
     if (file !== undefined) {
       anonHash(file).then((anonFile) => {
-        fileInput.files = createFileList(anonFile);
+        input.files = createFileList(anonFile);
       });
     }
   });
@@ -422,6 +440,39 @@ function gotTextArea(e) {
     });
   }
   e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
+}
+
+function createOptionCheckbox(parentNode, option) {
+  const span = document.createElement('span');
+  span.style.paddingRight = '3px';
+
+  // 4chan's default extension copies quick reply fields from normal reply form
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.setAttribute('onchange', `(() => {
+    const options = this.parentNode.parentNode.parentNode.children[0];
+    if (this.checked) {
+      options.value += '${option} ';
+    } else {
+      options.value = options.value.replace('${option} ', '');
+    }
+  })()`);
+
+  const label = document.createElement('label');
+  label.appendChild(input);
+  label.innerHTML += option;
+
+  span.appendChild(label);
+  parentNode.appendChild(span);
+}
+
+function gotOptionsField(e) {
+  if (store.optionsCheckboxes) {
+    e.style.display = 'none';
+    createOptionCheckbox(e.parentNode, 'sage');
+    createOptionCheckbox(e.parentNode, 'fortune');
+    createOptionCheckbox(e.parentNode, 'since4pass');
+  }
 }
 
 function mutationChange(mutations) {
@@ -466,7 +517,7 @@ function mutationChange(mutations) {
       } else if (isCommentArea(node)) {
         // if element itself is comment textarea
         gotTextArea(node);
-      } else if (node.nodeType === 1) {
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
         // search child nodes for input=file and comment texarea
         let nodesl = node.getElementsByTagName('input');
         for (let i = 0; i < nodesl.length; i++) {
@@ -518,6 +569,8 @@ browser.storage.local.get(store).then((item) => {
     for (let i = 0; i < inputs.length; i++) {
       if (isFileInput(inputs[i])) {
         gotFileInput(inputs[i]);
+      } else if (isOptionsField(inputs[i])) {
+        gotOptionsField(inputs[i]);
       }
     }
     inputs = document.getElementsByTagName('textarea');
