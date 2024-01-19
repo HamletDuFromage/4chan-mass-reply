@@ -11,7 +11,9 @@
 	},
 	"web_accessible_resources": [
 		"icons/reddit.png",
-		"icons/ifunny.png"
+		"icons/ifunny.png",
+		"fonts/SF-Compact-Display-Light.otf",
+		"fonts/SF-Compact-Display-Medium.otf"
 	],
 	"permissions":[
 		"*://*.4channel.org/*",
