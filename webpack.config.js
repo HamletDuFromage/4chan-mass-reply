@@ -46,12 +46,16 @@ module.exports = {
           to: "css/",
         },
         {
+          context: path.resolve(__dirname, "src", "fonts"),
+          from: "**/*",
+          to: "fonts/",
+        },
+        {
           from: "src/html/*.html",
           to: "html/[name].html",
         },
         {
-          from:
-            "node_modules/webextension-polyfill/dist/browser-polyfill.min.js",
+          from: "node_modules/webextension-polyfill/dist/browser-polyfill.min.js",
           to: "js/",
         },
       ],

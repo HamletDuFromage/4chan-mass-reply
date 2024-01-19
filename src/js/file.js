@@ -276,72 +276,98 @@ function drawWatermarkReddit(file) {
             return;
           }
 
-          debugLog('Adding Reddit watermark');
+          const fontLight = new FontFace(
+            'SF Compact Display',
+            `url(${browser.runtime.getURL('/fonts/SF-Compact-Display-Light.otf')})`,
+            {
+              weight: '300',
+            },
+          );
 
-          const cvs = document.createElement('canvas');
-          cvs.width = img.width;
-          cvs.height = img.height + watermarkH;
+          const fontMedium = new FontFace(
+            'SF Compact Display',
+            `url(${browser.runtime.getURL('/fonts/SF-Compact-Display-Medium.otf')})`,
+            {
+              weight: '500',
+            },
+          );
 
-          const ctx = cvs.getContext('2d');
-          ctx.drawImage(img, 0, 0);
+          document.fonts.add(fontLight);
+          document.fonts.add(fontMedium);
 
-          ctx.fillStyle = 'rgb(40, 40, 40)';
-          ctx.fillRect(0, img.height, img.width, watermarkH);
+          fontLight.load();
+          fontMedium.load();
 
-          const sidePadding = img.width * 0.02;
-          let textX = sidePadding;
-          const barMid = img.height + watermarkH / 2;
-          let fontSize = Math.round(watermarkH * 0.4);
-          let font = `${fontSize}px arial`;
+          document.fonts.ready.then(() => {
+            debugLog('Adding Reddit watermark');
 
-          const logoH = watermarkH * 0.6;
-          const logoW = (logoH * 250) / 81; // maintain the aspect ratio
+            const cvs = document.createElement('canvas');
+            cvs.width = img.width;
+            cvs.height = img.height + watermarkH;
 
-          const logoX = img.width - logoW - sidePadding;
-          const logoY = barMid - logoH / 2;
+            const ctx = cvs.getContext('2d');
+            ctx.drawImage(img, 0, 0);
 
-          ctx.fillStyle = 'white';
-          ctx.textBaseline = 'middle';
-          ctx.font = font;
+            ctx.fillStyle = 'rgb(40, 40, 40)';
+            ctx.fillRect(0, img.height, img.width, watermarkH);
 
-          const subreddit = subreddits[Math.floor(Math.random() * subreddits.length)];
-          const username = usernames[Math.floor(Math.random() * usernames.length)];
+            const sidePadding = img.width * 0.02;
+            let textX = sidePadding;
+            const barMid = img.height + watermarkH / 2;
 
-          const textW = ctx.measureText(`Posted in r/${subreddit} by u/${username}`).width;
-          const totalW = textW + sidePadding + img.width * 0.2;
-          if (logoX < totalW) {
-            fontSize = Math.round(fontSize * (logoX / totalW));
-            font = `${fontSize}px arial`; // real font is SF Pro Display but ...
-            ctx.font = font;
-          }
+            const logoH = watermarkH * 0.6;
+            const logoW = (logoH * 200) / 65; // maintain the aspect ratio
 
-          const postedIn = 'Posted in r/';
-          ctx.fillText(postedIn, textX, barMid);
-          textX += ctx.measureText(postedIn).width;
+            const logoX = img.width - logoW - sidePadding;
+            const logoY = barMid - logoH / 2;
 
-          ctx.font = `bold ${font}`;
-          ctx.fillText(subreddit, textX, barMid);
-          textX += ctx.measureText(subreddit).width;
+            const fontName = 'SF Compact Display';
+            let fontSize = Math.round(watermarkH * 0.4);
+            let font = `${fontSize}px '${fontName}'`;
 
-          ctx.font = font;
-          const by = ' by u/';
-          ctx.fillText(by, textX, barMid);
-          textX += ctx.measureText(by).width;
+            ctx.fillStyle = 'white';
+            ctx.textBaseline = 'middle';
+            ctx.font = `300 ${font}`;
 
-          ctx.font = `bold ${font}`;
-          ctx.fillText(username, textX, barMid);
+            const subreddit = subreddits[Math.floor(Math.random() * subreddits.length)];
+            const username = usernames[Math.floor(Math.random() * usernames.length)];
 
-          const logo = new Image();
-          logo.onload = () => {
-            ctx.drawImage(logo, logoX, logoY, logoW, logoH);
+            const textW = ctx.measureText(`Posted in r/${subreddit} by u/${username}`).width;
+            const totalW = textW + sidePadding + img.width * 0.2;
+            if (logoX < totalW) {
+              fontSize = Math.round(fontSize * (logoX / totalW));
+              font = `${fontSize}px '${fontName}'`;
+              ctx.font = `300 ${font}`;
+            }
 
-            cvs.toBlob((blob) => {
-              const newFile = new File([blob], file.name, { type: file.type });
-              resolve(newFile);
-            }, file.type, 0.9);
-          };
+            const postedIn = 'Posted in r/';
+            ctx.fillText(postedIn, textX, barMid);
+            textX += ctx.measureText(postedIn).width;
 
-          logo.src = browser.runtime.getURL('icons/reddit.png');
+            ctx.font = `500 ${font}`;
+            ctx.fillText(subreddit, textX, barMid);
+            textX += ctx.measureText(subreddit).width;
+
+            ctx.font = `300 ${font}`;
+            const by = ' by u/';
+            ctx.fillText(by, textX, barMid);
+            textX += ctx.measureText(by).width;
+
+            ctx.font = `500 ${font}`;
+            ctx.fillText(username, textX, barMid);
+
+            const logo = new Image();
+            logo.onload = () => {
+              ctx.drawImage(logo, logoX, logoY, logoW, logoH);
+
+              cvs.toBlob((blob) => {
+                const newFile = new File([blob], file.name, { type: file.type });
+                resolve(newFile);
+              }, file.type, 0.9);
+            };
+
+            logo.src = browser.runtime.getURL('/icons/reddit.png');
+          });
         };
 
         img.src = reader.result;
