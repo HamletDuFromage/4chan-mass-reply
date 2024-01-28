@@ -176,7 +176,7 @@ export function createQuotes(action, quoteFormat, quoteBottom) {
       if (filenameDOM !== null) {
         filename = filenameDOM.textContent;
         if (kymRegex.test(filename)) {
-          kym.push(`>${filename}`);
+          kym.push(`>>${posts[i].id.match(/(?<=\D+)\d+/)}\n>${filename}`);
         }
       }
     }
