@@ -265,7 +265,7 @@ function drawWatermarkReddit(file) {
             return;
           }
 
-          let watermarkH = img.height * 0.05;
+          let watermarkH = img.height * 0.054;
 
           if (watermarkH < 30) {
             watermarkH = 30;
@@ -308,21 +308,21 @@ function drawWatermarkReddit(file) {
             const ctx = cvs.getContext('2d');
             ctx.drawImage(img, 0, 0);
 
-            ctx.fillStyle = 'rgb(40, 40, 40)';
+            ctx.fillStyle = 'rgb(40, 39, 42)';
             ctx.fillRect(0, img.height, img.width, watermarkH);
 
             const sidePadding = img.width * 0.02;
             let textX = sidePadding;
             const barMid = img.height + watermarkH / 2;
 
-            const logoH = watermarkH * 0.6;
+            const logoH = watermarkH * 0.58;
             const logoW = (logoH * 200) / 65; // maintain the aspect ratio
 
             const logoX = img.width - logoW - sidePadding;
             const logoY = barMid - logoH / 2;
 
             const fontName = 'SF Compact Display';
-            let fontSize = Math.round(watermarkH * 0.4);
+            let fontSize = Math.round(watermarkH * 0.34);
             let font = `${fontSize}px '${fontName}'`;
 
             ctx.fillStyle = 'white';
