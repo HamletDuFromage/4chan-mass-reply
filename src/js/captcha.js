@@ -2,133 +2,113 @@ import {
   debugLog,
 } from './misc';
 
-/*
- * decide if a pixel is closer to black than to white.
- * return 0 for white, 1 for black
- */
-function pxlBlackOrWhite(r, g, b) {
-  return (r + g + b > 384) ? 0 : 1;
+// Decide if a pixel is closer to black than to white.
+function isPixelDark(r, g, b) {
+  return ((r + g + b) <= ((256 * 3) / 2));
 }
 
 /*
  * Get bordering pixels of transparent areas (the outline of the circles)
  * and return their coordinates with the neighboring color.
  */
-function getBoundries(imgdata) {
-  const data = imgdata.data;
-  const width = imgdata.width;
+function getBoundaries(imgData) {
+  const data = imgData.data;
+  const width = imgData.width;
 
-  let i = data.length - 1;
-  let cl = 0;
-  let cr = 0;
-  const chkArray = [];
-  let opq = true;
-  while (i > 0) {
+  const boundaries = [];
+
+  let isPreviousOpaque = true;
+
+  for (let i = data.length - 1; i >= 0; i -= 4) {
     // alpha channel above 128 is assumed opaque
-    const a = data[i] > 128;
-    if (a !== opq) {
-      if ((data[i - 4] > 128) === opq) {
-        // ignore just 1-width areas
-        i -= 4;
-        continue;
-      }
-      if (a) {
-        /* transparent pixel to its right */
-        /*
-        // set to color blue (for debugging)
-        data[i + 4] = 255;
-        data[i + 3] = 255;
-        data[i + 2] = 0;
-        data[i + 1] = 0;
-        */
-        const pos = (i + 1) / 4;
-        const x = pos % width;
-        const y = (pos - x) / width;
-        // 1: black, 0: white
-        const clr = pxlBlackOrWhite(data[i - 1], data[i - 2], data[i - 3]);
-        chkArray.push([x, y, clr]);
-        cr += 1;
-      } else {
-        /* opaque pixel to its right */
-        /*
-        // set to color red (for debugging)
-        data[i] = 255;
-        data[i - 1] = 0;
-        data[i - 2] = 0;
-        data[i - 3] = 255;
-        */
-        const pos = (i - 3) / 4;
-        const x = pos % width;
-        const y = (pos - x) / width;
-        // 1: black, 0: white
-        const clr = pxlBlackOrWhite(data[i + 1], data[i + 2], data[i + 3]);
-        chkArray.push([x, y, clr]);
-        cl += 1;
-      }
-      opq = a;
+    const isCurrentOpaque = (data[i] > 128);
+    if (isCurrentOpaque === isPreviousOpaque) continue;
+
+    // ignore single pixel areas
+    const isNextOpaque = (data[i - 4] > 128);
+    if (isNextOpaque === isPreviousOpaque) continue;
+
+    let transparentPixelNum;
+    let dark;
+
+    if (isCurrentOpaque) {
+      // transparent pixel to the right
+      transparentPixelNum = (i + 1) / 4;
+      dark = isPixelDark(data[i - 3], data[i - 2], data[i - 1]);
+    } else {
+      // opaque pixel to the right
+      transparentPixelNum = (i - 3) / 4;
+      dark = isPixelDark(data[i + 1], data[i + 2], data[i + 3]);
     }
-    i -= 4;
+
+    const x = transparentPixelNum % width;
+    const y = Math.floor(transparentPixelNum / width);
+
+    boundaries.push({ x, y, dark });
+
+    isPreviousOpaque = isCurrentOpaque;
   }
-  debugLog(`Border area of ${cl + cr} pixels in captcha`);
-  return chkArray;
+  debugLog(`Boundry area of ${boundaries.length} pixels in captcha`);
+  return boundaries;
 }
 
 /*
- * slide the background image and compare the colors of the border pixels in
- * chkArray, the position with the most matches wins
+ * Slide the background image and compare the colors of the border pixels in
+ * boundaries, the position with the most matches wins
  * Return in slider-percentage.
  */
-function getBestPos(bgdata, chkArray, slideWidth) {
-  const data = bgdata.data;
-  const width = bgdata.width;
+function getBestPos(bgData, boundaries, slideWidth) {
+  const data = bgData.data;
+  const width = bgData.width;
+
   let bestSimilarity = 0;
   let bestPos = 0;
 
-  for (let s = 0; s <= slideWidth; s += 1) {
+  const boundariesLen = boundaries.length;
+
+  for (let slidePos = 0; slidePos <= slideWidth; ++slidePos) {
     let similarity = 0;
-    const amount = chkArray.length;
-    for (let p = 0; p < amount; p += 1) {
-      const chk = chkArray[p];
-      const x = chk[0] + s;
-      const y = chk[1];
-      const clr = chk[2];
-      const off = (y * width + x) * 4;
-      const bgclr = pxlBlackOrWhite(data[off], data[off + 1], data[off + 2]);
-      if (bgclr === clr) {
-        similarity += 1;
+
+    for (let boundryIndex = 0; boundryIndex < boundariesLen; ++boundryIndex) {
+      const boundry = boundaries[boundryIndex];
+      const index = ((boundry.x + slidePos) + (boundry.y * width)) * 4;
+      const bgDark = isPixelDark(data[index], data[index + 1], data[index + 2]);
+      if (bgDark === boundry.dark) {
+        ++similarity;
       }
     }
+
     if (similarity > bestSimilarity) {
       bestSimilarity = similarity;
-      bestPos = s;
+      bestPos = slidePos;
     }
   }
   debugLog(`Best slider position with similarity of ${bestSimilarity}: ${bestPos}`);
-  return bestPos / slideWidth * 100;
+  return (bestPos / slideWidth) * 100;
 }
 
 function getImageDataFromURI(uri) {
   return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = image.width;
-      canvas.height = image.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(image, 0, 0);
-      const imgdata = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      resolve(imgdata);
+    const img = new Image();
+
+    img.onload = () => {
+      const cvs = document.createElement('canvas');
+      cvs.width = img.width;
+      cvs.height = img.height;
+      const ctx = cvs.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, cvs.width, cvs.height);
+      resolve(imgData);
     };
-    image.onerror = (e) => {
-      reject(e);
-    };
-    image.src = uri;
+
+    img.onerror = reject;
+    img.src = uri;
   });
 }
 
 /*
  * Automatically slide captcha into place
- * Arguments are the "t-fg', 't-bg', 't-slider', 't-resp' elements of the captcha
+ * Arguments are the 't-fg', 't-bg', 't-slider', 't-resp' elements of the captcha
  */
 export function slideCaptcha(tfgElement, tbgElement, sliderElement, answerElement) {
   // get data uris for captcha back- and foreground
@@ -141,15 +121,15 @@ export function slideCaptcha(tfgElement, tbgElement, sliderElement, answerElemen
   }
 
   // load foreground (image with holes)
-  getImageDataFromURI(tfgUri).then((igd) => {
+  getImageDataFromURI(tfgUri).then((fgImgData) => {
     // get array with pixels of foreground
     // that we compare to background
-    const chkArray = getBoundries(igd);
+    const boundaries = getBoundaries(fgImgData);
     // load background (image that gets slid)
-    getImageDataFromURI(tbgUri).then((sigd) => {
-      const slideWidth = sigd.width - igd.width;
+    getImageDataFromURI(tbgUri).then((bgImgData) => {
+      const slideWidth = bgImgData.width - fgImgData.width;
       // slide, compare and get best matching position
-      const sliderPos = getBestPos(sigd, chkArray, slideWidth);
+      const sliderPos = getBestPos(bgImgData, boundaries, slideWidth);
       // slide in the UI
       sliderElement.value = sliderPos;
       sliderElement.dispatchEvent(new Event('input'), { bubbles: true });

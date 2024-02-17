@@ -3,39 +3,12 @@ export function debugLog(...args) {
   console.debug(prefix, ...args);
 }
 
-export function getNumberWithOrdinal(i) {
-  const j = i % 10;
-  const k = i % 100;
-  if (j === 1 && k !== 11) {
-    return `${i}st`;
-  }
-  if (j === 2 && k !== 12) {
-    return `${i}nd`;
-  }
-  if (j === 3 && k !== 13) {
-    return `${i}rd`;
-  }
-  return `${i}th`;
-}
-
-export function getRandomDate() {
-  const curtime = new Date().getTime();
-  const randomTimePastYear = curtime - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000);
-  return new Date(randomTimePastYear);
-}
-
 export function getRandomString(length, lowercase = true, uppercase = true, digits = true) {
   let result = '';
   let alphabet = '';
-  if (lowercase) {
-    alphabet += 'abcdefghijklmnopqrstuvwxyz';
-  }
-  if (uppercase) {
-    alphabet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  }
-  if (digits) {
-    alphabet += '0123456789';
-  }
+  if (lowercase) alphabet += 'abcdefghijklmnopqrstuvwxyz';
+  if (uppercase) alphabet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (digits) alphabet += '0123456789';
   for (let i = 0; i < length; ++i) {
     result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
   }
@@ -49,4 +22,20 @@ export function getRandomHexString(length) {
     result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
   }
   return result;
+}
+
+export function isKYMfilename(filename) {
+  // at least 1 digit and 1 letter
+  const kymRegex = /^(?=[a-f]*[0-9])(?=[0-9]*[a-f])[a-f0-9]{3}\.[a-zA-Z]+$/;
+  return kymRegex.test(filename);
+}
+
+export const is4chanX = (!!document.querySelector("html[class~='fourchan-x'"));
+
+export function getFilenameElements(element) {
+  const selector = (is4chanX
+    ? "div[class~='fileText'] > span[class~='file-info'] > a"
+    : "div[class~='fileText'] > a");
+
+  return element.querySelectorAll(selector);
 }

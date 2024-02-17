@@ -1,4 +1,11 @@
 import {
+  debugLog,
+  is4chanX,
+  isKYMfilename,
+  getFilenameElements,
+} from './misc';
+
+import {
   createQuotes,
 } from './quotes';
 
@@ -9,11 +16,10 @@ import {
 } from './store';
 
 import {
-  fakeFilename,
-  anonHash,
-  fileConvert,
   fileCompress,
+  anonFile,
   drawWatermark,
+  fakeFilename,
 } from './file';
 
 import {
@@ -22,184 +28,140 @@ import {
 } from './board';
 
 import {
-  debugLog,
-} from './misc';
-
-import {
   slideCaptcha,
 } from './captcha';
 
-const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
-const isMobile = (document.getElementById('boardNavMobile') !== null && window.getComputedStyle(document.getElementById('boardNavMobile')).display !== 'none');
+import {
+  settings,
+} from './settings';
 
-/*
- * default values, make sure its the same as in popup.js
- */
-const store = {
-  fakeFilename: 'off',
-  watermark: 'off',
-  anonymizeFileHash: false,
-  bypassBanEvasion: false,
-  bypassWordfilter: true,
-  slideCaptcha: true,
-  optionsCheckboxes: false,
-  rememberFile: false,
-  quoteBottom: false,
-  quoteFormat: 'single',
-};
+const isMobile = (window.screen.width <= 480);
 
-const kymRegex = /^(?=(?:.*\d.*){1})[a-f0-9]{3}\.[a-zA-Z]+$/;
+const boardInfo = getBoardInfo();
 
-function spotKym(element) {
-  let filenameDOMs = null;
-  if (is4chanX) {
-    filenameDOMs = element.querySelectorAll("div[class~='fileText'] > span[class~='file-info'] > a[target]");
-  } else {
-    filenameDOMs = element.querySelectorAll("div[class~='fileText'] > a[target]");
-  }
-  for (let i = 0; i < filenameDOMs.length; ++i) {
-    if (kymRegex.test(filenameDOMs[i].textContent)) {
-      if (isMobile) {
-        const fileDiv = filenameDOMs[i].parentElement.parentElement;
-        if (fileDiv) {
-          const fileInfo = fileDiv.getElementsByClassName('mFileInfo');
-          if (fileInfo && fileInfo[0]) {
-            fileInfo[0].style.backgroundColor = '#FDFF47';
-          }
-        }
-      } else {
-        filenameDOMs[i].style.backgroundColor = '#FDFF47';
-      }
-    }
-  }
-}
-
-function isFileInput(e) {
-  const result = (
-    typeof e.type !== 'undefined'
-        && e.nodeType === Node.ELEMENT_NODE
-        && e.tagName === 'INPUT'
-        && /file(?:s)?/i.test(e.type)
-  );
-  if (result) {
-    debugLog('Found file input: ', e);
-  }
-  return result;
-}
-
-function isOptionsField(e) {
-  const result = (
-    typeof e.type !== 'undefined'
-        && e.nodeType === Node.ELEMENT_NODE
-        && e.tagName === 'INPUT'
-        && e.type === 'text'
-        && e.name === 'email'
-  );
-  if (result) {
-    debugLog('Found options field: ', e);
-  }
-  return result;
-}
-
-function isCommentArea(e) {
-  const result = (
-    typeof e.type !== 'undefined'
-        && e.nodeType === Node.ELEMENT_NODE
-        && e.tagName === 'TEXTAREA'
-        && (e.getAttribute('name') === 'com' || e.getAttribute('data-name') === 'com')
-  );
-  if (result) {
-    debugLog('Found comment textarea: ', e);
-  }
-  return result;
-}
-
-function createFileList(files) {
-  // make a copy of an array?
-  // i think this also allows files to be an array of files or multiple file arguments
-  // eslint-disable-next-line prefer-rest-params
-  files = [].slice.call(Array.isArray(files) ? files : arguments);
+function createFileList(...files) {
+  const fileList = Array.isArray(files[0]) ? files[0] : files;
 
   const dt = new DataTransfer();
 
-  for (let i = 0; i < files.length; ++i) {
-    if (!(files[i] instanceof File)) {
-      throw new TypeError('expected argument to FileList is File or array of File objects');
+  for (let i = 0; i < fileList.length; ++i) {
+    if (!(fileList[i] instanceof File)) {
+      debugLog('createFileList expected File arguments');
+      continue;
     }
-    dt.items.add(files[i]);
+    dt.items.add(fileList[i]);
   }
 
   return dt.files;
 }
 
-function fileChanged(evt) {
-  const element = evt.target;
-  if (element.files.length === 0) {
+let loadedFileQuality = null;
+let ignoreFileChange = false;
+
+function fileChanged(event) {
+  if (ignoreFileChange) {
+    ignoreFileChange = false;
     return;
   }
-  const board = getBoard();
-  if (!board) {
-    return;
-  }
-  fileConvert(element.files[0]).then((convertedFile) => {
-    element.files = createFileList(convertedFile);
 
-    const maxImageSize = getBoardInfo(board).maxImageFilesize;
+  const target = event.target;
+  if (!target.files.length) return;
 
-    fileCompress(element.files[0], maxImageSize).then((compressedFile) => {
-      element.files = createFileList(compressedFile);
+  fileCompress(
+    target.files[0],
+    boardInfo.maxFileSize,
+    loadedFileQuality || 0.9,
+  ).then((compressed) => {
+    if (!compressed) return;
 
-      if (store.rememberFile) {
-        saveFile(element.files[0]).catch(debugLog);
-      }
+    target.files = createFileList(compressed.file);
 
-      let hashPromise = Promise.resolve();
+    const quality = compressed.quality;
 
-      if (store.anonymizeFileHash) {
-        hashPromise = new Promise((resolve) => {
-          anonHash(element.files[0]).then((hashFile) => {
-            element.files = createFileList(hashFile);
+    // we saved a file which meets file size limits on one board
+    // but it might not meet on the other
+    if (settings.persistentFile && (loadedFileQuality !== quality)) {
+      saveFile(target.files[0], quality);
+    }
+
+    loadedFileQuality = null;
+
+    if (settings.fakeFilename !== 'off') {
+      const fakeFilenameFile = fakeFilename(target.files[0], settings.fakeFilename);
+      target.files = createFileList(fakeFilenameFile);
+    }
+
+    let anonPromise = Promise.resolve();
+
+    if (settings.anonymizeFileHash) {
+      anonPromise = new Promise((resolve) => {
+        anonFile(target.files[0], quality).then((anonedFile) => {
+          target.files = createFileList(anonedFile);
+          resolve();
+        });
+      });
+    }
+
+    anonPromise.then(() => {
+      let watermarkPromise = Promise.resolve();
+
+      if (settings.watermark !== 'off') {
+        watermarkPromise = new Promise((resolve) => {
+          drawWatermark(target.files[0], quality, settings.watermark).then((watermarkedFile) => {
+            if (watermarkedFile) {
+              target.files = createFileList(watermarkedFile);
+            }
             resolve();
           });
         });
       }
 
-      hashPromise.then(() => {
-        let watermarkPromise = Promise.resolve();
+      watermarkPromise.then(() => {
+        // check if the file size meets the limit after changing a pixel and drawing a watermark
+        fileCompress(target.files[0], boardInfo.maxFileSize, quality).then((compressed2) => {
+          if (!compressed2) return;
 
-        if (store.watermark !== 'off') {
-          watermarkPromise = new Promise((resolve) => {
-            drawWatermark(element.files[0], store.watermark).then((watermarkFile) => {
-              if (watermarkFile !== undefined) {
-                element.files = createFileList(watermarkFile);
-              }
-              resolve();
-            });
-          });
-        }
+          target.files = createFileList(compressed2.file);
 
-        watermarkPromise.then(() => {
-          if (store.fakeFilename !== 'off') {
-            element.files = createFileList(fakeFilename(element.files[0], store.fakeFilename));
-          }
+          // let the other listeners know we've updated the file
+          ignoreFileChange = true;
+
+          setTimeout(() => {
+            ignoreFileChange = false;
+          }, 1000);
+
+          target.dispatchEvent(new Event('change', { bubbles: true }));
         });
       });
     });
   });
 }
 
-function bypassWordFilters(text) {
-  const board = getBoard();
-  const wordFilters = getBoardInfo(board).wordFilters;
+function gotFileInput(element) {
+  // useCapture=true so it gets called before 4chanX's "change" listener
+  // because 4chanX empties fileInput.files
+  element.addEventListener('change', fileChanged, is4chanX);
 
-  let newText = text;
+  if (settings.persistentFile) {
+    loadFile().then((loaded) => {
+      loadedFileQuality = loaded.quality;
+      element.files = createFileList(loaded.file);
+      // let the other listeners know we've updated the file
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+}
+
+function bypassWordfilter(text) {
+  const board = getBoard();
+  const wordFilters = boardInfo.wordFilters;
 
   for (let i = 0; i < wordFilters.length; ++i) {
     const pattern = wordFilters[i];
-    newText = newText.replace(pattern, (match /* , offset, string */) => {
-      // check if we have a homoglyph
+    text = text.replace(pattern, (match) => {
       // r9k doesn't allow non ascii
       if (board !== 'r9k') {
+        // check if we have a homoglyph
         const replacements = {
           C: 'Ϲ',
           F: 'Ϝ',
@@ -222,7 +184,7 @@ function bypassWordFilters(text) {
 
         for (let j = match.length - 1; j >= 0; --j) {
           const letter = match[j];
-          if (replacements[letter] !== undefined) {
+          if (replacements[letter]) {
             return match.slice(0, j) + replacements[letter] + match.slice(j + 1);
           }
         }
@@ -264,197 +226,167 @@ function bypassWordFilters(text) {
       return match;
     });
   }
-  return newText;
+  return text;
 }
 
-function commentChanged(evt) {
-  const element = evt.target;
-  if (store.bypassWordfilter) {
-    element.value = bypassWordFilters(element.value);
+function commentChanged(event) {
+  if (settings.bypassWordfilter) {
+    const element = event.target;
+    element.value = bypassWordfilter(element.value);
   }
 }
 
-function gotFileInput(e) {
-  e.addEventListener('change', fileChanged);
-  if (store.rememberFile) {
-    loadFile().then((rememberedFile) => {
-      e.files = createFileList(rememberedFile);
-
-      let hashPromise = Promise.resolve();
-
-      if (store.anonymizeFileHash) {
-        hashPromise = new Promise((resolve) => {
-          anonHash(e.files[0]).then((hashFile) => {
-            e.files = createFileList(hashFile);
-            resolve();
-          });
-        });
-      }
-
-      hashPromise.then(() => {
-        let watermarkPromise = Promise.resolve();
-
-        if (store.watermark !== 'off') {
-          watermarkPromise = new Promise((resolve) => {
-            drawWatermark(e.files[0], store.watermark).then((watermarkFile) => {
-              if (watermarkFile !== undefined) {
-                e.files = createFileList(watermarkFile);
-              }
-              resolve();
-            });
-          });
-        }
-
-        watermarkPromise.then(() => {
-          if (store.fakeFilename !== 'off') {
-            e.files = createFileList(fakeFilename(e.files[0], store.fakeFilename));
-          }
-        });
-      });
-    }).catch(debugLog);
-  }
-}
-
-function createButton(parentNode, label, title, listener) {
+function createButton(parentElement, label, title, listener) {
   const btn = document.createElement('span');
   btn.classList.add('mrBtn');
   btn.textContent = label;
-  btn.id = `${title.toLowerCase().replaceAll(' ', '-')}-btn`;
   btn.title = title;
-  parentNode.appendChild(btn);
+  parentElement.appendChild(btn);
   btn.addEventListener('click', listener);
 }
 
-function addQuotesText(e, action) {
-  if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-  const str = createQuotes(action, store.quoteFormat, store.quoteBottom);
-  e.value += str;
-  e.scrollTop = e.scrollHeight;
-  e.focus();
+function addQuotesText(element, action) {
+  if (element.value && element.value.slice(-1) !== '\n') element.value += '\n';
+  element.value += createQuotes(
+    action,
+    settings.quoteFormat,
+    settings.quoteBottom,
+    boardInfo.maxLines,
+    boardInfo.characterLimit,
+  );
+  element.scrollTop = element.scrollHeight;
+  element.focus();
 }
 
-function gotTextArea(e) {
-  e.classList.add('comtxt');
-  e.addEventListener('change', commentChanged);
+function deleteCookie() {
+  debugLog('Deleting 4chan_pass cookie');
+  document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4channel.org';
+  document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4chan.org';
+}
+
+function gotTextArea(element) {
+  element.classList.add('comtxt');
+  element.addEventListener('change', commentChanged);
 
   // build UI after comment textarea
-  const ui = document.createElement('span');
+  const div = document.createElement('div');
 
-  createButton(ui, '🗑️', 'Clear Text', () => {
-    e.value = '';
-    e.focus();
+  createButton(div, '🗑️', 'Clear Text', () => {
+    element.value = '';
+    element.focus();
   });
 
-  createButton(ui, '📋', 'Paste from Clipboard', () => {
-    navigator.clipboard.readText().then((txt) => {
-      if (e.value && e.value.slice(-1) !== '\n') e.value += '\n';
-      e.value += txt;
-      e.scrollTop = e.scrollHeight;
-      e.focus();
+  createButton(div, '📋', 'Paste from Clipboard', () => {
+    navigator.clipboard.readText().then((text) => {
+      if (element.value && element.value.slice(-1) !== '\n') element.value += '\n';
+      element.value += text;
+      element.scrollTop = element.scrollHeight;
+      element.focus();
     });
   });
 
-  createButton(ui, '🍪', 'Delete Cookie', () => {
-    debugLog('Deleting 4chan_pass cookie');
-    document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4channel.org';
-    document.cookie = '4chan_pass=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.4chan.org';
+  createButton(div, '🍪', 'Delete Cookie', () => {
+    deleteCookie();
   });
 
-  createButton(ui, '⚔️', 'Mass Reply', () => {
-    addQuotesText(e, 'regular');
+  createButton(div, '⚔️', 'Mass Reply', () => {
+    addQuotesText(element, 'regular');
   });
 
-  createButton(ui, '😮', 'Soyquote', () => {
-    e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl, offset, value) => {
-      let str = (offset && value.charAt(offset - 1) !== '\n') ? '\n' : '';
-      str += `>${document.getElementById(`m${repl}`).innerText
-        .replaceAll('\n', '\n>')}`;
-      if (offset + match.length + 1 < value.length) str += '\n';
-      return str;
+  createButton(div, '😮', 'Soyquote', () => {
+    element.value = element.value.replace(/>>(\d+)\s*/g, (match, group1, offset, string) => {
+      const message = document.getElementById(`m${group1}`);
+      if (!message) return match;
+
+      let replacement = (offset && string.charAt(offset - 1) !== '\n') ? '\n' : '';
+      replacement += `>${message.innerText.replaceAll('\n', '\n>')}`;
+      if ((offset + match.length + 1) < string.length) replacement += '\n';
+
+      return replacement;
     });
-    e.scrollTop = e.scrollHeight;
-    e.focus();
+    element.scrollTop = element.scrollHeight;
+    element.focus();
   });
 
-  createButton(ui, '🖼️', 'Soyquote Filename', () => {
-    e.value = e.value.replace(/>>(\d+)\s*/g, (match, repl) => {
-      const fileText = document.getElementById(`fT${repl}`);
-      if (!fileText) return '';
+  createButton(div, '🖼️', 'Soyquote Filename', () => {
+    element.value = element.value.replace(/>>(\d+)\s*/g, (match, group1) => {
+      const fileText = document.getElementById(`fT${group1}`);
+      if (!fileText) return match;
 
       if (is4chanX) {
         const fileTextA = fileText.children[0].children[0];
-        const fnfull = fileTextA.getElementsByClassName('fnfull')[0];
-        return `>${(fnfull || fileTextA).textContent}\n`;
+        const fnfull = fileTextA.getElementsByClassName('fnfull');
+        return `>${(fnfull.length ? fnfull[0] : fileTextA).textContent}\n`;
       }
+
       const fileName = fileText.children[0];
       return `>${fileName.title ? fileName.title : fileName.textContent}\n`;
     });
-    e.scrollTop = e.scrollHeight;
-    e.focus();
+    element.scrollTop = element.scrollHeight;
+    element.focus();
   });
 
-  createButton(ui, '☝️', "Check 'em", () => {
-    addQuotesText(e, 'dubs');
+  createButton(div, '☝️', "Check 'em", () => {
+    addQuotesText(element, 'dubs');
   });
 
-  createButton(ui, '🏷️', 'Spoof Filename', () => {
-    const input = e.parentElement.parentElement.querySelector('[type=file]');
-    let file = input.files[0];
-    if (file !== undefined) {
-      file = fakeFilename(file, (store.fakeFilename !== 'off' ? store.fakeFilename : 'unix'));
+  createButton(div, '🏷️', 'Spoof Filename', () => {
+    const input = element.parentElement.parentElement.parentElement.querySelector('[type=file]');
+    if (input && input.files.length) {
+      const file = fakeFilename(input.files[0], (settings.fakeFilename !== 'off' ? settings.fakeFilename : 'unix'));
       input.files = createFileList(file);
     }
   });
 
-  createButton(ui, '#️', 'Anonymize File Hash', () => {
-    const input = e.parentElement.parentElement.querySelector('[type=file]');
-    const file = input.files[0];
-    if (file !== undefined) {
-      anonHash(file).then((anonFile) => {
-        input.files = createFileList(anonFile);
+  createButton(div, '#️⃣', 'Anonymize File Hash', () => {
+    const input = element.parentElement.parentElement.parentElement.querySelector('[type=file]');
+    if (input && input.files.length) {
+      anonFile(input.files[0]).then((anonedFile) => {
+        input.files = createFileList(anonedFile);
       });
     }
   });
 
-  if (window.location.href.includes('/thread/')) {
-    const board = getBoard();
-    const boardInfo = getBoardInfo(board);
-
+  if (/^\/[^/]+\/thread/.test(window.location.pathname)) {
     if (boardInfo.hasUserIDs) {
-      createButton(ui, '🏆', 'Rankings', () => {
-        addQuotesText(e, 'rankings');
+      createButton(div, '🏆', 'Rankings', () => {
+        addQuotesText(element, 'rankings');
       });
       // this emoji doesn't work on win 7
-      createButton(ui, '1️⃣', 'Quote 1pbtIDs', () => {
-        addQuotesText(e, '1pbtid');
+      createButton(div, '1️⃣', 'Quote 1pbtIDs', () => {
+        addQuotesText(element, '1pbtid');
       });
     }
 
     if (boardInfo.hasBoardFlags) {
-      createButton(ui, '🏁', 'Quote Memeflags', () => {
-        addQuotesText(e, 'memeflags');
+      createButton(div, '🏁', 'Quote Memeflags', () => {
+        addQuotesText(element, 'memeflags');
       });
     }
-    createButton(ui, '💩', 'KYM', () => {
-      addQuotesText(e, 'kym');
+
+    createButton(div, '💩', 'KYM', () => {
+      addQuotesText(element, 'kym');
     });
   }
-  e.parentNode.parentNode.insertBefore(ui, e.parentNode.nextSibling);
+
+  element.parentElement.parentElement.insertBefore(div, element.parentElement.nextSibling);
 }
 
-function createOptionCheckbox(parentNode, option) {
+function createOptionCheckbox(parentElement, option) {
   const span = document.createElement('span');
   span.style.paddingRight = '3px';
 
-  // 4chan's default extension copies quick reply fields from normal reply form
+  // 4chan's extension builds quick reply from original reply form
   const input = document.createElement('input');
   input.type = 'checkbox';
   input.setAttribute('onchange', `(() => {
-    const options = this.parentNode.parentNode.parentNode.children[0];
-    if (this.checked) {
-      options.value += '${option} ';
-    } else {
-      options.value = options.value.replace('${option} ', '');
+    const options = this.parentElement.parentElement.parentElement.querySelector("input[name=email]");
+    if (options) {
+      if (this.checked) {
+        options.value += '${option} ';
+      } else {
+        options.value = options.value.replace('${option} ', '');
+      }
     }
   })()`);
 
@@ -463,130 +395,150 @@ function createOptionCheckbox(parentNode, option) {
   label.innerHTML += option;
 
   span.appendChild(label);
-  parentNode.appendChild(span);
+  parentElement.appendChild(span);
 }
 
-function gotOptionsField(e) {
-  if (store.optionsCheckboxes) {
-    e.style.display = 'none';
-    createOptionCheckbox(e.parentNode, 'sage');
-    createOptionCheckbox(e.parentNode, 'fortune');
-    createOptionCheckbox(e.parentNode, 'since4pass');
+function gotOptionsField(element) {
+  if (settings.optionsCheckboxes) {
+    element.style.display = 'none';
+    const parent = element.parentElement;
+    createOptionCheckbox(parent, 'sage');
+    createOptionCheckbox(parent, 'fortune');
+    createOptionCheckbox(parent, 'since4pass');
   }
 }
 
-function mutationChange(mutations) {
+function highlightKym(element) {
+  const filenameElems = getFilenameElements(element);
+
+  for (let i = 0; i < filenameElems.length; ++i) {
+    const filename = filenameElems[i].textContent;
+    if (!isKYMfilename(filename)) continue;
+
+    const highlightColor = '#FDFF47';
+
+    if (isMobile) {
+      const fileDiv = filenameElems[i].parentElement.parentElement;
+      if (!fileDiv) continue;
+      const mFileInfo = fileDiv.getElementsByClassName('mFileInfo');
+      if (mFileInfo.length) {
+        mFileInfo[0].style.backgroundColor = highlightColor;
+      }
+    } else {
+      filenameElems[i].style.backgroundColor = highlightColor;
+    }
+  }
+}
+
+function getFields(element) {
+  const files = element.querySelectorAll('input[type=file]');
+  for (let i = 0; i < files.length; ++i) {
+    debugLog('Found file input: ', files[i]);
+    gotFileInput(files[i]);
+  }
+
+  // 4chan's extension builds quick reply from original reply form
+  // therefore quick reply's email will already be hidden and have checkboxes
+  const emails = element.querySelectorAll('input[name=email]:not(#qrEmail)');
+  for (let i = 0; i < emails.length; ++i) {
+    debugLog('Found options field: ', emails[i]);
+    gotOptionsField(emails[i]);
+  }
+
+  const comments = element.querySelectorAll('textarea[name=com], textarea[data-name=com]');
+  for (let i = 0; i < comments.length; ++i) {
+    debugLog('Found comment textarea: ', comments[i]);
+    gotTextArea(comments[i]);
+  }
+}
+
+function mutationCallback(mutations) {
   mutations.forEach((mutation) => {
-    if (mutation.target
-        && mutation.target.className.indexOf('postInfo') !== -1
-        && mutation.target.parentElement) {
-      spotKym(mutation.target.parentElement);
+    // detect Get Captcha button text changing from Loading
+    if (settings.slideCaptcha
+        && mutation.target
+        && mutation.target.id === 't-load'
+        && mutation.removedNodes.length
+        && mutation.removedNodes[0].data === 'Loading'
+    ) {
+      const parent = mutation.target.parentElement;
+      if (parent) {
+        const tfg = parent.querySelector('#t-fg');
+        const tbg = parent.querySelector('#t-bg');
+        const tslider = parent.querySelector('#t-slider');
+        const tresp = parent.querySelector('#t-resp');
+        slideCaptcha(tfg, tbg, tslider, tresp);
+      }
       return;
     }
 
-    /*
-     * Detect Captcha loaded
-     * (its ok to check via ElementById comparsion , because only one Captcha
-     *  can be loaded on the site at once)
-     */
-    if (store.slideCaptcha) {
-      if (mutation.target
-        && mutation.target.id === 't-load'
-        && mutation.removedNodes
-        && mutation.removedNodes[0].data === 'Loading'
+    if (settings.autoDeleteCookie
+      && mutation.target
+      && (is4chanX
+        ? (mutation.target.id === 'notifications' && mutation.addedNodes.length)
+        : (mutation.target.id === 'qrError' && mutation.target.style.display !== 'none'))
+    ) {
+      const text = mutation.target.textContent;
+      if (text.indexOf('Error: Ban evasion') !== -1
+        || text.indexOf('temporarily blocked') !== -1
       ) {
-        const tfg = document.getElementById('t-fg');
-        const tbg = document.getElementById('t-bg');
-        const tslider = document.getElementById('t-slider');
-        const tresp = document.getElementById('t-resp');
-        slideCaptcha(tfg, tbg, tslider, tresp);
-        return;
+        deleteCookie();
       }
     }
-    /*
-     * Detect and hook into other stuff we need, like reply box or floating
-     * QuickReplyBox. There can be multiple of those open together,
-     * so we get each when it appears and don't go for IDs
-     */
-    const nodes = mutation.addedNodes;
-    for (let n = 0; n < nodes.length; n++) {
-      const node = nodes[n];
-      if (isFileInput(node)) {
-        // if element itself is input=file
-        gotFileInput(node);
-      } else if (isCommentArea(node)) {
-        // if element itself is comment textarea
-        gotTextArea(node);
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        // search child nodes for input=file and comment texarea
-        let nodesl = node.getElementsByTagName('input');
-        for (let i = 0; i < nodesl.length; i++) {
-          if (isFileInput(nodesl[i])) {
-            gotFileInput(nodesl[i]);
-          }
-        }
-        nodesl = node.getElementsByTagName('textarea');
-        for (let i = 0; i < nodesl.length; i++) {
-          if (isCommentArea(nodesl[i])) {
-            gotTextArea(nodesl[i]);
-          }
-        }
+
+    // watch for quick reply box and new posts
+    const addedNodes = mutation.addedNodes;
+    for (let i = 0; i < addedNodes.length; ++i) {
+      const addedNode = addedNodes[i];
+      if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
+
+      if (addedNode.className.indexOf('postContainer') !== -1) {
+        highlightKym(addedNode);
+      } else {
+        getFields(addedNode);
       }
     }
   });
 }
 
-browser.runtime.onMessage.addListener((message) => {
-  const str = createQuotes(message.command, store.quoteFormat, store.quoteBottom);
-  return Promise.resolve({ response: str });
-});
-
-browser.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local') {
-    return;
-  }
-
-  const storeValues = Object.keys(store);
-  for (let i = 0; i < storeValues.length; i++) {
-    const key = storeValues[i];
-    if (Object.prototype.hasOwnProperty.call(changes, key)) {
-      store[key] = changes[key].newValue;
-    }
+browser.storage.local.onChanged.addListener((changes) => {
+  const keys = Object.keys(changes);
+  for (let i = 0; i < keys.length; ++i) {
+    const key = keys[i];
+    settings[key] = changes[key].newValue;
   }
 });
 
-browser.storage.local.get(store).then((item) => {
-  const storeValues = Object.keys(store);
-  for (let i = 0; i < storeValues.length; i++) {
-    const key = storeValues[i];
-    store[key] = Object.prototype.hasOwnProperty.call(item, key) ? item[key] : false;
+// init
+browser.storage.local.get(settings).then((localStorage) => {
+  const keys = Object.keys(localStorage);
+  for (let i = 0; i < keys.length; ++i) {
+    const key = keys[i];
+    settings[key] = localStorage[key];
   }
 
-  spotKym(document);
-
-  initDB().catch(debugLog).then(() => {
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-      if (isFileInput(inputs[i])) {
-        gotFileInput(inputs[i]);
-      } else if (isOptionsField(inputs[i])) {
-        gotOptionsField(inputs[i]);
+  initDB().then(() => {
+    if (settings.autoDeleteCookie && /^\/[^/]+\/post$/.test(window.location.pathname)) {
+      const errmsg = document.getElementById('errmsg');
+      if (errmsg) {
+        const text = errmsg.textContent;
+        if (text.indexOf('Error: Ban evasion') !== -1
+          || text.indexOf('temporarily blocked') !== -1
+        ) {
+          deleteCookie();
+        }
       }
     }
-    inputs = document.getElementsByTagName('textarea');
-    for (let i = 0; i < inputs.length; i++) {
-      if (isCommentArea(inputs[i])) {
-        gotTextArea(inputs[i]);
-      }
-    }
-  });
 
-  const observer = new MutationObserver((mutations) => {
-    mutationChange(mutations);
-  });
-  observer.observe(document, {
-    childList: true,
-    subtree: true,
+    highlightKym(document.body);
+    getFields(document.body);
+
+    const observer = new MutationObserver(mutationCallback);
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   });
 }, (error) => {
   debugLog(`Error getting local storage: ${error}`);
