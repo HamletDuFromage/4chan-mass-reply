@@ -25,17 +25,13 @@
 		"webRequest",
 		"webRequestBlocking"
 	],
-	"background":{
-		"scripts":[
-			"js/browser-polyfill.min.js",
-			"js/background.js"
-		]
-	},
 	"content_scripts":[
 		{
 			"matches":[
-				"*://*.4chan.org/*",
-				"*://*.4channel.org/*"
+				"*://boards.4chan.org/*",
+				"*://sys.4chan.org/*",
+				"*://boards.4channel.org/*",
+				"*://sys.4channel.org/*"
 			],
 			"js":[
 				"js/browser-polyfill.min.js",

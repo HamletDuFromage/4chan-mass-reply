@@ -1,188 +1,191 @@
 import {
-  getBoard,
-  getBoardInfo,
-} from './board';
-
-import {
-  getNumberWithOrdinal,
+  isKYMfilename,
+  getFilenameElements,
 } from './misc';
 
-const kymRegex = /^(?=(?:.*\d.*){1})[a-f0-9]{3}\.[a-zA-Z]+$/;
+function createQuotesString(links, format, quoteBottom, characterLimit, maxLines) {
+  let result = '';
 
-function createQuotesString(strArray, quoteFormat, bottom, characterLimit, maxLines) {
-  let res = '';
-  quoteFormat = quoteFormat || 'single';
-  const strLength = strArray[0].length;
-  const spacing = (quoteFormat === 'tower') ? 3 : 1; // to account for spaces and linebreaks
-  const quotesNumber = Math.min(
-    strArray.length,
-    Math.floor(characterLimit / (strLength + spacing)),
+  const spacing = (format === 'tower') ? 3 : 1; // to account for spaces and linebreaks
+
+  const maxRepliesToFit = Math.min(
+    links.length,
+    Math.floor(characterLimit / (links[0].length + spacing)),
   );
-  const offset = bottom * (strArray.length - quotesNumber);
-  switch (quoteFormat) {
+
+  const offset = quoteBottom * (links.length - maxRepliesToFit);
+
+  switch (format) {
     case 'lines': {
-      const cols = Math.floor(quotesNumber / maxLines);
+      const cols = Math.floor(maxRepliesToFit / maxLines);
+
       if (cols < 1) {
-        for (let i = 0; i < quotesNumber; i++) {
-          res += `${strArray[i]}\n`;
+        for (let i = 0; i < maxRepliesToFit; ++i) {
+          result += `${links[i]}\n`;
         }
       } else {
-        const r = Math.floor((quotesNumber - maxLines) / cols) + 1;
-        for (let i = 0 + offset; i < maxLines - r + offset; i++) {
-          res += `${strArray[i]}\n`;
+        const rows = Math.floor((maxRepliesToFit - maxLines) / cols) + 1;
+
+        const currentRow = offset;
+        const remainingLines = maxLines - rows + offset;
+
+        for (let i = currentRow; i < remainingLines; ++i) {
+          result += `${links[i]}\n`;
         }
-        for (let i = maxLines - r + offset; i < quotesNumber + offset; i++) {
-          res += strArray[i] + (
-            ((i - maxLines - r + offset) % (cols + 1) === 0 || i === quotesNumber + offset - 1)
-              ? '\n'
-              : ' '
-          );
+
+        const startColumn = maxLines - rows + offset;
+        const endQuoteIndex = maxRepliesToFit + offset;
+
+        for (let i = startColumn; i < endQuoteIndex; ++i) {
+          result += links[i];
+
+          const isLastColumn = ((i - startColumn) % (cols + 1) === 0) || (i === endQuoteIndex - 1);
+          result += isLastColumn ? '\n' : ' ';
         }
       }
       break;
     }
     case 'tower': {
-      const cols = (quotesNumber / 3 < maxLines - 1) // at least three width
-        ? 3 : Math.ceil(quotesNumber / maxLines - 1);
-      let cnt = 0;
-      for (let i = 0 + offset; i < quotesNumber + offset; i++) {
-        if (cnt && cnt % cols === cols - 1) {
-          res += `${strArray[i]}\n`;
+      const cols = (maxRepliesToFit / 3 < maxLines - 1)
+        ? 3 : Math.ceil(maxRepliesToFit / maxLines - 1);
+
+      let count = 0;
+
+      for (let i = offset; i < (maxRepliesToFit + offset); ++i) {
+        if (count && ((count % cols) === (cols - 1))) {
+          result += `${links[i]}\n`;
         } else {
-          res += `${strArray[i]} | `;
+          result += `${links[i]} | `;
         }
-        cnt++;
+        ++count;
       }
-      if (cnt % 3) res = `${res.slice(0, -2)}\n`;
+
+      if (count % 3) {
+        result = `${result.slice(0, -3)}\n`;
+      }
       break;
     }
     default: {
-      for (let i = 0 + offset; i < quotesNumber + offset; i++) {
-        res += `${strArray[i]} `;
+      for (let i = offset; i < (maxRepliesToFit + offset); ++i) {
+        result += `${links[i]} `;
       }
-      res += '\n';
+      result = `${result.slice(0, -1)}\n`;
       break;
     }
   }
-  return res;
+
+  return result;
 }
 
 function getUIDStats(posts) {
-  const postids = [];
-  for (let i = 0; i < posts.length; i++) {
-    const idelems = posts[i].getElementsByClassName('posteruid');
-    if (idelems.length) {
-      const uid = idelems[0].classList[1].slice(3);
-      if (postids[uid]) {
-        postids[uid][0].push(posts[i].id.slice(2));
-        postids[uid][1] += 1;
-      } else {
-        postids[uid] = [
-          [posts[i].id.slice(2)], 1,
-        ];
-      }
+  const stats = {};
+  for (let i = 0; i < posts.length; ++i) {
+    const pidElems = posts[i].getElementsByClassName('posteruid');
+    if (!pidElems.length) continue;
+    const uid = pidElems[0].classList[1].slice(3);
+    const pid = posts[i].id.match(/\d+/);
+    if (stats[uid]) {
+      stats[uid].push(pid);
+    } else {
+      stats[uid] = [pid];
     }
   }
-  return postids;
+  return stats;
 }
 
-export function createQuotes(action, quoteFormat, quoteBottom) {
-  const board = getBoard();
-  if (!board) return '';
+function getNumberWithOrdinal(i) {
+  const j = i % 10;
+  const k = i % 100;
+  if (j === 1 && k !== 11) return `${i}st`;
+  if (j === 2 && k !== 12) return `${i}nd`;
+  if (j === 3 && k !== 13) return `${i}rd`;
+  return `${i}th`;
+}
 
-  let str = '';
-
-  const is4chanX = (document.querySelector("html[class~='fourchan-x'") !== null);
-
-  const limits = getBoardInfo(board);
-  const maxLines = limits.maxLines;
-  const characterLimit = limits.characterLimit;
-
+export function createQuotes(action, format, quoteBottom, maxLines, characterLimit) {
   let posts = [];
-  if (/\/catalog$/.test(window.location.href)) {
+  if (/^\/[^/]+\/catalog$/.test(window.location.pathname)) {
     posts = document.getElementsByClassName('thread');
   } else {
     posts = document.querySelectorAll("div[class~='postContainer']:not([data-clone])");
   }
 
-  if (action === 'regular') {
-    const ids = Array.from(posts).map((e) => `>>${e.id.match(/(?<=\D+)\d+/)}`);
-    str += createQuotesString(ids, quoteFormat, quoteBottom, characterLimit, maxLines);
-  } else if (action === 'dubs') {
-    const dubs = [];
-    for (let i = 0; i < posts.length; i++) {
-      if (/(\d)\1\b/.test(posts[i].id)) {
-        dubs.push(`>>${posts[i].id.match(/(?<=\D+)\d+/)}`);
-      }
+  switch (action) {
+    case 'regular': {
+      const ids = Array.from(posts).map((element) => `>>${element.id.match(/\d+/)}`);
+      return createQuotesString(ids, format, quoteBottom, characterLimit, maxLines);
     }
-    if (!dubs.length) return 'No posts with digits found';
-    str += createQuotesString(dubs, quoteFormat, quoteBottom, characterLimit, maxLines);
-  } else if (action === 'memeflags') {
-    const memeflags = [];
-    for (let i = 0; i < posts.length; i++) {
-      if (posts[i].getElementsByClassName('bfl').length) {
-        memeflags.push(`>>${posts[i].id.slice(2)}`);
-      }
-    }
-    if (!memeflags.length) return 'No memeflags found';
-    str += createQuotesString(memeflags, quoteFormat, quoteBottom, characterLimit, maxLines);
-  } else if (action === '1pbtid') {
-    const onepbtid = [];
-    const postids = getUIDStats(posts);
-    const uids = Object.keys(postids);
-    for (let c = 0; c < uids.length; c++) {
-      const uidstat = postids[uids[c]];
-      if (uidstat[1] === 1) {
-        onepbtid.push(`>>${uidstat[0][0]}`);
-      }
-    }
-    if (!onepbtid.length) return 'No 1pbtids found';
-    str += createQuotesString(onepbtid, quoteFormat, quoteBottom, characterLimit, maxLines);
-  } else if (action === 'rankings') {
-    const ranking = [];
-    const postids = getUIDStats(posts);
-    const uids = Object.keys(postids);
-    for (let c = 0; c < uids.length; c++) {
-      const uidstat = postids[uids[c]];
-      ranking.push([uids[c], uidstat[0], uidstat[1]]);
-    }
-    ranking.sort((e1, e2) => e2[2] - e1[2]);
-    for (let v = 0; v < ranking.length; v++) {
-      if ((v + 1) * 4 + 1 > maxLines) {
-        break;
-      }
-      const uidStat = ranking[v];
-      const numOrdinal = getNumberWithOrdinal(v + 1);
-      let addStr = '\n';
-      addStr += `${numOrdinal} place:\n${uidStat[0]} with ${uidStat[2]} posts:\n`;
-      addStr += createQuotesString(uidStat[1].map((e) => `>>${e}`), 'single', quoteBottom, characterLimit, maxLines);
-      if (str.length + addStr.length > characterLimit) {
-        break;
-      }
-      str += addStr;
-    }
-    if (!str.length) return "Couldn't rank users";
-    return str;
-  } else if (action === 'kym') {
-    const kym = [];
-    let filename = null;
-    let filenameDOM = null;
-    for (let i = 0; i < posts.length; i++) {
-      if (is4chanX) {
-        filenameDOM = posts[i].querySelector("div[class~='fileText'] > span[class~='file-info'] > a[target]");
-      } else {
-        filenameDOM = posts[i].querySelector("[class~='fileText'] > a");
-      }
-      if (filenameDOM !== null) {
-        filename = filenameDOM.textContent;
-        if (kymRegex.test(filename)) {
-          kym.push(`>>${posts[i].id.match(/(?<=\D+)\d+/)}\n>${filename}`);
+    case 'dubs': {
+      const dubs = [];
+      for (let i = 0; i < posts.length; ++i) {
+        if (/(\d)\1\b/.test(posts[i].id)) {
+          dubs.push(`>>${posts[i].id.match(/\d+/)}`);
         }
       }
+      if (!dubs.length) return 'No posts with digits found';
+      return createQuotesString(dubs, format, quoteBottom, characterLimit, maxLines);
     }
-    if (!kym.length) return 'No KYM filenames found';
-    str += createQuotesString(kym, quoteFormat, quoteBottom, characterLimit, maxLines);
+    case 'memeflags': {
+      const memeflags = [];
+      for (let i = 0; i < posts.length; ++i) {
+        if (posts[i].getElementsByClassName('bfl').length) {
+          memeflags.push(`>>${posts[i].id.match(/\d+/)}`);
+        }
+      }
+      if (!memeflags.length) return 'No memeflags found';
+      return createQuotesString(memeflags, format, quoteBottom, characterLimit, maxLines);
+    }
+    case '1pbtid': {
+      const onepbtid = [];
+      const stats = getUIDStats(posts);
+      const uids = Object.keys(stats);
+      for (let i = 0; i < uids.length; ++i) {
+        const uidStat = stats[uids[i]];
+        if (uidStat.length === 1) {
+          onepbtid.push(`>>${uidStat[0]}`);
+        }
+      }
+      if (!onepbtid.length) return 'No 1pbtids found';
+      return createQuotesString(onepbtid, format, quoteBottom, characterLimit, maxLines);
+    }
+    case 'rankings': {
+      const stats = getUIDStats(posts);
+      const statsSorted = Object.entries(stats).sort((e1, e2) => e2[1].length - e1[1].length);
+
+      let result = '';
+      for (let i = 0; i < statsSorted.length; ++i) {
+        if (maxLines < ((i + 1) * 2)) break;
+
+        const stat = statsSorted[i];
+        const statUID = stat[0];
+        const statPosts = stat[1];
+        const numOrdinal = getNumberWithOrdinal(i + 1);
+        const ranking = `${numOrdinal} place ${
+          statUID} with ${statPosts.length} post${((statPosts.length > 1) ? 's' : '')}:\n${
+          createQuotesString(statPosts.map((pid) => `>>${pid}`), 'single', quoteBottom, characterLimit, maxLines)}`;
+
+        if (characterLimit < (result.length + ranking.length)) break;
+
+        result += ranking;
+      }
+      if (!result.length) return "Couldn't rank users";
+      return result;
+    }
+    case 'kym': {
+      const kym = [];
+
+      const filenameElems = getFilenameElements(document.body);
+      for (let i = 0; i < filenameElems.length; ++i) {
+        const filename = filenameElems[i].textContent;
+        if (isKYMfilename(filename)) {
+          kym.push(`>>${posts[i].id.match(/\d+/)}\n>${filename}`);
+        }
+      }
+
+      if (!kym.length) return 'No KYM filenames found';
+      return createQuotesString(kym, format, quoteBottom, characterLimit, maxLines);
+    }
   }
 
-  return str;
+  return '';
 }

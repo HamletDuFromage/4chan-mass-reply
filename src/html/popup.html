@@ -31,11 +31,8 @@
 				<option value="iphoneIMG">iPhone (IMG)</option>
 				<option value="iphoneGUID">iPhone (GUID)</option>
 				<option value="whatsapp">WhatsApp</option>
+				<option value="random">Random</option>
 			</select>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
-			</div>
 		</div>
 		<div>
 			<span>Watermark:</span>
@@ -44,43 +41,7 @@
 				<option value="reddit">Reddit</option>
 				<option value="ifunny">iFunny</option>
 			</select>
-			<div class="tooltip">
-				<span class="tooltipSymbol">&#9432</span>
-				<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
-			</div>
 		</div>
-		<label><input type="checkbox" id="anonymizeFileHash" name="anonymizeFileHash" />Anonymize file hash</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
-		</div>
-		<br>
-		<label><input type="checkbox" id="rememberFile" name="rememberFile" />Remember last used file</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">The last selected file will stay selected even on refresh or after posting</span>
-		</div>
-		<br>
-		<label><input type="checkbox" id="bypassBanEvasion" name="bypassBanEvasion" />Bypass ban-evasion detection</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">Strip '4chan_pass' cookie and randomize numbers of the user-agent. May cause posts to not go through.</span>
-		</div>
-		<br>
-		<label><input type="checkbox" id="bypassWordfilter" name="bypassWordfilter" />Bypass wordfilters</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">Replace the letter in the filtered words with a similar letter</span>
-		</div>
-		<br>
-		<label><input type="checkbox" id="slideCaptcha" name="slideCaptcha" />Automatically slide captcha</label>
-		<br>
-		<label><input type="checkbox" id="optionsCheckboxes" name="optionsCheckboxes" />Replace options field with checkboxes</label>
-		<div class="tooltip">
-			<span class="tooltipSymbol">&#9432</span>
-			<span class="tooltipText">You WILL NOT use this with 4chanX's quick reply</span>
-		</div>
-		<br>
 		<div>
 			<span>Mass-reply format:</span>
 			<select id="quoteFormat">
@@ -90,9 +51,18 @@
 			</select>
 		</div>
 		<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
-	</div>
-	<div id="error-content" class="hidden">
-		<p>Can not mass reply on this web page.</p>
+		<br>
+		<label><input type="checkbox" id="anonymizeFileHash" name="anonymizeFileHash" />Anonymize file hash</label>
+		<br>
+		<label><input type="checkbox" id="persistentFile" name="persistentFile" />Keep last selected file after posting or refreshing the page</label>
+		<br>
+		<label><input type="checkbox" id="bypassWordfilter" name="bypassWordfilter" />Bypass wordfilter</label>
+		<br>
+		<label><input type="checkbox" id="autoDeleteCookie" name="autoDeleteCookie" />Automatically delete cookie on ban evasion error</label>
+		<br>
+		<label><input type="checkbox" id="slideCaptcha" name="slideCaptcha" />Automatically slide captcha</label>
+		<br>
+		<label><input type="checkbox" id="optionsCheckboxes" name="optionsCheckboxes" />Replace options field with checkboxes</label>
 	</div>
 
 	<script src="../js/browser-polyfill.min.js"></script>

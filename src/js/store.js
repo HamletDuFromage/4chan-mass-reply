@@ -2,56 +2,79 @@ import {
   debugLog,
 } from './misc';
 
-let db = null;
+let database = null;
 
 export function initDB() {
   return new Promise((resolve, reject) => {
     if (!window.indexedDB) {
-      reject(new Error('window.indexedDB is undefined'));
+      const errMsg = 'Error opening indexedDB: window.indexedDB is undefined';
+      debugLog(errMsg);
+      reject(new Error(errMsg));
       return;
     }
 
     const dbVersion = 1;
     const request = window.indexedDB.open('mrextension', dbVersion);
 
-    request.onsuccess = (evt) => {
-      db = evt.target.result;
+    request.onsuccess = () => {
+      database = request.result;
       resolve();
     };
 
-    request.onupgradeneeded = (evt) => {
-      evt.target.result.createObjectStore('file');
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore('file');
     };
 
-    request.onerror = () => reject(new Error('Error opening indexedDB'));
+    request.onerror = () => {
+      const errMsg = `Error opening indexedDB: ${request.error}`;
+      debugLog(errMsg);
+      reject(new Error(errMsg));
+    };
   });
 }
 
-export function saveFile(file) {
+export function saveFile(file, quality) {
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['file'], 'readwrite');
-    const request = transaction.objectStore('file').put(file, 'data');
+    const transaction = database.transaction(['file'], 'readwrite');
+    const objectStore = transaction.objectStore('file');
+    const request = objectStore.put({ file, quality }, 'file');
+
     request.onsuccess = () => {
-      debugLog(`Remembering file "${file.name}"`);
+      debugLog(`Remembered file "${file.name}" with quality "${quality ? quality.toFixed(2) : undefined}"`);
       resolve();
     };
-    request.onerror = () => reject(new Error("Couldn't remember file."));
+
+    request.onerror = () => {
+      const errMsg = `Error remembering file: ${request.error}`;
+      debugLog(errMsg);
+      reject(new Error(errMsg));
+    };
   });
 }
 
 export function loadFile() {
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['file'], 'readonly');
-    const request = transaction.objectStore('file').get('data');
-    request.onsuccess = (evt) => {
-      if (evt.target.result) {
-        const file = evt.target.result;
-        debugLog(`Loading remembered file "${file.name}"`);
-        resolve(file);
+    const transaction = database.transaction(['file'], 'readonly');
+    const objectStore = transaction.objectStore('file');
+    const request = objectStore.get('file');
+
+    request.onsuccess = () => {
+      if (!request.result) {
+        const errMsg = 'No file remembered';
+        debugLog(errMsg);
+        reject(new Error(errMsg));
         return;
       }
-      reject(new Error('No file remembered.'));
+
+      const { file, quality } = request.result;
+      debugLog(`Loaded remembered file "${file.name}" with quality "${quality ? quality.toFixed(2) : undefined}"`);
+      resolve({ file, quality });
     };
-    request.onerror = () => reject(new Error("Couldn't load remembered file."));
+
+    request.onerror = () => {
+      const errMsg = `Error loading remembered file: ${request.error}`;
+      debugLog(errMsg);
+      reject(new Error(errMsg));
+    };
   });
 }
