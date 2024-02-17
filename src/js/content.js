@@ -431,25 +431,35 @@ function highlightKym(element) {
 }
 
 function getFields(element) {
-  const files = element.querySelectorAll('input[type=file]');
-  for (let i = 0; i < files.length; ++i) {
-    debugLog('Found file input: ', files[i]);
-    gotFileInput(files[i]);
-  }
+  const selectors = [
+    {
+      selector: 'input[type=file]',
+      debugMsg: 'Found file input: ',
+      callback: gotFileInput,
+    }, {
+      selector: 'input[name=email]:not(#qrEmail)',
+      debugMsg: 'Found options field: ',
+      callback: gotOptionsField,
+    }, {
+      selector: 'textarea[name=com], textarea[data-name=com]',
+      debugMsg: 'Found comment textarea: ',
+      callback: gotTextArea,
+    },
+  ];
 
-  // 4chan's extension builds quick reply from original reply form
-  // therefore quick reply's email will already be hidden and have checkboxes
-  const emails = element.querySelectorAll('input[name=email]:not(#qrEmail)');
-  for (let i = 0; i < emails.length; ++i) {
-    debugLog('Found options field: ', emails[i]);
-    gotOptionsField(emails[i]);
-  }
+  selectors.forEach(({ selector, debugMsg, callback }) => {
+    if (element.matches(selector)) {
+      debugLog(debugMsg, element);
+      callback(element);
+    }
 
-  const comments = element.querySelectorAll('textarea[name=com], textarea[data-name=com]');
-  for (let i = 0; i < comments.length; ++i) {
-    debugLog('Found comment textarea: ', comments[i]);
-    gotTextArea(comments[i]);
-  }
+    const match = element.querySelector(selector);
+
+    if (match) {
+      debugLog(debugMsg, match);
+      callback(match);
+    }
+  });
 }
 
 function mutationCallback(mutations) {
@@ -484,6 +494,7 @@ function mutationCallback(mutations) {
       ) {
         deleteCookie();
       }
+      return;
     }
 
     // watch for quick reply box and new posts

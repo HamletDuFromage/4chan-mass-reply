@@ -8,10 +8,10 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 - Ability to mimic many filename types
 - Add a meme website watermark to uploads
 - Anonymize file hash
-- Bypass ban evasion detection by stripping the 4chan_pass cookie and randomizing numbers of the user-agent
+- Automatically delete 4chan_pass cookie on ban evasion error
 - Bypass common wordfilters by replacing a letter in the filtered words with a similar letter
 - Automatically slide captcha into the right position
-- Reattach the last selected file
+- Re-attach the last selected file
 - Configurable mass reply with multiple targets
 - Soyquote text and filename
 - Automatically convert WebP to JPEG
@@ -33,7 +33,7 @@ Use the buttons in the reply box for (left to right):
 - Rank IDs by their post count
 - Reply to 1-post-by-this-ID
 - Reply to /pol/ memeflag posts
-- Quote knowyourmeme.com filenames
+- Quote Know Your Meme filenames
 
 ![replybox](screenshots/replybox.png)
 
