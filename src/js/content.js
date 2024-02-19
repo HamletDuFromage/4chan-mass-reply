@@ -10,7 +10,6 @@ import {
 } from './quotes';
 
 import {
-  initDB,
   saveFile,
   loadFile,
 } from './store';
@@ -40,7 +39,7 @@ const isMobile = (window.screen.width <= 480);
 const boardInfo = getBoardInfo();
 
 function createFileList(...files) {
-  const fileList = Array.isArray(files[0]) ? files[0] : files;
+  const fileList = (Array.isArray(files[0]) ? files[0] : files);
 
   const dt = new DataTransfer();
 
@@ -528,28 +527,27 @@ browser.storage.local.get(settings).then((localStorage) => {
     settings[key] = localStorage[key];
   }
 
-  initDB().then(() => {
-    if (settings.autoDeleteCookie && /^\/[^/]+\/post$/.test(window.location.pathname)) {
-      const errmsg = document.getElementById('errmsg');
-      if (errmsg) {
-        const text = errmsg.textContent;
-        if (text.indexOf('Error: Ban evasion') !== -1
-          || text.indexOf('temporarily blocked') !== -1
-        ) {
-          deleteCookie();
-        }
+  if (settings.autoDeleteCookie && /^\/[^/]+\/post$/.test(window.location.pathname)) {
+    const errmsg = document.getElementById('errmsg');
+    if (errmsg) {
+      const text = errmsg.textContent;
+      if (text.indexOf('Error: Ban evasion') !== -1
+        || text.indexOf('temporarily blocked') !== -1
+      ) {
+        deleteCookie();
       }
+      return;
     }
+  }
 
-    highlightKym(document.body);
-    getFields(document.body);
+  highlightKym(document.body);
+  getFields(document.body);
 
-    const observer = new MutationObserver(mutationCallback);
+  const observer = new MutationObserver(mutationCallback);
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
   });
 }, (error) => {
   debugLog(`Error getting local storage: ${error}`);
