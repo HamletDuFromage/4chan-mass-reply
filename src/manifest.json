@@ -21,9 +21,7 @@
 		"activeTab",
 		"clipboardRead",
 		"storage",
-		"cookies",
-		"webRequest",
-		"webRequestBlocking"
+		"cookies"
 	],
 	"content_scripts":[
 		{

@@ -92,10 +92,10 @@ function fileChanged(event) {
 
     let anonPromise = Promise.resolve();
 
-    if (settings.anonymizeFileHash) {
+    if (settings.changeFileHash) {
       anonPromise = new Promise((resolve) => {
-        anonFile(target.files[0], quality).then((anonedFile) => {
-          target.files = createFileList(anonedFile);
+        anonFile(target.files[0], quality).then((hashFile) => {
+          target.files = createFileList(hashFile);
           resolve();
         });
       });

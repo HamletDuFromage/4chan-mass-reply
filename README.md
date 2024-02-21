@@ -7,7 +7,7 @@ Inspired by /tv/'s posting culture, this browser extension aims to facilitate th
 
 - Ability to mimic many filename types
 - Add a meme website watermark to uploads
-- Anonymize file hash
+- Change file hash
 - Automatically delete 4chan_pass cookie on ban evasion error
 - Bypass common wordfilters by replacing a letter in the filtered words with a similar letter
 - Automatically slide captcha into the right position
