@@ -1,7 +1,7 @@
 export const settings = {
   fakeFilename: 'off',
   watermark: 'off',
-  anonymizeFileHash: false,
+  changeFileHash: false,
   autoDeleteCookie: false,
   bypassWordfilter: true,
   slideCaptcha: true,

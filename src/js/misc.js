@@ -3,6 +3,13 @@ export function debugLog(...args) {
   console.debug(prefix, ...args);
 }
 
+// The maximum is exclusive and the minimum is inclusive
+export function getRandomInt(min, max) {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+}
+
 export function getRandomString(length, lowercase = true, uppercase = true, digits = true) {
   let result = '';
   let alphabet = '';
@@ -10,7 +17,7 @@ export function getRandomString(length, lowercase = true, uppercase = true, digi
   if (uppercase) alphabet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   if (digits) alphabet += '0123456789';
   for (let i = 0; i < length; ++i) {
-    result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+    result += alphabet.charAt(getRandomInt(0, alphabet.length));
   }
   return result;
 }
@@ -19,7 +26,7 @@ export function getRandomHexString(length) {
   let result = '';
   const alphabet = '0123456789abcdef';
   for (let i = 0; i < length; ++i) {
-    result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+    result += alphabet.charAt(getRandomInt(0, alphabet.length));
   }
   return result;
 }
