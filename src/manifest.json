@@ -2,7 +2,7 @@
 	"manifest_version":2,
 	"name":"4chan Mass Reply",
 	"author":"HamletDuFromage",
-	"version":"3.4.2",
+	"version":"3.5.0",
 	"description":"Post more efficiently",
 	"homepage_url":"https://github.com/HamletDuFromage/4chan-mass-reply",
 	"icons":{
