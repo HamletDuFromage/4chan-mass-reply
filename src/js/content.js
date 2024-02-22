@@ -371,23 +371,32 @@ function gotTextArea(element) {
   element.parentElement.parentElement.insertBefore(div, element.parentElement.nextSibling);
 }
 
-function createOptionCheckbox(parentElement, option) {
+function createOptionRadio(parentElement, option) {
   const span = document.createElement('span');
-  span.style.paddingRight = '3px';
+  span.style.marginRight = '3px';
 
-  // 4chan's extension builds quick reply from original reply form
   const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.setAttribute('onchange', `(() => {
-    const options = this.parentElement.parentElement.parentElement.querySelector("input[name=email]");
-    if (options) {
-      if (this.checked) {
-        options.value += '${option} ';
-      } else {
-        options.value = options.value.replace('${option} ', '');
-      }
-    }
-  })()`);
+  input.type = 'radio';
+  // group radio buttons + will send the value when not 4chanx quick reply
+  input.name = 'email';
+  input.value = option;
+  input.style.margin = '3px';
+  input.style.verticalAlign = 'middle';
+
+  // 4chanx gets email value from it's element
+  if (is4chanX) {
+    // input -> label -> span -> div
+    input.setAttribute('onchange', `(() => {
+      const options = 
+        this
+        .parentElement
+        .parentElement
+        .parentElement
+        .querySelector('input[name=email]:not([type=radio])');
+      
+      if (options) options.value = '${option}';
+    })()`);
+  }
 
   const label = document.createElement('label');
   label.appendChild(input);
@@ -398,12 +407,14 @@ function createOptionCheckbox(parentElement, option) {
 }
 
 function gotOptionsField(element) {
-  if (settings.optionsCheckboxes) {
+  if (settings.optionsRadios) {
     element.style.display = 'none';
+    element.disabled = true; // don't send the original email field
+
     const parent = element.parentElement;
-    createOptionCheckbox(parent, 'sage');
-    createOptionCheckbox(parent, 'fortune');
-    createOptionCheckbox(parent, 'since4pass');
+    createOptionRadio(parent, 'sage');
+    createOptionRadio(parent, 'fortune');
+    createOptionRadio(parent, 'since4pass');
   }
 }
 
@@ -436,7 +447,8 @@ function getFields(element) {
       debugMsg: 'Found file input: ',
       callback: gotFileInput,
     }, {
-      selector: 'input[name=email]:not(#qrEmail)',
+      // 4chan's extension builds quick post from original form
+      selector: 'input[name=email]:not([type=radio]):not(#qrEmail)',
       debugMsg: 'Found options field: ',
       callback: gotOptionsField,
     }, {

@@ -5,7 +5,7 @@ export const settings = {
   autoDeleteCookie: false,
   bypassWordfilter: true,
   slideCaptcha: true,
-  optionsCheckboxes: false,
+  optionsRadios: false,
   persistentFile: false,
   quoteBottom: false,
   quoteFormat: 'single',
