@@ -407,7 +407,7 @@ function createOptionRadio(parentElement, option) {
 }
 
 function gotOptionsField(element) {
-  if (settings.optionsRadios) {
+  if (settings.optionRadios) {
     element.style.display = 'none';
     element.disabled = true; // don't send the original email field
 
@@ -500,9 +500,7 @@ function mutationCallback(mutations) {
         : (mutation.target.id === 'qrError' && mutation.target.style.display !== 'none'))
     ) {
       const text = mutation.target.textContent;
-      if (text.indexOf('Error: Ban evasion') !== -1
-        || text.indexOf('temporarily blocked') !== -1
-      ) {
+      if (text.includes('Error: Ban evasion') || text.includes('temporarily blocked')) {
         deleteCookie();
       }
       return;
@@ -514,7 +512,7 @@ function mutationCallback(mutations) {
       const addedNode = addedNodes[i];
       if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
-      if (addedNode.className.indexOf('postContainer') !== -1) {
+      if (addedNode.classList.contains('postContainer')) {
         highlightKym(addedNode);
       } else {
         getFields(addedNode);
@@ -543,9 +541,7 @@ browser.storage.local.get(settings).then((localStorage) => {
     const errmsg = document.getElementById('errmsg');
     if (errmsg) {
       const text = errmsg.textContent;
-      if (text.indexOf('Error: Ban evasion') !== -1
-        || text.indexOf('temporarily blocked') !== -1
-      ) {
+      if (text.includes('Error: Ban evasion') || text.includes('temporarily blocked')) {
         deleteCookie();
       }
       return;

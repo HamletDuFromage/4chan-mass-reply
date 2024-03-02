@@ -4,72 +4,68 @@ import {
 } from './misc';
 
 function createQuotesString(links, format, quoteBottom, characterLimit, maxLines) {
+  if (links.length < 1) {
+    return '';
+  }
+
   let result = '';
 
-  const spacing = (format === 'tower') ? 3 : 1; // to account for spaces and linebreaks
-
-  const maxRepliesToFit = Math.min(
-    links.length,
-    Math.floor(characterLimit / (links[0].length + spacing)),
-  );
-
-  const offset = quoteBottom * (links.length - maxRepliesToFit);
-
   switch (format) {
-    case 'lines': {
-      const cols = Math.floor(maxRepliesToFit / maxLines);
+    case 'max': {
+      const quoteCount = Math.min(
+        links.length,
+        Math.floor(characterLimit / (links[0].length + 1)),
+      );
 
-      if (cols < 1) {
-        for (let i = 0; i < maxRepliesToFit; ++i) {
-          result += `${links[i]}\n`;
+      const offset = quoteBottom * (links.length - quoteCount);
+
+      const rows = [];
+
+      for (let curRow = Math.min(links.length, maxLines) - 1; curRow >= 0; --curRow) {
+        const row = [];
+
+        for (let i = curRow; i < quoteCount; i += maxLines) {
+          row.push(links[i + offset]);
         }
-      } else {
-        const rows = Math.floor((maxRepliesToFit - maxLines) / cols) + 1;
 
-        const currentRow = offset;
-        const remainingLines = maxLines - rows + offset;
-
-        for (let i = currentRow; i < remainingLines; ++i) {
-          result += `${links[i]}\n`;
-        }
-
-        const startColumn = maxLines - rows + offset;
-        const endQuoteIndex = maxRepliesToFit + offset;
-
-        for (let i = startColumn; i < endQuoteIndex; ++i) {
-          result += links[i];
-
-          const isLastColumn = ((i - startColumn) % (cols + 1) === 0) || (i === endQuoteIndex - 1);
-          result += isLastColumn ? '\n' : ' ';
-        }
+        rows.push(row.join(' '));
       }
+
+      result = `${rows.join('\n')}\n`;
       break;
     }
-    case 'tower': {
-      const cols = (maxRepliesToFit / 3 < maxLines - 1)
-        ? 3 : Math.ceil(maxRepliesToFit / maxLines - 1);
+    case 'align': {
+      // how many columns to fit within line limit
+      const columnCount = Math.ceil(links.length / maxLines);
 
-      let count = 0;
+      const rowLen = links[0].length * columnCount + 3 * (columnCount - 1) + 1;
 
-      for (let i = offset; i < (maxRepliesToFit + offset); ++i) {
-        if (count && ((count % cols) === (cols - 1))) {
-          result += `${links[i]}\n`;
-        } else {
-          result += `${links[i]} | `;
-        }
-        ++count;
+      const rowCount = Math.floor(Math.min(
+        links.length / columnCount,
+        characterLimit / rowLen, // how many rows fit within character limit
+      ));
+
+      const quoteCount = rowCount * columnCount;
+
+      const offset = quoteBottom * (links.length - quoteCount);
+
+      for (let i = 0; i < quoteCount; ++i) {
+        const isLastColumn = ((i + 1) % columnCount === 0);
+
+        result += links[i + offset] + (isLastColumn ? '\n' : ' | ');
       }
 
-      if (count % 3) {
-        result = `${result.slice(0, -3)}\n`;
-      }
       break;
     }
     default: {
-      for (let i = offset; i < (maxRepliesToFit + offset); ++i) {
-        result += `${links[i]} `;
-      }
-      result = `${result.slice(0, -1)}\n`;
+      const quoteCount = Math.min(
+        links.length,
+        Math.floor(characterLimit / (links[0].length + 1)),
+      );
+
+      const offset = quoteBottom * (links.length - quoteCount);
+
+      result = `${links.slice(offset, offset + quoteCount).join(' ')}\n`;
       break;
     }
   }

@@ -2,6 +2,8 @@ import {
   debugLog,
 } from './misc';
 
+// credits: pixelplanetdev
+
 // Decide if a pixel is closer to black than to white.
 function isPixelDark(r, g, b) {
   return ((r + g + b) <= ((256 * 3) / 2));
