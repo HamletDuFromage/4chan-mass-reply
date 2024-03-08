@@ -464,12 +464,12 @@ function getFields(element) {
       callback(element);
     }
 
-    const match = element.querySelector(selector);
+    const matches = element.querySelectorAll(selector);
 
-    if (match) {
+    matches.forEach((match) => {
       debugLog(debugMsg, match);
       callback(match);
-    }
+    });
   });
 }
 
