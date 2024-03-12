@@ -9,4 +9,5 @@ export const settings = {
   persistentFile: false,
   quoteBottom: false,
   quoteFormat: 'single',
+  highlightKym: false,
 };

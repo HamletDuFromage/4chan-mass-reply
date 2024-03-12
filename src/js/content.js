@@ -407,15 +407,15 @@ function createOptionRadio(parentElement, option) {
 }
 
 function gotOptionsField(element) {
-  if (settings.optionRadios) {
-    element.style.display = 'none';
-    element.disabled = true; // don't send the original email field
+  if (!settings.optionRadios) return;
 
-    const parent = element.parentElement;
-    createOptionRadio(parent, 'sage');
-    createOptionRadio(parent, 'fortune');
-    createOptionRadio(parent, 'since4pass');
-  }
+  element.style.display = 'none';
+  element.disabled = true; // don't send the original email field
+
+  const parent = element.parentElement;
+  createOptionRadio(parent, 'sage');
+  createOptionRadio(parent, 'fortune');
+  createOptionRadio(parent, 'since4pass');
 }
 
 function highlightKym(element) {
@@ -513,7 +513,9 @@ function mutationCallback(mutations) {
       if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
       if (addedNode.classList.contains('postContainer')) {
-        highlightKym(addedNode);
+        if (settings.highlightKym) {
+          highlightKym(addedNode);
+        }
       } else {
         getFields(addedNode);
       }
@@ -548,7 +550,10 @@ browser.storage.local.get(settings).then((localStorage) => {
     }
   }
 
-  highlightKym(document.body);
+  if (settings.highlightKym) {
+    highlightKym(document.body);
+  }
+
   getFields(document.body);
 
   const observer = new MutationObserver(mutationCallback);
