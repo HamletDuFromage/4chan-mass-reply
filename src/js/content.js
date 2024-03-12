@@ -385,15 +385,16 @@ function createOptionRadio(parentElement, option) {
 
   // 4chanx gets email value from it's element
   if (is4chanX) {
-    // input -> label -> span -> div
+    // input -> label -> span -> span -> div
     input.setAttribute('onchange', `(() => {
-      const options = 
+      const options =
         this
         .parentElement
         .parentElement
         .parentElement
+        .parentElement
         .querySelector('input[name=email]:not([type=radio])');
-      
+
       if (options) options.value = '${option}';
     })()`);
   }
@@ -412,10 +413,30 @@ function gotOptionsField(element) {
   element.style.display = 'none';
   element.disabled = true; // don't send the original email field
 
-  const parent = element.parentElement;
-  createOptionRadio(parent, 'sage');
-  createOptionRadio(parent, 'fortune');
-  createOptionRadio(parent, 'since4pass');
+  const span = document.createElement('span');
+
+  span.title = 'Shift + Click to uncheck';
+
+  span.setAttribute('onmousedown', `((event) => {
+    if (event.shiftKey) {
+      event.preventDefault();
+    }
+  })(event)`);
+
+  span.setAttribute('onclick', `((event) => {
+    if (event.shiftKey) {
+      const radios = this.querySelectorAll('input[type=radio]');
+      radios.forEach((radio) => {
+        radio.checked = false;
+      });
+    }
+  })(event)`);
+
+  createOptionRadio(span, 'sage');
+  createOptionRadio(span, 'fortune');
+  createOptionRadio(span, 'since4pass');
+
+  element.parentElement.appendChild(span);
 }
 
 function highlightKym(element) {
