@@ -141,6 +141,11 @@
 					"version":"3.5.1",
 					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.5.1/4chan_mass_reply.xpi",
 					"update_hash":"sha256:0f122ba3ac68b0c436d69379fe79c5ddb919595df08768d14915ed77df6b8178"
+				},
+				{
+					"version":"3.5.2",
+					"update_link":"https://github.com/HamletDuFromage/4chan-mass-quote/releases/download/3.5.2/4chan_mass_reply.xpi",
+					"update_hash":"sha256:1f32b5d35c6da7a6b9dd766fcd14ba46ee8c8341859666586d332354bc67e670"
 				}
 			]
 		}
