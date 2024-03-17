@@ -10,9 +10,21 @@ export function getBoard() {
 export function getBoardInfo() {
   let characterLimit = 2000;
   let maxFileSize = 4194304;
-  let maxLines = 101;
   let hasUserIDs = false;
   const hasBoardFlags = (!!document.getElementsByClassName('flagSelector').length);
+
+  let maxLines = 101;
+  const isNsfw = document.body.classList.contains('nws');
+
+  // catalog page doesn't have maxLines defined
+  if (isNsfw) {
+    const board = getBoard();
+    if (board === 'b' || board === 'bant') {
+      maxLines = 51;
+    } else {
+      maxLines = 71;
+    }
+  }
 
   function handleMessage(event) {
     const detail = event.detail;

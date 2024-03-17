@@ -371,23 +371,33 @@ function gotTextArea(element) {
   element.parentElement.parentElement.insertBefore(div, element.parentElement.nextSibling);
 }
 
-function createOptionCheckbox(parentElement, option) {
+function createOptionRadio(parentElement, option) {
   const span = document.createElement('span');
-  span.style.paddingRight = '3px';
+  span.style.marginRight = '3px';
 
-  // 4chan's extension builds quick reply from original reply form
   const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.setAttribute('onchange', `(() => {
-    const options = this.parentElement.parentElement.parentElement.querySelector("input[name=email]");
-    if (options) {
-      if (this.checked) {
-        options.value += '${option} ';
-      } else {
-        options.value = options.value.replace('${option} ', '');
-      }
-    }
-  })()`);
+  input.type = 'radio';
+  // group radio buttons + will send the value when not 4chanx quick reply
+  input.name = 'email';
+  input.value = option;
+  input.style.margin = '3px';
+  input.style.verticalAlign = 'middle';
+
+  // 4chanx gets email value from it's element
+  if (is4chanX) {
+    // input -> label -> span -> span -> div
+    input.setAttribute('onchange', `(() => {
+      const options =
+        this
+        .parentElement
+        .parentElement
+        .parentElement
+        .parentElement
+        .querySelector('input[name=email]:not([type=radio])');
+
+      if (options) options.value = '${option}';
+    })()`);
+  }
 
   const label = document.createElement('label');
   label.appendChild(input);
@@ -398,13 +408,35 @@ function createOptionCheckbox(parentElement, option) {
 }
 
 function gotOptionsField(element) {
-  if (settings.optionsCheckboxes) {
-    element.style.display = 'none';
-    const parent = element.parentElement;
-    createOptionCheckbox(parent, 'sage');
-    createOptionCheckbox(parent, 'fortune');
-    createOptionCheckbox(parent, 'since4pass');
-  }
+  if (!settings.optionRadios) return;
+
+  element.style.display = 'none';
+  element.disabled = true; // don't send the original email field
+
+  const span = document.createElement('span');
+
+  span.title = 'Shift + Click to uncheck';
+
+  span.setAttribute('onmousedown', `((event) => {
+    if (event.shiftKey) {
+      event.preventDefault();
+    }
+  })(event)`);
+
+  span.setAttribute('onclick', `((event) => {
+    if (event.shiftKey) {
+      const radios = this.querySelectorAll('input[type=radio]');
+      radios.forEach((radio) => {
+        radio.checked = false;
+      });
+    }
+  })(event)`);
+
+  createOptionRadio(span, 'sage');
+  createOptionRadio(span, 'fortune');
+  createOptionRadio(span, 'since4pass');
+
+  element.parentElement.appendChild(span);
 }
 
 function highlightKym(element) {
@@ -436,7 +468,8 @@ function getFields(element) {
       debugMsg: 'Found file input: ',
       callback: gotFileInput,
     }, {
-      selector: 'input[name=email]:not(#qrEmail)',
+      // 4chan's extension builds quick post from original form
+      selector: 'input[name=email]:not([type=radio]):not(#qrEmail)',
       debugMsg: 'Found options field: ',
       callback: gotOptionsField,
     }, {
@@ -488,9 +521,7 @@ function mutationCallback(mutations) {
         : (mutation.target.id === 'qrError' && mutation.target.style.display !== 'none'))
     ) {
       const text = mutation.target.textContent;
-      if (text.indexOf('Error: Ban evasion') !== -1
-        || text.indexOf('temporarily blocked') !== -1
-      ) {
+      if (text.includes('Error: Ban evasion') || text.includes('temporarily blocked')) {
         deleteCookie();
       }
       return;
@@ -502,8 +533,10 @@ function mutationCallback(mutations) {
       const addedNode = addedNodes[i];
       if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
-      if (addedNode.className.indexOf('postContainer') !== -1) {
-        highlightKym(addedNode);
+      if (addedNode.classList.contains('postContainer')) {
+        if (settings.highlightKym) {
+          highlightKym(addedNode);
+        }
       } else {
         getFields(addedNode);
       }
@@ -531,16 +564,17 @@ browser.storage.local.get(settings).then((localStorage) => {
     const errmsg = document.getElementById('errmsg');
     if (errmsg) {
       const text = errmsg.textContent;
-      if (text.indexOf('Error: Ban evasion') !== -1
-        || text.indexOf('temporarily blocked') !== -1
-      ) {
+      if (text.includes('Error: Ban evasion') || text.includes('temporarily blocked')) {
         deleteCookie();
       }
       return;
     }
   }
 
-  highlightKym(document.body);
+  if (settings.highlightKym) {
+    highlightKym(document.body);
+  }
+
   getFields(document.body);
 
   const observer = new MutationObserver(mutationCallback);

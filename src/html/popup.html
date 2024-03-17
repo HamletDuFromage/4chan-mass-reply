@@ -47,8 +47,8 @@
 			<span>Mass-reply format:</span>
 			<select id="quoteFormat">
 				<option value="single">Single Line</option>
-				<option value="lines">Seperate Lines</option>
-				<option value="tower">Tower</option>
+				<option value="max">Maximize Line Count</option>
+				<option value="align">Align</option>
 			</select>
 		</div>
 		<label><input type="checkbox" id="quoteBottom" name="quoteBottom" />Quote bottom posts if the thread is too long</label>
@@ -63,7 +63,9 @@
 		<br>
 		<label><input type="checkbox" id="slideCaptcha" name="slideCaptcha" />Automatically slide captcha</label>
 		<br>
-		<label><input type="checkbox" id="optionsCheckboxes" name="optionsCheckboxes" />Replace options field with checkboxes</label>
+		<label><input type="checkbox" id="optionRadios" name="optionRadios" />Replace options field with radio buttons</label>
+		<br>
+		<label><input type="checkbox" id="highlightKym" name="highlightKym" />Highlight KYM filenames</label>
 	</div>
 
 	<script src="../js/browser-polyfill.min.js"></script>
