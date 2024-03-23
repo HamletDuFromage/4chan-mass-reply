@@ -19,19 +19,28 @@ function createQuotesString(links, format, quoteBottom, characterLimit, maxLines
 
       const offset = quoteBottom * (links.length - quoteCount);
 
-      const rows = [];
-
-      for (let curRow = Math.min(links.length, maxLines) - 1; curRow >= 0; --curRow) {
-        const row = [];
-
-        for (let i = curRow; i < quoteCount; i += maxLines) {
-          row.push(links[i + offset]);
-        }
-
-        rows.push(row.join(' '));
+      const upper_cols = Math.ceil(quoteCount / maxLines);
+      const upper_rows = quoteCount % maxLines;
+      let matrix = [];
+      for (let i = 0; i < upper_rows; i++) {
+          let row = [];
+          for (let j = 0; j < upper_cols; j++) {
+              row.push(links[i * upper_cols + j + offset]);
+          }
+          matrix.push(row.join(' '));
       }
 
-      result = `${rows.join('\n')}\n`;
+      const lower_cols = Math.floor(quoteCount / maxLines);
+      const lower_rows = maxLines - quoteCount % maxLines;
+      for (let i = 0; i < lower_rows; i++) {
+          let row = [];
+          for (let j = 0; j < lower_cols; j++) {
+              row.push(links[(i + upper_cols * upper_rows) * lower_cols + j + offset]);
+          }
+          matrix.push(row.join(' '));
+      }
+
+      result = `${matrix.join('\n')}\n`;
       break;
     }
     case 'align': {
