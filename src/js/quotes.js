@@ -23,21 +23,23 @@ function createQuotesString(links, format, quoteBottom, characterLimit, maxLines
       const upper_rows = quoteCount % maxLines;
       let matrix = [];
       for (let i = 0; i < upper_rows; i++) {
-          let row = [];
-          for (let j = 0; j < upper_cols; j++) {
-              row.push(links[i * upper_cols + j + offset]);
-          }
-          matrix.push(row.join(' '));
+        let row = [];
+        for (let j = 0; j < upper_cols; j++) {
+          row.push(links[i * upper_cols + j + offset]);
+        }
+        matrix.push(row.join(' '));
       }
 
       const lower_cols = Math.floor(quoteCount / maxLines);
-      const lower_rows = maxLines - quoteCount % maxLines;
+      const lower_rows = Math.min((quoteCount - upper_cols * upper_rows) / lower_cols, maxLines - upper_rows)
       for (let i = 0; i < lower_rows; i++) {
-          let row = [];
-          for (let j = 0; j < lower_cols; j++) {
-              row.push(links[(i + upper_cols * upper_rows) * lower_cols + j + offset]);
-          }
-          matrix.push(row.join(' '));
+        let row = [];
+        for (let j = 0; j < lower_cols; j++) {
+          let pos = (i + upper_cols * upper_rows) * lower_cols + j + offset;
+          if (pos >= links.length) break;
+          row.push(links[pos]);
+        }
+        matrix.push(row.join(' '));
       }
 
       result = `${matrix.join('\n')}\n`;
